@@ -28,6 +28,45 @@ class User extends Authenticatable
         return $this->hasMany(Diario::class);
     }
 
+    /**
+     * Relación de muchos a muchos con otros usuarios a través de la tabla de amistades.
+     * Los amigos aceptados del usuario.
+     */
+    public function amigos()
+    {
+        return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
+                    ->withPivot('status')
+                    ->wherePivot('status', 'aceptada')
+                    ->orderBy('name', 'asc'); // Ordenar alfabéticamente los amigos
+    }
+
+    /**
+     * Relación con las solicitudes de amistad enviadas por el usuario.
+     * Las solicitudes pendientes que ha enviado.
+     */
+    public function solicitudesEnviadas()
+    {
+        return $this->hasMany(Friendship::class, 'user_id')
+        ->where('status', 'pendiente'); // Filtramos las solicitudes pendientes
+    }
+
+    /**
+     * Relación con las solicitudes de amistad recibidas por el usuario.
+     * Las solicitudes pendientes que ha recibido.
+     */
+    public function solicitudesRecibidas()
+    {
+        return $this->hasMany(Friendship::class, 'friend_id')
+                    ->where('status', 'pendiente'); // Solo las solicitudes pendientes
+    }
+
+     /**
+     * Método para saber si el usuario ya es amigo de otro.
+     */
+    public function esAmigoDe(User $user)
+    {
+        return $this->amigos()->where('friend_id', $user->id)->exists();
+    }
 
     /**
      * The attributes that should be hidden for serialization.

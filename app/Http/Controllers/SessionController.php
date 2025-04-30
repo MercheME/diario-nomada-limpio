@@ -21,7 +21,7 @@ class SessionController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect('/diarios');
+            return redirect('/');
         }
 
         return back()->withErrors(['email' => 'Credenciales incorrectas']);

@@ -10,12 +10,26 @@ use Illuminate\Support\Facades\Auth;
 
 class DiarioController extends Controller
 {
+
+    public function home()
+    {
+        $user = Auth::user();
+        $amigos = $user->amigos;
+        $usuarios = $user->where('id', '!=', $user->id)->get(); // Obtener todos los usuarios excepto el autenticado
+        $solicitudesPendientes = $user->solicitudesRecibidas;
+        $diariosPublicos = Diario::where('is_public', true)->get();
+
+        $ultimosDiarios = Diario::orderBy('created_at', 'desc')->take(3)->get(); // Obtener los últimos 3 diarios
+
+        return view('home', compact('usuarios','amigos','solicitudesPendientes','ultimosDiarios', 'diariosPublicos'));
+    }
+
     public function index( Request $request)
     {
         $query = $request->input('query');
 
         if ($query) {
-            $diarios = Diario::where('description', 'LIKE', "%{$query}%")->get();
+            $diarios = Diario::where('descripcion', 'LIKE', "%{$query}%")->get();
         } else {
             $diarios = Diario::all();
         }

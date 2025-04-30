@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('diario_imagenes', function (Blueprint $table) {
             $table->id();
             $table->foreignId('diario_id')->constrained()->onDelete('cascade');
-            $table->string('url');
+            $table->string('url_imagen');
             $table->text('descripcion')->nullable();
+            $table->boolean('is_principal')->default(false); // Imagen destacada
             $table->timestamps();
         });
     }

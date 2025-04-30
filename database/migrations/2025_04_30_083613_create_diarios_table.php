@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->string('destino');
             $table->text('contenido');
+            $table->boolean('favorito')->default(false)->nullable();
             $table->date('fecha_inicio');
             $table->date('fecha_final');
             $table->decimal('latitud', 10, 8)->nullable();
@@ -32,6 +33,7 @@ return new class extends Migration
             $table->text('musica')->nullable();
             $table->text('peliculas')->nullable();
             $table->text('documentales')->nullable();
+            $table->json('etiquetas')->nullable();
             $table->timestamps();
         });
     }

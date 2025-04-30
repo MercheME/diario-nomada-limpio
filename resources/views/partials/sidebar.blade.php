@@ -1,0 +1,57 @@
+<aside class="w-64 bg-white shadow-md p-4">
+    <h2 class="text-xl font-bold mb-4">Menú</h2>
+    <ul class="space-y-2">
+
+        <!-- Sección Diarios -->
+        <li class="font-semibold text-gray-600">Diarios</li>
+        <ul class="ml-4 space-y-1">
+            <li>
+                <a href="{{ route('diarios.create') }}"
+                   class="{{ Request::routeIs('diarios.create') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Crear Diario
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('diarios.index') }}"
+                   class="{{ Request::routeIs('diarios.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Mis Diarios
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('diariosPublicados') }}"
+                   class="{{ Request::routeIs('diariosPublicados') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Diarios Publicados
+                </a>
+            </li>
+            {{-- <li>
+                <a href="{{ route('diarios.index') }}"
+                   class="{{ Request::routeIs('diarios.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Mapas
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('diarios.index') }}"
+                   class="{{ Request::is('diarios*') && !Request::routeIs('diarios.create') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Calendario
+                </a>
+            </li> --}}
+        </ul>
+
+        <!-- Sección Proyectos Locales (Comunidades) -->
+        <li class="font-semibold text-gray-600 mt-4">Proyectos Locales</li>
+        <ul class="ml-4 space-y-1">
+            <li>
+                {{-- <a href="{{ route('proyectos.mapa') }}"
+                   class="{{ Request::routeIs('proyectos.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Mapa
+                </a> --}}
+            </li>
+            <li>
+                <a href="{{ route('proyectos.index') }}"
+                   class="{{ Request::routeIs('proyectos.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Proyectos Locales
+                </a>
+            </li>
+        </ul>
+    </ul>
+</aside>

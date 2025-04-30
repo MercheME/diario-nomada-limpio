@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comunidades', function (Blueprint $table) {
+        Schema::create('proyecto_imagenes', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre');
-            $table->text('descripcion');
-            $table->string('url')->nullable();
-            $table->decimal('latitud', 10, 8);
-            $table->decimal('longitud', 11, 8);
+            $table->foreignId('proyecto_id')->constrained()->onDelete('cascade');
+            $table->string('url_imagen'); // Ruta o URL de la imagen
+            $table->text('descripcion')->nullable();
+            $table->boolean('is_principal')->default(false); // Imagen destacada o de portada
             $table->timestamps();
         });
     }
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comunidades');
+        Schema::dropIfExists('proyecto_imagenes');
     }
 };
