@@ -17,8 +17,25 @@
             @forelse ($ultimosDiarios as $diario)
                 <li>
                     <a href="{{ route('diarios.show', $diario->slug) }}" class="text-blue-600 hover:underline">
-                        {{ $diario->titulo }}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                            @if($diario->imagenPrincipal)
+                                <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                                    <div class="aspect-w-4 aspect-h-3 rounded-xl overflow-hidden">
+                                        <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
+                                        alt="Imagen Principal"
+                                        class="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105">
+                                        <!-- Overlay de texto -->
+                                        <div class="absolute inset-0 bg-opacity-40 flex flex-col justify-end p-4 text-white">
+                                            <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
+                                            <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
+                                            <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        </div>
                     </a>
+
                 </li>
             @empty
                 <p class="text-gray-500">No has publicado diarios recientes.</p>

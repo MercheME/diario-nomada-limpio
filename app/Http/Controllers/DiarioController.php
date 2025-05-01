@@ -87,7 +87,7 @@ class DiarioController extends Controller
             'musica' => 'nullable|string',
             'peliculas' => 'nullable|string',
             'documentales' => 'nullable|string',
-            'imagen_principal' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'imagen_principal' => 'image|mimes:jpeg,png,jpg,gif',
         ]);
 
         // Crear un nuevo diario utilizando los datos validados
@@ -118,12 +118,28 @@ class DiarioController extends Controller
 
         if ($request->hasFile('imagen_principal')) {
             $path = $request->file('imagen_principal')->store('imagenes/diarios', 'public');
-            DiarioImagen::create([
-                'diario_id' => $diario->id,
-                'url_imagen' => $path,
-                'is_principal' => true
-            ]);
+        } else {
+            // Asegúrate de que esta imagen exista en: storage/app/public/diarios/default.png
+            $path = 'imagenes/diarios/default.png';
         }
+
+        // if ($request->hasFile('imagen_principal')) {
+        //     $path = $request->file('imagen_principal')->store('imagenes/diarios', 'public');
+        //     DiarioImagen::create([
+        //         'diario_id' => $diario->id,
+        //         'url_imagen' => $path,
+        //         'is_principal' => true
+        //     ]);
+        // }
+        // else {
+        //     $path = 'diarios/default.png';
+        // }
+
+        DiarioImagen::create([
+            'diario_id' => $diario->id,
+            'url_imagen' => $path,
+            'is_principal' => true
+        ]);
 
         return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
     }
@@ -136,9 +152,6 @@ class DiarioController extends Controller
 
     public function edit($slug)
     {
-        if (auth()->id() !== $diario->user_id) {
-            abort(403); // No autorizado
-        }
 
         $diario = Diario::where('slug', $slug)->firstOrFail();
         return view('diarios.edit', compact('diario'));

@@ -53,5 +53,20 @@
                 </a>
             </li>
         </ul>
+        <li class="font-semibold text-gray-600 mt-4">Opciones</li>
+        <ul class="ml-4 space-y-1">
+            <li>
+                <a href="{{ route('proyectos.index') }}"
+                   class="{{ Request::routeIs('proyectos.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Calendario
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('proyectos.index') }}"
+                   class="{{ Request::routeIs('proyectos.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Mapa
+                </a>
+            </li>
+        </ul>
     </ul>
 </aside>

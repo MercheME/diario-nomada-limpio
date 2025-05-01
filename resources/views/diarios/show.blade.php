@@ -2,15 +2,24 @@
 
 @section('content')
 
-    @if($diario->imagenPrincipal)
-        <div>
-            <h2>Imagen Principal</h2>
-            <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}" alt="Imagen Principal" width="300">
-        </div>
-        {{-- <pre>
-            {{ dd($diario->imagenPrincipal->url_imagen) }}
-        </pre> --}}
-    @endif
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+        @if($diario->imagenPrincipal)
+            <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                <div class="aspect-w-4 aspect-h-3 rounded-xl overflow-hidden">
+                    <h2 class="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 text-sm rounded">Imagen Principal</h2>
+                    <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
+                    alt="Imagen Principal"
+                    class="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105">
+                    <!-- Overlay de texto -->
+                    <div class="absolute inset-0 bg-opacity-40 flex flex-col justify-end p-4 text-white">
+                        <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
+                        <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
+                        <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
 
 
     <h1>{{ $diario->titulo }}</h1>
@@ -21,38 +30,46 @@
     {{-- Agrega otros campos como impacto_ambiental, libros, etc. si están disponibles --}}
 
     @if($diario->imagenes->count())
-        <div class="mt-4">
-            <h2>Galería</h2>
-            <div class="grid grid-cols-3 gap-4">
+        <div class="mt-10">
+            <h2 class="text-2xl font-semibold mb-4">Galería</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
                 @foreach($diario->imagenes->where('is_principal', false) as $imagen)
-                    <div class="relative group">
-                        <img src="{{ asset('storage/' . $imagen->url_imagen) }}" alt="Imagen del diario" class="w-full h-auto rounded">
+                    <div class="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="relative w-full h-120">
+                            <img
+                                src="{{ asset('storage/' . $imagen->url_imagen) }}"
+                                class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                alt="Imagen del diario"
+                            />
 
-                        <!-- Botón eliminar -->
-                        <form action="{{ route('diario-imagenes.destroy', $imagen->id) }}" method="POST"
-                              class="absolute top-1 right-1 z-10">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit"
-                                    onclick="return confirm('¿Eliminar esta imagen?');"
-                                    class="text-white bg-red-600 rounded-full px-2 py-0.5 hover:bg-red-700 transition">
-                                ❌
-                            </button>
-                        </form>
+                            @if(auth()->id() === $diario->user_id)
+                                <!-- Botón eliminar -->
+                                <form action="{{ route('diario-imagenes.destroy', $imagen->id) }}" method="POST" class="absolute top-2 right-2 z-10">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                            onclick="return confirm('¿Eliminar esta imagen?');"
+                                            class="text-white bg-red-600 rounded-full px-2 py-1 hover:bg-red-700 transition text-sm">
+                                        ❌
+                                    </button>
+                                </form>
 
-                        <!-- Formulario para establecer como principal -->
-                        <form action="{{ route('diario-imagenes.establecerPrincipal', $imagen->id) }}" method="POST" class="mt-2 text-center">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700">
-                                📌 Establecer como principal
-                            </button>
-                        </form>
+                                <!-- Establecer como principal -->
+                                <form action="{{ route('diario-imagenes.establecerPrincipal', $imagen->id) }}" method="POST" class="absolute bottom-2 left-2 z-10">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="bg-blue-600 text-white text-xs px-3 py-1 rounded hover:bg-blue-700">
+                                        📌 Principal
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
                     </div>
                 @endforeach
+            </div>
         </div>
     @endif
-
 
     @auth
         @if(auth()->id() === $diario->user_id)
@@ -73,6 +90,5 @@
             </form>
         @endif
     @endauth
-
 
 @endsection

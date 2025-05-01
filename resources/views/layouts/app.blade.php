@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Bubbles&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
     @vite(['resources/js/app.js'])
+    <script src="//unpkg.com/alpinejs" defer></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
@@ -17,7 +18,7 @@
     <header class="bg-gray-400 text-white">
         <nav class="flex items-center justify-between p-4">
             <div class="flex items-center">
-                <a href="{{ route('home') }}" class="text-2xl font-bold text-indigo-900">☠️ Instagram</a>
+                <a href="{{ route('home') }}" class="text-2xl font-bold text-indigo-900">☠️ Diarios Nómadas</a>
             </div>
 
             <div class="flex items-center space-x-4">
