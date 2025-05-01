@@ -35,6 +35,8 @@ Route::post('/logout', [SessionController::class, 'destroy'])->name('logout')->m
 Route::post('/solicitudes/{user}', [FriendshipCrontroller::class, 'enviarSolicitudAmistad'])->name('solicitudes.enviar');
 Route::post('/solicitudes/aceptar/{friendship}', [FriendshipCrontroller::class, 'aceptarSolicitudAmistad'])->name('solicitudes.aceptar');
 Route::post('/solicitudes/rechazar/{friendship}', [FriendshipCrontroller::class, 'rechazarSolicitudAmistad'])->name('solicitudes.rechazar');
+Route::delete('/amigos/{user}', [FriendshipCrontroller::class, 'eliminarAmigo'])->name('amigos.eliminar');
+
 
 // Rutas para mostrar amigos y solicitudes
 Route::get('/amigos', [FriendshipCrontroller::class, 'mostrarAmigos'])->name('amigos.index');
@@ -43,13 +45,17 @@ Route::get('/solicitudes', [FriendshipCrontroller::class, 'mostrarSolicitudesPen
 // Diarios
 Route::get('/home', [DiarioController::class, 'home'])->name('home')->middleware('auth');
 Route::get('/diarios', [DiarioController::class, 'index'])->middleware('auth')->name('diarios.index');
+Route::get('/diarios/publicados', [DiarioController::class, 'publicados'])->middleware('auth')->name('diariosPublicados');
+
 Route::get('/diarios/crear', [DiarioController::class, 'create'])->middleware('auth')->name('diarios.create');
 Route::post('/diarios', [DiarioController::class, 'store'])->middleware('auth')->name('diarios.store');
 Route::get('/diarios/{slug}', [DiarioController::class, 'show'])->name('diarios.show');
 Route::get('/diarios/{slug}/editar', [DiarioController::class, 'edit'])->middleware('auth')->name('diarios.edit');
 Route::put('/diarios/{slug}', [DiarioController::class, 'update'])->middleware('auth')->name('diarios.update');
 Route::delete('/diarios/{slug}', [DiarioController::class, 'destroy'])->middleware('auth')->name('diarios.destroy');
-Route::get('/diarios/publicados', [DiarioController::class, 'index'])->name('diariosPublicados');
+Route::post('/diarios/{slug}/imagenes', [DiarioController::class, 'agregarImagen'])->name('diarios.agregarImagen');
+Route::delete('/imagenes/{imagen}', [DiarioImagenController::class, 'destroy'])->name('diario-imagenes.destroy');
+Route::patch('/diario-imagenes/{imagen}/establecer-principal', [DiarioImagenController::class, 'establecerPrincipal'])->name('diario-imagenes.establecerPrincipal');
 
 
 // Imágenes de diarios

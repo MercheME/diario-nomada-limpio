@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Diario;
+use App\Models\DiarioImagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,7 @@ class DiarioController extends Controller
         $solicitudesPendientes = $user->solicitudesRecibidas;
         $diariosPublicos = Diario::where('is_public', true)->get();
 
-        $ultimosDiarios = Diario::orderBy('created_at', 'desc')->take(3)->get(); // Obtener los últimos 3 diarios
+        $ultimosDiarios = Auth::user()->diarios()->latest()->take(3)->get(); // Obtener los últimos 3 diarios
 
         return view('home', compact('usuarios','amigos','solicitudesPendientes','ultimosDiarios', 'diariosPublicos'));
     }
@@ -28,11 +29,34 @@ class DiarioController extends Controller
     {
         $query = $request->input('query');
 
+        // Obtener los diarios del usuario autenticado
+        $diariosQuery = Auth::user()->diarios();
+
+        // Si hay una consulta de búsqueda, aplicarla sobre la descripción del diario
         if ($query) {
-            $diarios = Diario::where('descripcion', 'LIKE', "%{$query}%")->get();
-        } else {
-            $diarios = Diario::all();
+            $diariosQuery = $diariosQuery->where('descripcion', 'LIKE', "%{$query}%");
         }
+
+        // Obtener los diarios con la búsqueda aplicada (si la hay), paginados
+        $diarios = $diariosQuery->latest()->paginate(10);
+
+        return view('diarios.index', compact('diarios'));
+    }
+
+    public function publicados(Request $request)
+    {
+        $query = $request->input('query');
+
+        // Obtener los diarios públicos
+        $diariosQuery = Diario::where('is_public', true); // Asumiendo que tienes un campo `es_publico`
+
+        // Si hay una consulta de búsqueda, aplicarla sobre la descripción del diario
+        if ($query) {
+            $diariosQuery = $diariosQuery->where('descripcion', 'LIKE', "%{$query}%");
+        }
+
+        // Obtener los diarios públicos con la búsqueda aplicada (si la hay), paginados
+        $diarios = $diariosQuery->latest()->paginate(10);
 
         return view('diarios.index', compact('diarios'));
     }
@@ -63,6 +87,7 @@ class DiarioController extends Controller
             'musica' => 'nullable|string',
             'peliculas' => 'nullable|string',
             'documentales' => 'nullable|string',
+            'imagen_principal' => 'required|image|mimes:jpeg,png,jpg,gif',
         ]);
 
         // Crear un nuevo diario utilizando los datos validados
@@ -87,10 +112,20 @@ class DiarioController extends Controller
         $diario->peliculas = $validated['peliculas'] ?? null;
         $diario->documentales = $validated['documentales'] ?? null;
 
+
         // Guardar el diario en la base de datos
         $diario->save();
 
-        return redirect("/diarios/{$diario->slug}");
+        if ($request->hasFile('imagen_principal')) {
+            $path = $request->file('imagen_principal')->store('imagenes/diarios', 'public');
+            DiarioImagen::create([
+                'diario_id' => $diario->id,
+                'url_imagen' => $path,
+                'is_principal' => true
+            ]);
+        }
+
+        return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
     }
 
     public function show($slug)
@@ -101,6 +136,10 @@ class DiarioController extends Controller
 
     public function edit($slug)
     {
+        if (auth()->id() !== $diario->user_id) {
+            abort(403); // No autorizado
+        }
+
         $diario = Diario::where('slug', $slug)->firstOrFail();
         return view('diarios.edit', compact('diario'));
     }
@@ -139,5 +178,34 @@ class DiarioController extends Controller
         $diario->delete();
 
         return redirect('/diarios');
+    }
+
+    public function agregarImagen(Request $request, $slug)
+    {
+        $diario = Diario::where('slug', $slug)->firstOrFail();
+
+        $request->validate([
+            'imagenes' => 'required|array|max:12',
+            'imagenes.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $imagenesActuales = $diario->imagenes()->count();
+        $nuevasImagenes = count($request->file('imagenes'));
+
+        if (($imagenesActuales + $nuevasImagenes) > 13) {
+            return redirect()->back()->withErrors('No puedes subir más de 12 imágenes en total para este diario.');
+        }
+
+        foreach ($request->file('imagenes') as $imagen) {
+            $path = $imagen->store('imagenes/diarios', 'public');
+            DiarioImagen::create([
+                'diario_id' => $diario->id,
+                'url_imagen' => $path,
+                'is_principal' => false
+            ]);
+        }
+
+        return redirect()->back()->with('success', 'Imágenes agregadas correctamente.');
+
     }
 }

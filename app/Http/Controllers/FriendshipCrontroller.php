@@ -55,6 +55,19 @@ class FriendshipCrontroller extends Controller
         $friendship->status = 'aceptada';
         $friendship->save();
 
+        // Crear la relación inversa si aún no existe
+        $existeRelacionInversa = Friendship::where('user_id', $friendship->friend_id)
+            ->where('friend_id', $friendship->user_id)
+            ->exists();
+
+        if (!$existeRelacionInversa) {
+            Friendship::create([
+                'user_id' => $friendship->friend_id,
+                'friend_id' => $friendship->user_id,
+                'status' => 'aceptada',
+            ]);
+        }
+
         return back()->with('success', 'Solicitud de amistad aceptada.');
     }
 
@@ -92,4 +105,24 @@ class FriendshipCrontroller extends Controller
 
         return view('solicitudes.index', compact('solicitudesPendientes'));
     }
+
+    /**
+     * Eliminar un amigo aceptado.
+     */
+    public function eliminarAmigo(User $user)
+    {
+        $authId = Auth::id();
+
+        // Eliminar ambas direcciones de amistad si existen
+        Friendship::where(function($query) use ($authId, $user) {
+            $query->where('user_id', $authId)
+                ->where('friend_id', $user->id);
+        })->orWhere(function($query) use ($authId, $user) {
+            $query->where('user_id', $user->id)
+                ->where('friend_id', $authId);
+        })->where('status', 'aceptada')->delete();
+
+        return back()->with('success', 'Amigo eliminado exitosamente.');
+    }
+
 }

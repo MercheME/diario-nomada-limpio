@@ -1,86 +1,103 @@
 @extends('layouts.app')
 
 @section('content')
+<section class="w-full max-w-4xl mx-auto p-6 space-y-10">
 
-<section class="flex flex-col gap-10 w-full justify-center">
-    <h1 class="text-4xl text-center mt-10 uppercase font-bold text-gray-700">Bienvenido a tu Diario de Viajes</h1>
+    <!-- Bienvenida con el nombre del usuario -->
+    <div class="text-center mt-10">
+        <h1 class="text-4xl font-bold text-gray-700 uppercase">Hola, {{ Auth::user()->name }} 👋</h1>
+        <p class="text-gray-600 mt-2">Bienvenido a tu Diario de Viajes. Explora, crea y comparte tus experiencias.</p>
+        <p class="text-gray-500">Descubre proyectos locales que impulsan tu comunidad.</p>
+    </div>
 
-    <p class="text-center text-gray-600">Explora, crea y comparte tus experiencias. Descubre proyectos locales que impulsan tu comunidad.</p>
+    <!-- Últimos diarios -->
+    <div>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">📝 Últimos diarios</h2>
+        <ul class="space-y-2">
+            @forelse ($ultimosDiarios as $diario)
+                <li>
+                    <a href="{{ route('diarios.show', $diario->slug) }}" class="text-blue-600 hover:underline">
+                        {{ $diario->titulo }}
+                    </a>
+                </li>
+            @empty
+                <p class="text-gray-500">No has publicado diarios recientes.</p>
+            @endforelse
+        </ul>
+    </div>
 
-    <h2 class="text-2xl mt-6 font-semibold text-gray-600">Últimos diarios</h2>
-    <ul class="space-y-2">
-        @forelse ($ultimosDiarios as $diario)
-            <li>
-                <a href="{{ route('diarios.show', $diario->slug) }}" class="text-blue-500">{{ $diario->titulo }}</a>
-            </li>
-        @empty
-            <p>No hay diarios recientes.</p>
-        @endforelse
-    </ul>
-
-    <h2>Diarios Publicados</h2>
-    {{-- <ul>
-        @forelse ($diariosPublicados as $diario)
-            <li>
-                <a href="{{ route('diarios.show', $diario->slug) }}">
-                    {{ $diario->titulo }}
-                </a>
-            </li>
-        @empty
-            <li>No hay diarios publicados.</li>
-        @endforelse
-    </ul> --}}
-
-    <h2>Mis Amigos</h2>
-    <ul>
-        @foreach ($amigos as $amigo)
-            <li>
-                <strong>{{ $amigo->name }}</strong><br>
-                Email: {{ $amigo->email }}<br>
-                {{-- Fecha de amistad: {{ $amigo->pivot->created_at->format('d/m/Y') }}<br> --}}
-                <!-- Aquí puedes agregar más información si lo deseas -->
-            </li>
-        @endforeach
-    </ul>
-
-    <h2>Todos los Usuarios</h2>
-    <ul>
-        @foreach ($usuarios as $usuario)
-            <li>
-                <strong>{{ $usuario->name }}</strong><br>
-                Email: {{ $usuario->email }}<br>
-                @if ($amigos->contains($usuario))
-                    <span>Ya son amigos</span>
-                @else
-                    <form action="{{ route('solicitudes.enviar', $usuario) }}" method="POST">
+    <!-- Mis amigos -->
+    <div>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">👥 Mis Amigos</h2>
+        <ul class="space-y-4">
+            @foreach ($amigos as $amigo)
+                <li class="bg-white p-4 rounded-lg shadow flex flex-col md:flex-row justify-between items-center">
+                    <div>
+                        <strong class="text-lg">{{ $amigo->name }}</strong><br>
+                        <span class="text-gray-500">Email: {{ $amigo->email }}</span>
+                    </div>
+                    <form action="{{ route('amigos.eliminar', $amigo->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar a este amigo?')">
                         @csrf
-                        <button type="submit">Enviar solicitud de amistad</button>
+                        @method('DELETE')
+                        <button type="submit" class="mt-3 md:mt-0 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded">Eliminar Amigo</button>
                     </form>
-                @endif
-            </li>
-        @endforeach
-    </ul>
+                </li>
+            @endforeach
+        </ul>
+    </div>
 
-    <h2>Solicitudes de Amistad Pendientes</h2>
-    <ul>
-        @forelse ($solicitudesPendientes as $solicitud)
-            <li>
-                <strong>{{ $solicitud->user->name }}</strong> te ha enviado una solicitud de amistad.
-                <form action="{{ route('solicitudes.aceptar', $solicitud) }}" method="POST" style="display:inline;">
-                    @csrf
-                    <button type="submit">Aceptar</button>
-                </form>
-                <form action="{{ route('solicitudes.rechazar', $solicitud) }}" method="POST" style="display:inline;">
-                    @csrf
-                    <button type="submit">Rechazar</button>
-                </form>
-            </li>
-        @empty
-            <li>No tienes solicitudes de amistad pendientes.</li>
-        @endforelse
-    </ul>
+    <!-- Todos los usuarios -->
+    <div>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">🌍 Todos los Usuarios</h2>
+        <ul class="space-y-4">
+            @foreach ($usuarios as $usuario)
+                <li class="bg-gray-100 p-4 rounded-md flex flex-col md:flex-row justify-between items-center">
+                    <div>
+                        <strong class="text-lg">{{ $usuario->name }}</strong><br>
+                        <span class="text-gray-600">Email: {{ $usuario->email }}</span>
+                    </div>
+                    @if ($amigos->contains($usuario))
+                        <span class="text-green-600 font-semibold mt-2 md:mt-0">Ya son amigos</span>
+                    @elseif (Auth::user()->tieneSolicitudPendienteCon($usuario))
+                        <span class="text-yellow-600 font-semibold mt-2 md:mt-0">Solicitud enviada</span>
+                    @else
+                        <form action="{{ route('solicitudes.enviar', $usuario) }}" method="POST" class="mt-2 md:mt-0">
+                            @csrf
+                            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Enviar solicitud</button>
+                        </form>
+                    @endif
+                </li>
+            @endforeach
+        </ul>
+    </div>
 
-    <a href="{{ route('diarios.index') }}" class="text-blue-500 mt-4">Ver todos los diarios</a>
+    <!-- Solicitudes de amistad -->
+    <div>
+        <h2 class="text-2xl font-semibold text-gray-700 mb-4">📨 Solicitudes de Amistad Pendientes</h2>
+        <ul class="space-y-4">
+            @forelse ($solicitudesPendientes as $solicitud)
+                <li class="bg-yellow-100 p-4 rounded-md flex flex-col md:flex-row justify-between items-center">
+                    <span class="text-gray-700"><strong>{{ $solicitud->user->name }}</strong> te ha enviado una solicitud.</span>
+                    <div class="mt-2 md:mt-0 space-x-2">
+                        <form action="{{ route('solicitudes.aceptar', $solicitud) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded">Aceptar</button>
+                        </form>
+                        <form action="{{ route('solicitudes.rechazar', $solicitud) }}" method="POST" class="inline">
+                            @csrf
+                            <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Rechazar</button>
+                        </form>
+                    </div>
+                </li>
+            @empty
+                <li class="text-gray-500">No tienes solicitudes de amistad pendientes.</li>
+            @endforelse
+        </ul>
+    </div>
+
+    <!-- Enlace a todos los diarios -->
+    <div class="text-center">
+        <a href="{{ route('diarios.index') }}" class="text-blue-600 hover:underline text-lg">Ver todos los diarios</a>
+    </div>
 </section>
-
 @endsection

@@ -63,9 +63,30 @@ class User extends Authenticatable
      /**
      * Método para saber si el usuario ya es amigo de otro.
      */
-    public function esAmigoDe(User $user)
+    // public function esAmigoDe(User $user)
+    // {
+    //     return $this->amigos()->where('friend_id', $user->id)->exists();
+    // }
+
+    public function tieneSolicitudPendienteCon(User $user): bool
     {
-        return $this->amigos()->where('friend_id', $user->id)->exists();
+        // return Friendship::between($this, $user)
+        //     ->where('status', 'pendiente')
+        //     ->exists();
+        return Friendship::where(function ($query) use ($user) {
+            $query->where('user_id', $this->id)
+                  ->where('friend_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('user_id', $user->id)
+                  ->where('friend_id', $this->id);
+        })->where('status', 'pendiente')->exists();
+    }
+
+    public function esAmigoDe(User $user): bool
+    {
+        return Friendship::between($this, $user)
+            ->where('status', 'aceptada')
+            ->exists();
     }
 
     /**

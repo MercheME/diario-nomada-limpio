@@ -16,13 +16,10 @@ class Diario extends Model
         return $this->hasMany(DiarioImagen::class);
     }
 
-    public function tags()
+    public function imagenPrincipal()
     {
-        return $this->belongsToMany(Tag::class, 'diario_tags');
+        return $this->hasOne(DiarioImagen::class)->where('is_principal', true);
     }
 
-    public function comunidades()
-    {
-        return $this->belongsToMany(Comunidad::class, 'diario_comunidades');
-    }
+
 }

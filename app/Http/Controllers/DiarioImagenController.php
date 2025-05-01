@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diario;
 use App\Models\DiarioImagen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class DiarioImagenController extends Controller
 {
@@ -28,7 +29,31 @@ class DiarioImagenController extends Controller
 
     public function destroy(DiarioImagen $imagen)
     {
+        // Proteger imagen principal
+        if ($imagen->is_principal) {
+            return back()->withErrors('No puedes eliminar la imagen principal.');
+        }
+
+        // Eliminar el archivo físico
+        Storage::disk('public')->delete($imagen->url_imagen);
+
+        // Eliminar de la base de datos
         $imagen->delete();
-        return back();
+
+        return back()->with('success', 'Imagen eliminada correctamente.');
+    }
+
+    public function establecerPrincipal(DiarioImagen $imagen)
+    {
+        $diario = $imagen->diario;
+
+        // Desactivar la actual imagen principal
+        $diario->imagenes()->update(['is_principal' => false]);
+
+        // Activar la nueva
+        $imagen->is_principal = true;
+        $imagen->save();
+
+        return redirect()->route('diarios.show', $diario->slug)->with('success', 'Imagen principal actualizada.');
     }
 }
