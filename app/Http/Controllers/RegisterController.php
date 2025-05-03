@@ -20,16 +20,26 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users', // PLURAL
-            'password' => 'required|min:6'
+            'password' => 'required|min:6',
+            'bio' => 'nullable|string|max:1000',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+
+        if ($request->hasFile('profile_image')) {
+            $imagePath = $request->file('profile_image')->store('profile_images', 'public');
+        } else {
+            $imagePath = null;
+        }
 
         $usuario = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'bio' => $request->bio,
+            'profile_image' => $imagePath, // Guardar la ruta de la imagen
         ]);
 
         Auth::login($usuario);
-        return redirect('/diarios');
+        return redirect('/home');
     }
 }

@@ -10,10 +10,10 @@
         @endif
     </h1>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         @forelse ($diarios as $diario)
             <a href="{{ route('diarios.show', $diario->slug) }}" class="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
-                <div class="relative w-full h-120">
+                <div class="relative w-full h-150">
                     @if($diario->imagenPrincipal)
                         <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
                             alt="Imagen Principal"

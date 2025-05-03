@@ -62,6 +62,11 @@ Route::patch('/diario-imagenes/{imagen}/establecer-principal', [DiarioImagenCont
 Route::post('/diarios/{diario}/imagenes', [DiarioImagenController::class, 'store']);
 Route::delete('/diarios/imagenes/{id}', [DiarioImagenController::class, 'destroy']);
 
+
+// Mapa para diarios
+Route::get('/mapa-diarios', [\App\Http\Controllers\DiarioController::class, 'mapa'])->name('diarios.mapa');
+
+
 // Comunidades
 Route::get('/proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);

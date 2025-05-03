@@ -7,7 +7,7 @@ use App\Models\DiarioImagen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Http;
 
 class DiarioController extends Controller
 {
@@ -75,8 +75,6 @@ class DiarioController extends Controller
             'contenido' => 'required|string',
             'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-            'latitud' => 'nullable|numeric',
-            'longitud' => 'nullable|numeric',
             'is_public' => 'boolean',
             'impacto_ambiental' => 'nullable|string',
             'impacto_cultural' => 'nullable|string',
@@ -90,6 +88,29 @@ class DiarioController extends Controller
             'imagen_principal' => 'image|mimes:jpeg,png,jpg,gif',
         ]);
 
+        $response = Http::get('https://nominatim.openstreetmap.org/search', [
+            'q' => $request->destino,
+            'format' => 'json',
+            'limit' => 1,
+        ]);
+
+        // $lat = null;
+        // $lon = null;
+
+
+        // Asegúrate de que la respuesta tiene datos antes de acceder a ellos
+        // $responseData = $response->json();
+
+        // if ($response->ok() && isset($responseData[0])) {
+        //     $lat = $responseData[0]['lat'];
+        //     $lon = $responseData[0]['lon'];
+        // } else {
+        //     // Si no se encontró ninguna respuesta válida, puedes dejar las coordenadas como null
+        //     // o manejarlo de alguna manera (por ejemplo, establecer valores predeterminados)
+        //     $lat = null;
+        //     $lon = null;
+        // }
+
         // Crear un nuevo diario utilizando los datos validados
         $diario = new Diario();
         $diario->user_id = Auth::id();
@@ -99,8 +120,6 @@ class DiarioController extends Controller
         $diario->contenido = $validated['contenido'];
         $diario->fecha_inicio = $validated['fecha_inicio'];
         $diario->fecha_final = $validated['fecha_final'];
-        $diario->latitud = $validated['latitud'] ?? null;
-        $diario->longitud = $validated['longitud'] ?? null;
         $diario->is_public = $validated['is_public'] ?? true;
         $diario->impacto_ambiental = $validated['impacto_ambiental'] ?? null;
         $diario->impacto_cultural = $validated['impacto_cultural'] ?? null;
@@ -123,18 +142,6 @@ class DiarioController extends Controller
             $path = 'imagenes/diarios/default.png';
         }
 
-        // if ($request->hasFile('imagen_principal')) {
-        //     $path = $request->file('imagen_principal')->store('imagenes/diarios', 'public');
-        //     DiarioImagen::create([
-        //         'diario_id' => $diario->id,
-        //         'url_imagen' => $path,
-        //         'is_principal' => true
-        //     ]);
-        // }
-        // else {
-        //     $path = 'diarios/default.png';
-        // }
-
         DiarioImagen::create([
             'diario_id' => $diario->id,
             'url_imagen' => $path,
@@ -142,6 +149,16 @@ class DiarioController extends Controller
         ]);
 
         return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
+    }
+
+    public function mapa()
+    {
+        $user = Auth::user();
+        $diarios = Diario::where('user_id', $user->id)
+                         ->whereNotNull('destino')
+                         ->get();
+
+        return view('diarios.mapa', compact('diarios'));
     }
 
     public function show($slug)

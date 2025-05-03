@@ -23,13 +23,13 @@
                     Diarios Publicados
                 </a>
             </li>
-            {{-- <li>
-                <a href="{{ route('diarios.index') }}"
-                   class="{{ Request::routeIs('diarios.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+            <li>
+                <a href="{{ route('diarios.mapa') }}"
+                   class="{{ Request::routeIs('diarios.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
                     Mapas
                 </a>
             </li>
-            <li>
+            {{-- <li>
                 <a href="{{ route('diarios.index') }}"
                    class="{{ Request::is('diarios*') && !Request::routeIs('diarios.create') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
                     Calendario

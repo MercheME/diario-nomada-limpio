@@ -5,7 +5,7 @@
       <div>
         <h2 class="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Registro</h2>
       </div>
-      <form method="POST" action="{{ route("store") }}">
+      <form method="POST" action="{{ route("store") }}" enctype="multipart/form-data">
         @csrf
 
         <div class="space-y-12">
@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
                     <div class="mt-2">
                         <input type="password" name="password" id="password" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
@@ -46,11 +46,34 @@
                 </div>
 
                 <div class="mb-4">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Repite el Password</label>
+                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Repite la Contraseña</label>
                     <div class="mt-2">
                         <input type="password" name="password_confirmation" id="password_confirmation" required
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                         @error('password_confirmation')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                 <!-- Campo de Biografía -->
+                <div class="mb-4">
+                    <label for="bio" class="block text-sm font-medium text-gray-700">Biografía</label>
+                    <div class="mt-2">
+                        <textarea name="bio" id="bio" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">{{ old('bio') }}</textarea>
+                        @error('bio')
+                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Campo de Imagen de Perfil -->
+                <div class="mb-4">
+                    <label for="profile_image" class="block text-sm font-medium text-gray-700">Imagen de Perfil</label>
+                    <div class="mt-2">
+                        <input type="file" name="profile_image" id="profile_image" accept="image/*"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        @error('profile_image')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>

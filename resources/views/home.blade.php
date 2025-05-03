@@ -11,36 +11,47 @@
     </div>
 
     <!-- Últimos diarios -->
-    <div>
-        <h2 class="text-2xl font-semibold text-gray-700 mb-4">📝 Últimos diarios</h2>
-        <ul class="space-y-2">
-            @forelse ($ultimosDiarios as $diario)
-                <li>
-                    <a href="{{ route('diarios.show', $diario->slug) }}" class="text-blue-600 hover:underline">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+    <div class="flex flex-col gap-10 w-full justify-center">
+        <div class="mt-6">
+            <h2 class="text-2xl font-semibold text-gray-700 mb-4">📝 Últimos diarios</h2>
+            <div class="flex overflow-x-auto space-x-4 pb-4">
+                @forelse ($ultimosDiarios as $diario)
+                    {{-- <div class="w-[300px] h-[300px] flex-shrink-0"> --}}
+                    <div class="w-[300px] h-[400px]">
+                        <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                             @if($diario->imagenPrincipal)
-                                <div class="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                                    <div class="aspect-w-4 aspect-h-3 rounded-xl overflow-hidden">
-                                        <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
+                                <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                                    <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
                                         alt="Imagen Principal"
-                                        class="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105">
-                                        <!-- Overlay de texto -->
-                                        <div class="absolute inset-0 bg-opacity-40 flex flex-col justify-end p-4 text-white">
-                                            <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
-                                            <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
-                                            <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
-                                        </div>
+                                        class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
+
+                                    <!-- Solo el bloque inferior tiene el fondo degradado -->
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-white">
+                                        <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
+                                        <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
+                                        <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
                                     </div>
                                 </div>
-                            @endif
-                        </div>
-                    </a>
 
-                </li>
-            @empty
-                <p class="text-gray-500">No has publicado diarios recientes.</p>
-            @endforelse
-        </ul>
+                                {{-- <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
+                                    <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
+                                         alt="Imagen Principal"
+                                         class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
+                                    <!-- Overlay de texto -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent flex flex-col justify-end p-4 text-white">
+                                        <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
+                                        <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
+                                        <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
+                                    </div>
+                                </div> --}}
+                            @endif
+                        </a>
+                    </div>
+                @empty
+                    <p class="text-gray-500">No has publicado diarios recientes.</p>
+                @endforelse
+            </div>
+        </div>
     </div>
 
     <!-- Mis amigos -->
