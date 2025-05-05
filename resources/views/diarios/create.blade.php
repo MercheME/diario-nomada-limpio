@@ -16,19 +16,27 @@
                 @error('titulo') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
             </div>
 
+            {{-- <div>
+                <label for="destino" class="block font-medium">Destino</label>
+                <input type="text" name="destino" class="w-full border p-2 rounded" value="{{ old('destino') }}">
+                @error('destino') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+            </div> --}}
+
             <!-- Incluir el CSS de Leaflet -->
             <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-            <script src="{{ asset('js/mapa.js') }}"></script>
-
-
             <!-- Incluir el JS de Leaflet -->
             <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-            <div>
+            {{-- <div>
                 <label for="destino" class="block font-medium">Destino</label>
                 <input type="text" id="destino" name="destino" class="w-full border p-2 rounded" value="{{ old('destino') }}">
-                <input type="hidden" name="latitud" id="latitud">
-                <input type="hidden" name="longitud" id="longitud">
+            </div> --}}
+
+            <div>
+                <label for="destinos" class="block font-medium">Destinos</label>
+                <div id="destinos" class="space-y-2">
+                    <!-- Los destinos se agregarán aquí como párrafos -->
+                </div>
             </div>
 
             <div id="map" style="height: 400px; margin-top: 20px;"></div> <!-- Aquí se mostrará el mapa -->
@@ -154,4 +162,131 @@
         </div>
     @endif
 </section>
+
+<script>
+ var map = L.map('map').setView([20.0, 0.0], 2); // Centrado por defecto, puedes ajustarlo
+
+// Cargar OpenStreetMap
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
+
+// Array para almacenar los destinos y los marcadores
+var destinos = [];
+var markers = [];
+
+// Detectar el clic del usuario en el mapa
+map.on('click', function(e) {
+    var lat = e.latlng.lat;
+    var lon = e.latlng.lng;
+
+    // Crear un marcador en la ubicación seleccionada
+    var marker = L.marker([lat, lon]).addTo(map);
+
+    // Realizar la búsqueda inversa para obtener la dirección
+    fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.address) {
+                // Intentar obtener el nombre más específico del lugar
+                var address = data.address.city || data.address.town || data.address.village || data.address.country;
+
+                // Si hay un nombre más específico, como una sierra o paraje natural, lo preferimos
+                var specificName = data.display_name;
+
+                // Si el nombre específico de la ubicación (como una sierra) está disponible, usamos ese
+                if (specificName && !address.includes(specificName)) {
+                    address = specificName;
+                }
+
+                // Agregar el destino a la lista de destinos
+                destinos.push(address);
+                markers.push(marker); // Almacenar marcador
+
+                // Mostrar los destinos como párrafos debajo del mapa
+                var destinosContainer = document.getElementById('destinos');
+                var destinoP = document.createElement('p');
+                destinoP.classList.add('text-sm', 'text-gray-700', 'cursor-pointer');
+                destinoP.textContent = address;
+
+                // Añadir evento para eliminar el destino
+                destinoP.addEventListener('click', function() {
+                    // Eliminar marcador del mapa
+                    map.removeLayer(marker);
+
+                    // Eliminar el destino de la lista de destinos
+                    destinos = destinos.filter(function(d) {
+                        return d !== address;
+                    });
+
+                    // Eliminar el párrafo del DOM
+                    destinoP.remove();
+                });
+
+                destinosContainer.appendChild(destinoP);
+            } else {
+                // Si no se encontró la dirección de manera adecuada
+                alert("No se pudo obtener información de este lugar.");
+            }
+        })
+        .catch(error => {
+            console.error("Error al obtener los datos:", error);
+            alert("Hubo un error al obtener la información del lugar.");
+        });
+});
+//  var map = L.map('map').setView([20.0, 0.0], 2); // Centrado por defecto, puedes ajustarlo
+
+//     // Cargar OpenStreetMap
+//     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+//         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+//     }).addTo(map);
+
+//     // Array para almacenar los destinos y los marcadores
+//     var destinos = [];
+//     var markers = [];
+
+//     // Detectar el clic del usuario en el mapa
+//     map.on('click', function(e) {
+//         var lat = e.latlng.lat;
+//         var lon = e.latlng.lng;
+
+//         // Crear un marcador en la ubicación seleccionada
+//         var marker = L.marker([lat, lon]).addTo(map);
+
+//         // Realizar la búsqueda inversa para obtener la dirección
+//         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
+//             .then(response => response.json())
+//             .then(data => {
+//                 if (data && data.address) {
+//                     var address = data.address.city || data.address.country || 'Dirección desconocida';
+
+//                     // Agregar el destino a la lista de destinos
+//                     destinos.push(address);
+//                     markers.push(marker); // Almacenar marcador
+
+//                     // Mostrar los destinos como párrafos debajo del mapa
+//                     var destinosContainer = document.getElementById('destinos');
+//                     var destinoP = document.createElement('p');
+//                     destinoP.classList.add('text-sm', 'text-gray-700', 'cursor-pointer');
+//                     destinoP.textContent = address;
+
+//                     // Añadir evento para eliminar el destino
+//                     destinoP.addEventListener('click', function() {
+//                         // Eliminar marcador del mapa
+//                         map.removeLayer(marker);
+
+//                         // Eliminar el destino de la lista de destinos
+//                         destinos = destinos.filter(function(d) {
+//                             return d !== address;
+//                         });
+
+//                         // Eliminar el párrafo del DOM
+//                         destinoP.remove();
+//                     });
+
+//                     destinosContainer.appendChild(destinoP);
+//                 }
+//             });
+//     });
+    </script>
 @endsection
