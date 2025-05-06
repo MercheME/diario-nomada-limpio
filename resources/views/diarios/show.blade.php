@@ -18,7 +18,43 @@
             </div>
         @endif
     </div>
+    <h1 class="font-playfair italic text-4xl">Este es un título con Playfair</h1>
 
+    <p class="font-raleway italic text-lg">
+        Este es un párrafo con Raleway.
+    </p>
+
+    <code class="font-cascadia">
+        Código usando Cascadia Code.
+    </code>
+
+    <div class="min-h-screen bg-tierra-claro p-8 font-sans text-tierra-oscuro">
+        <h1 class="text-4xl font-serif mb-4">Mi Diario de Viaje</h1>
+
+        <p class="mb-6 text-lg">
+            Bienvenido a tu espacio personal para planificar y recordar tus aventuras.
+        </p>
+
+        <div class="bg-orange-100 p-6 rounded-lg shadow-lg text-white mb-8">
+            <h2 class="text-2xl font-serif mb-2">Próximo Destino: Kyoto</h2>
+            <p>Del 12 de junio al 20 de junio. Prepárate para disfrutar de los templos y jardines.</p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="text-xl font-serif mb-2">Notas personales</h3>
+            <p class="mb-2">Llevar cámara y cuaderno. Revisar transporte interno.</p>
+            <pre class="bg-tierra-oscuro text-white p-4 rounded-lg font-mono text-sm">
+    Checklist:
+    - Pasaporte
+    - Billetes de avión
+    - Reserva de hotel
+            </pre>
+        </div>
+
+        <button class="bg-tierra-oscuro text-white px-4 py-2 rounded-lg hover:bg-tierra-medio transition">
+            Añadir nuevo destino
+        </button>
+    </div>
 
     <h1>{{ $diario->titulo }}</h1>
     <p><strong>Contenido:</strong> {{ $diario->contenido }}</p>

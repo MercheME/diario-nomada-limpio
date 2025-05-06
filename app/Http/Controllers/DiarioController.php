@@ -112,16 +112,16 @@ class DiarioController extends Controller
         return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
     }
 
-    // public function mapa()
-    // {
-    //     $user = Auth::user();
+    public function mapa()
+    {
+        $user = Auth::user();
 
-    //     $diarios = Diario::with('destinos')
-    //     ->where('user_id', $user->id)
-    //     ->get();
+        $diarios = Diario::with('destinos')
+        ->where('user_id', $user->id)
+        ->get();
 
-    //     return view('diarios.mapa', compact('diarios'));
-    // }
+        return view('diarios.mapa', compact('diarios'));
+    }
 
     public function show($slug)
     {

@@ -3,7 +3,7 @@
     <ul class="space-y-2">
 
         <!-- Sección Diarios -->
-        <li class="font-semibold text-gray-600">Diarios</li>
+        <li class="font-semibold text-gray-600">Diarios de viaje</li>
         <ul class="ml-4 space-y-1">
             <li>
                 <a href="{{ route('diarios.create') }}"
@@ -23,12 +23,7 @@
                     Diarios Publicados
                 </a>
             </li>
-            <li>
-                <a href="{{ route('diarios.mapa') }}"
-                   class="{{ Request::routeIs('diarios.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
-                    Mapas
-                </a>
-            </li>
+
             {{-- <li>
                 <a href="{{ route('diarios.index') }}"
                    class="{{ Request::is('diarios*') && !Request::routeIs('diarios.create') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
@@ -62,9 +57,9 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('proyectos.index') }}"
-                   class="{{ Request::routeIs('proyectos.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
-                    Mapa
+                <a href="{{ route('diarios.mapa') }}"
+                   class="{{ Request::routeIs('diarios.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                    Mapas
                 </a>
             </li>
         </ul>
