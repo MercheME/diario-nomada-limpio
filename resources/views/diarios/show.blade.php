@@ -12,9 +12,7 @@
                     class="object-contain w-full h-full transition-transform duration-500 group-hover:scale-105">
                     <!-- Overlay de texto -->
                     <div class="absolute inset-0 bg-opacity-40 flex flex-col justify-end p-4 text-white">
-                        <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
                         <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
-                        <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
                     </div>
                 </div>
             </div>
@@ -23,9 +21,33 @@
 
 
     <h1>{{ $diario->titulo }}</h1>
-    <p><strong>Destino:</strong> {{ $diario->destino }}</p>
     <p><strong>Contenido:</strong> {{ $diario->contenido }}</p>
     <p><strong>Fechas:</strong> {{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
+
+
+     {{-- Mostrar los destinos como tarjetas --}}
+    @if($diario->destinos->count())
+        <div class="mt-10">
+            <h2 class="text-2xl font-semibold mb-4">Destinos del Diario</h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+                @foreach($diario->destinos as $destino)
+                    <div class="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
+                        <div class="relative w-full h-120">
+                            <!-- Card de destino -->
+                            <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ asset('storage/' . $destino->imagen_url) }}')"></div>
+                        </div>
+
+                        <div class="absolute inset-0 flex flex-col justify-end p-4 text-white bg-black bg-opacity-50">
+                            <h3 class="text-lg font-semibold">{{ $destino->nombre }}</h3>
+                            <p class="text-sm">{{ Str::limit($destino->descripcion, 100) }}</p>
+                            <a href="{{ route('destinos.show', $destino->slug) }}" class="mt-2 text-blue-500 hover:underline">Ver Destino</a>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    @endif
 
     {{-- Agrega otros campos como impacto_ambiental, libros, etc. si están disponibles --}}
 
@@ -81,7 +103,10 @@
                 <button type="submit">Subir</button>
             </form>
 
-            <a href="{{ route('diarios.edit', $diario->slug) }}" class="btn btn-primary">Editar</a>
+            <p>
+                <!-- Enlace para editar el diario -->
+                <a href="{{ route('diarios.edit', $diario->slug) }}" class="btn btn-warning">Editar Diario</a>
+            </p>
 
             <form action="{{ route('diarios.destroy', $diario->slug) }}" method="POST" onsubmit="return confirm('¿Estás seguro?');" class="inline-block">
                 @csrf

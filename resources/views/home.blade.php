@@ -5,6 +5,7 @@
 
     <!-- Bienvenida con el nombre del usuario -->
     <div class="text-center mt-10">
+        <img src="{{ asset('storage/' . Auth::user()->profile_image) }}" alt="Foto de perfil" class="w-32 h-32 rounded-full mx-auto">
         <h1 class="text-4xl font-bold text-gray-700 uppercase">Hola, {{ Auth::user()->name }} 👋</h1>
         <p class="text-gray-600 mt-2">Bienvenido a tu Diario de Viajes. Explora, crea y comparte tus experiencias.</p>
         <p class="text-gray-500">Descubre proyectos locales que impulsan tu comunidad.</p>

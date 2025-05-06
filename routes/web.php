@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DestinoController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\DiarioController;
 use App\Http\Controllers\DiarioImagenController;
@@ -66,8 +67,13 @@ Route::delete('/diarios/imagenes/{id}', [DiarioImagenController::class, 'destroy
 // Mapa para diarios
 Route::get('/mapa-diarios', [\App\Http\Controllers\DiarioController::class, 'mapa'])->name('diarios.mapa');
 
+//Rutas para destinos
+Route::get('/diarios/{diario}/destinos/crear', [DestinoController::class, 'create'])->name('destinos.create');
+Route::post('/diarios/{diario}/destinos', [DestinoController::class, 'store'])->name('destinos.store');
+Route::get('/diarios/{diario}/destinos/{slug}', [DestinoController::class, 'show'])->name('destinos.show');
 
-// Comunidades
+
+// Proyectos comunitarios
 Route::get('/proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');
 Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
 Route::post('/proyectos', [ProyectoController::class, 'store']);

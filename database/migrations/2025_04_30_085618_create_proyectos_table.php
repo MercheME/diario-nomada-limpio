@@ -16,17 +16,16 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('nombre');
             $table->text('descripcion');
-            $table->string('tipo')->nullable();
-            $table->string('historia')->nullable();
+            $table->boolean('is_public')->default(true);
+            $table->string('lugar');
+
+            // Contacto
             $table->string('url_web')->nullable();
-            $table->boolean('is_public')->default(true); // Indica si el proyecto es público
-            $table->boolean('favorito')->default(false)->nullable();
-            $table->decimal('latitud', 10, 8);
-            $table->decimal('longitud', 11, 8);
             $table->string('contacto_email')->nullable();
             $table->string('contacto_telefono')->nullable();
             $table->string('redes_sociales')->nullable();
             $table->json('etiquetas')->nullable();
+
             $table->timestamps();
         });
     }

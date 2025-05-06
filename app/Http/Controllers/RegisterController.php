@@ -36,7 +36,7 @@ class RegisterController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'bio' => $request->bio,
-            'profile_image' => $imagePath, // Guardar la ruta de la imagen
+            'profile_image' => $imagePath,
         ]);
 
         Auth::login($usuario);

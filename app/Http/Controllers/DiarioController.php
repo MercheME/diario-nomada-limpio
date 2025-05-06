@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Destino;
 use App\Models\Diario;
 use App\Models\DiarioImagen;
 use Illuminate\Http\Request;
@@ -63,78 +64,38 @@ class DiarioController extends Controller
 
     public function create()
     {
-        return view('diarios.create');
+        // Obtener el usuario autenticado
+        $usuario = Auth::user();
+
+        // Crear un diario provisional y asociarlo al usuario
+        $diario = new Diario();
+        $diario->usuario_id = $usuario->id; // Relacionar con el usuario autenticado
+
+        // Pasar el diario a la vista para crear destinos
+        return view('diarios.create', compact('diario'));
     }
 
     public function store(Request $request)
     {
-        // Validar los datos del formulario
+
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
-            'destino' => 'required|string|max:255',
-            'contenido' => 'required|string',
-            'fecha_inicio' => 'required|date',
-            'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
+            'estado' => 'in:borrador,en_progreso,completado',
             'is_public' => 'boolean',
-            'impacto_ambiental' => 'nullable|string',
-            'impacto_cultural' => 'nullable|string',
-            'aprendizajes' => 'nullable|string',
-            'compromisos' => 'nullable|string',
-            'calificacion_sostenibilidad' => 'nullable|integer|min:1|max:5',
-            'libros' => 'nullable|string',
-            'musica' => 'nullable|string',
-            'peliculas' => 'nullable|string',
-            'documentales' => 'nullable|string',
-            'imagen_principal' => 'image|mimes:jpeg,png,jpg,gif',
         ]);
-
-        $response = Http::get('https://nominatim.openstreetmap.org/search', [
-            'q' => $request->destino,
-            'format' => 'json',
-            'limit' => 1,
-        ]);
-
-        // $lat = null;
-        // $lon = null;
-
-
-        // Asegúrate de que la respuesta tiene datos antes de acceder a ellos
-        // $responseData = $response->json();
-
-        // if ($response->ok() && isset($responseData[0])) {
-        //     $lat = $responseData[0]['lat'];
-        //     $lon = $responseData[0]['lon'];
-        // } else {
-        //     // Si no se encontró ninguna respuesta válida, puedes dejar las coordenadas como null
-        //     // o manejarlo de alguna manera (por ejemplo, establecer valores predeterminados)
-        //     $lat = null;
-        //     $lon = null;
-        // }
 
         // Crear un nuevo diario utilizando los datos validados
         $diario = new Diario();
         $diario->user_id = Auth::id();
         $diario->titulo = $validated['titulo'];
         $diario->slug = Str::slug($validated['titulo'] . '-' . uniqid());
-        $diario->destino = $validated['destino'];
-        $diario->contenido = $validated['contenido'];
-        $diario->fecha_inicio = $validated['fecha_inicio'];
-        $diario->fecha_final = $validated['fecha_final'];
-        $diario->is_public = $validated['is_public'] ?? true;
-        $diario->impacto_ambiental = $validated['impacto_ambiental'] ?? null;
-        $diario->impacto_cultural = $validated['impacto_cultural'] ?? null;
-        $diario->aprendizajes = $validated['aprendizajes'] ?? null;
-        $diario->compromisos = $validated['compromisos'] ?? null;
-        $diario->calificacion_sostenibilidad = $validated['calificacion_sostenibilidad'] ?? null;
-        $diario->libros = $validated['libros'] ?? null;
-        $diario->musica = $validated['musica'] ?? null;
-        $diario->peliculas = $validated['peliculas'] ?? null;
-        $diario->documentales = $validated['documentales'] ?? null;
-
+        $diario->estado = $validated['estado'] ?? 'planificado';  // Asignar 'borrador' si no se envía
+        $diario->is_public = $validated['is_public'] ?? false; // Asignar false si no se envía
 
         // Guardar el diario en la base de datos
         $diario->save();
 
+        // Procesar la imagen principal
         if ($request->hasFile('imagen_principal')) {
             $path = $request->file('imagen_principal')->store('imagenes/diarios', 'public');
         } else {
@@ -151,15 +112,16 @@ class DiarioController extends Controller
         return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
     }
 
-    public function mapa()
-    {
-        $user = Auth::user();
-        $diarios = Diario::where('user_id', $user->id)
-                         ->whereNotNull('destino')
-                         ->get();
+    // public function mapa()
+    // {
+    //     $user = Auth::user();
 
-        return view('diarios.mapa', compact('diarios'));
-    }
+    //     $diarios = Diario::with('destinos')
+    //     ->where('user_id', $user->id)
+    //     ->get();
+
+    //     return view('diarios.mapa', compact('diarios'));
+    // }
 
     public function show($slug)
     {
@@ -171,35 +133,93 @@ class DiarioController extends Controller
     {
 
         $diario = Diario::where('slug', $slug)->firstOrFail();
-        return view('diarios.edit', compact('diario'));
+        $destinos = Destino::all();
+        return view('diarios.edit', compact('diario', 'destinos'));
     }
 
     public function update(Request $request, $slug)
     {
         $diario = Diario::where('slug', $slug)->firstOrFail();
 
-        // Validar los datos de entrada
+        // dd($request->all());
+
+       // Validar los datos del formulario
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'destination' => 'required|string|max:255',
-            'content' => 'required|string',
-            'date' => 'required|date',
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
+            'titulo' => 'required|string|max:255',
+            'contenido' => 'required|string',
+            'fecha_inicio' => 'required|date',
+            'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
+            'is_public' => 'boolean',
+            'impacto_ambiental' => 'nullable|string',
+            'impacto_cultural' => 'nullable|string',
+            'libros' => 'nullable|string',
+            'musica' => 'nullable|string',
+            'peliculas' => 'nullable|string',
+            'documentales' => 'nullable|string',
+            'etiquetas' => 'nullable|array',
+            'destinos' => 'nullable|array',
+            'destinos.*' => 'exists:destinos,id',
+            // 'planificaciones' => 'nullable|array',
+            // 'planificaciones.*.fecha' => 'required|date',
+            // 'planificaciones.*.descripcion' => 'nullable|string',
         ]);
 
-        // Actualizar con los datos validados
-        $diario->update([
-            'title' => $validated['title'],
-            'slug' => Str::slug($validated['title'] . '-' . uniqid()),
-            'destination' => $validated['destination'],
-            'content' => $validated['content'],
-            'date' => $validated['date'],
-            'latitude' => $validated['latitude'],
-            'longitude' => $validated['longitude'],
-        ]);
+        // Actualizar los campos básicos del diario
+        $diario->titulo = $validated['titulo'];
 
-        return redirect("/diarios/{$diario->slug}");
+        // Solo actualizar el slug si el título ha cambiado
+        if ($diario->titulo !== $validated['titulo']) {
+            $diario->slug = Str::slug($validated['titulo'] . '-' . uniqid()); // Generar nuevo slug
+        }
+
+        $diario->contenido = $validated['contenido'];
+        $diario->fecha_inicio = $validated['fecha_inicio'];
+        $diario->fecha_final = $validated['fecha_final'];
+        $diario->is_public = $validated['is_public'] ?? true;
+        $diario->impacto_ambiental = $validated['impacto_ambiental'] ?? null;
+        $diario->impacto_cultural = $validated['impacto_cultural'] ?? null;
+        $diario->libros = $validated['libros'] ?? null;
+        $diario->musica = $validated['musica'] ?? null;
+        $diario->peliculas = $validated['peliculas'] ?? null;
+        $diario->documentales = $validated['documentales'] ?? null;
+        $diario->etiquetas = $validated['etiquetas'] ?? [];
+
+        // // Guardar los cambios en el diario
+        // $diario->save();
+
+        // dd($request->all());
+
+        // Actualizar destinos
+        if ($request->has('destinos') && is_array($request->destinos)) {
+            // Eliminar destinos existentes
+            $diario->destinos()->delete();
+
+            // Crear nuevos destinos
+            foreach ($request->destinos as $destinoId) {
+                $diario->destinos()->create(['destino_id' => $destinoId]);
+            }
+        }
+
+        // Guardar otros campos del diario
+        $diario->update($request->except('destinos'));
+
+        // Actualizar planificaciones (si las hay)
+        // if ($request->has('planificaciones')) {
+        //     // Eliminar planificaciones anteriores
+        //     $diario->planificaciones()->delete();
+
+        //     // Añadir nuevas planificaciones
+        //     foreach ($validated['planificaciones'] as $planificacionData) {
+        //         $diario->planificaciones()->create([
+        //             'fecha' => $planificacionData['fecha'],
+        //             'descripcion' => $planificacionData['descripcion'] ?? null,
+        //         ]);
+        //     }
+        // }
+
+        return redirect()->route('diarios.show', $diario->slug)
+            ->with('success', 'Diario actualizado correctamente.');
+        // return redirect()->route('diarios.edit', $diario->slug)->with('success', 'Diario actualizado correctamente');
     }
 
     public function destroy($slug)

@@ -16,24 +16,31 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('titulo');
             $table->string('slug')->unique();
-            $table->string('destino');
-            $table->text('contenido');
-            $table->boolean('favorito')->default(false)->nullable();
-            $table->date('fecha_inicio');
-            $table->date('fecha_final');
-            $table->decimal('latitud', 10, 8)->nullable();
-            $table->decimal('longitud', 11, 8)->nullable();
-            $table->boolean('is_public')->default(true);
+            $table->text('contenido')->nullable();
+            
+            // Privacidad
+            $table->boolean('is_public')->default(false);
+
+            // Fechas del viaje
+            $table->date('fecha_inicio')->nullable();
+            $table->date('fecha_final')->nullable();
+
+            // Reflexiones globales del viaje
             $table->text('impacto_ambiental')->nullable();
             $table->text('impacto_cultural')->nullable();
-            $table->text('aprendizajes')->nullable();
-            $table->text('compromisos')->nullable();
-            $table->integer('calificacion_sostenibilidad')->nullable();
+
+            // Medios inspiradores
             $table->text('libros')->nullable();
             $table->text('musica')->nullable();
             $table->text('peliculas')->nullable();
             $table->text('documentales')->nullable();
+
+            // Etiquetas específicas del diario
             $table->json('etiquetas')->nullable();
+
+            // Estado del diario
+            $table->enum('estado', ['planificado', 'en_curso', 'realizado'])->default('planificado');
+
             $table->timestamps();
         });
     }
