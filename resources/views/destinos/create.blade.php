@@ -11,20 +11,26 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-         <!-- Nombre del destino (ubicación) -->
-         <div>
-            <label for="nombre" class="block font-medium">Nombre del Destino</label>
-            <input type="text" name="nombre" id="nombre" class="w-full border p-2 rounded" placeholder="Escribe el nombre del destino" value="{{ old('nombre') }}">
-            @error('nombre') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+        <!-- Nombre del destino -->
+        <div>
+            <label for="nombre_destino" class="block font-medium">Nombre del Destino</label>
+            <input type="text" id="nombre_destino" name="nombre_destino" class="w-full border p-2 rounded" placeholder="Buscar destino o selecciona en el mapa" autocomplete="off" list="suggestions">
+        </div>
+
+        <!-- Ubicación seleccionada -->
+        <div>
+            <label for="ubicacion" class="block font-medium">Ubicación (Seleccionada desde el mapa o autocompletado)</label>
+            <input type="text" id="ubicacion" name="ubicacion" class="w-full border p-2 rounded" placeholder="Ubicación seleccionada" autocomplete="off" readonly value="{{ old('ubicacion') }}">
+            @error('ubicacion') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <input type="hidden" name="latitud" id="latitud" value="{{ old('latitud') }}">
         <input type="hidden" name="longitud" id="longitud" value="{{ old('longitud') }}">
 
-         <!-- Selección de ubicación en el mapa (opcional, si se quiere permitir click en el mapa para seleccionar) -->
+         <!-- Selección de ubicación en el mapa -->
          <div>
             <label for="mapa" class="block font-medium">Seleccionar ubicación en el mapa</label>
-            <div id="mapa" style="height: 300px;"></div> <!-- Este div se llenará con un mapa -->
+            <div id="mapa" style="height: 300px;"></div>
             @error('mapa') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
@@ -38,15 +44,15 @@
         <!-- Fechas -->
         <div class="flex space-x-4">
             <div class="w-1/2">
-                <label for="fecha_inicio" class="block font-medium">Fecha de Inicio</label>
-                <input type="date" name="fecha_inicio" class="w-full border p-2 rounded" value="{{ old('fecha_inicio') }}">
-                @error('fecha_inicio') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+                <label for="fecha_inicio_destino" class="block font-medium">Fecha de Inicio</label>
+                <input type="date" name="fecha_inicio_destino" class="w-full border p-2 rounded" value="{{ old('fecha_inicio_destino') }}">
+                @error('fecha_inicio_destino') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
             </div>
 
             <div class="w-1/2">
-                <label for="fecha_final" class="block font-medium">Fecha Final</label>
-                <input type="date" name="fecha_final" class="w-full border p-2 rounded" value="{{ old('fecha_final') }}">
-                @error('fecha_final') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+                <label for="fecha_final_destino" class="block font-medium">Fecha Final</label>
+                <input type="date" name="fecha_final_destino" class="w-full border p-2 rounded" value="{{ old('fecha_final_destino') }}">
+                @error('fecha_final_destino') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
             </div>
         </div>
 
@@ -102,48 +108,85 @@
     </form>
 </section>
 <script>
-    var map = L.map('mapa').setView([20.0, 0.0], 2); // Centrado por defecto, puedes ajustarlo
+    var map = L.map('mapa').setView([20.0, 0.0], 2);
+    var marker;
 
-    // Cargar OpenStreetMap
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
-    // Detectar el clic del usuario en el mapa
-    map.on('click', function(e) {
+    // ✅ Manejar clic en mapa
+    map.on('click', function (e) {
         let lat = e.latlng.lat;
         let lon = e.latlng.lng;
 
-        // Actualiza los campos ocultos con las coordenadas
+        // Eliminar marcador anterior
+        if (marker) {
+            map.removeLayer(marker);
+        }
+
+        marker = L.marker([lat, lon]).addTo(map);
+
         document.getElementById('latitud').value = lat;
         document.getElementById('longitud').value = lon;
 
-        // Crear un marcador en la ubicación seleccionada
-        let marker = L.marker([lat, lon]).addTo(map);
-
-        // Realizar la búsqueda inversa para obtener la dirección
+        // Buscar nombre del lugar
         fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
             .then(response => response.json())
             .then(data => {
-                if (data && data.address) {
-                    var address = data.address.city || data.address.town || data.address.village || data.address.country;
-                    var specificName = data.display_name;
-
-                    if (specificName && !address.includes(specificName)) {
-                        address = specificName;
-                    }
-
-                    // Autocompletar el campo "nombre" con la dirección
-                    document.getElementById('nombre').value = address;
-                } else {
-                    alert("No se pudo obtener información de este lugar.");
+                if (data && data.display_name) {
+                    document.getElementById('ubicacion').value = data.display_name;
                 }
-            })
-            .catch(error => {
-                console.error("Error al obtener los datos:", error);
-                alert("Hubo un error al obtener la información del lugar.");
             });
     });
+
+    // ✅ Autocompletado desde input
+    document.getElementById('ubicacion').addEventListener('input', function () {
+        const query = this.value;
+
+        if (query.length < 3) return;
+
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`)
+            .then(response => response.json())
+            .then(data => {
+                const datalist = document.getElementById('suggestions');
+                datalist.innerHTML = '';
+
+                data.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.display_name;
+                    option.setAttribute('data-lat', item.lat);
+                    option.setAttribute('data-lon', item.lon);
+                    datalist.appendChild(option);
+                });
+            });
+    });
+
+    // ✅ Si el usuario selecciona una opción del datalist
+    document.getElementById('ubicacion').addEventListener('change', function () {
+        const val = this.value;
+        const options = document.getElementById('suggestions').children;
+
+        for (let i = 0; i < options.length; i++) {
+            if (options[i].value === val) {
+                const lat = options[i].getAttribute('data-lat');
+                const lon = options[i].getAttribute('data-lon');
+
+                // Actualizar marcador en mapa
+                if (marker) {
+                    map.removeLayer(marker);
+                }
+
+                marker = L.marker([lat, lon]).addTo(map);
+                map.setView([lat, lon], 10);
+
+                document.getElementById('latitud').value = lat;
+                document.getElementById('longitud').value = lon;
+                break;
+            }
+        }
+    });
 </script>
+
 
 @endsection

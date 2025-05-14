@@ -67,7 +67,8 @@
                 <label for="destinos">Destinos Asociados</label>
                 <ul>
                     @foreach($diario->destinos as $destino)
-                        <li>{{ $destino->nombre }}</li>
+                        <li>{{ $destino->nombre_destino }}</li>
+
                     @endforeach
                 </ul>
             </div>

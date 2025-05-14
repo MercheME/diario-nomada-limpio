@@ -38,4 +38,9 @@ class Diario extends Model
         return $this->hasMany(Destino::class);
     }
 
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
 }

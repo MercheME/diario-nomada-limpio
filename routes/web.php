@@ -70,7 +70,7 @@ Route::get('/mapa-diarios', [\App\Http\Controllers\DiarioController::class, 'map
 //Rutas para destinos
 Route::get('/diarios/{diario}/destinos/crear', [DestinoController::class, 'create'])->name('destinos.create');
 Route::post('/diarios/{diario}/destinos', [DestinoController::class, 'store'])->name('destinos.store');
-Route::get('/diarios/{diario}/destinos/{slug}', [DestinoController::class, 'show'])->name('destinos.show');
+// Route::get('/diarios/{diario}/destinos/{slug}', [DestinoController::class, 'show'])->name('destinos.show');
 
 
 // Proyectos comunitarios

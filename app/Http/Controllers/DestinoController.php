@@ -33,16 +33,17 @@ class DestinoController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Diario $diario)
+    public function store(Request $request,  $slug)
     {
+        $diario = Diario::where('slug', $slug)->firstOrFail();
 
          // Validar los datos del formulario
         $validated = $request->validate([
-            'nombre' => 'required|string|max:255',
+            'nombre_destino' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
-            'ubicacion' => 'nullable|string',
-            'fecha_inicio' => 'nullable|date',
-            'fecha_final' => 'nullable|date',
+            'ubicacion' => 'required|string',
+            'fecha_inicio_destino' => 'required|date',
+            'fecha_final_destino' => 'required|date',
             'transporte' => 'nullable|string',
             'alojamiento' => 'nullable|string',
             'personas_conocidas' => 'nullable|string',
@@ -55,7 +56,7 @@ class DestinoController extends Controller
         $destino->diario_id = $diario->id;
 
         // Generar un slug único
-        $slugBase = Str::slug($request->nombre);
+        $slugBase = Str::slug($request->nombre_destino);
         $slug = $slugBase;
         $counter = 1;
         // Mientras exista un destino con este slug, añade un número al final
@@ -74,12 +75,12 @@ class DestinoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Diario $diario, $slug)
+    public function show(Diario $diario)
     {
-        $destino = $diario->destinos()->where('slug', $slug)->firstOrFail();
+        // $destino = $diario->destinos()->where('slug', $slug)->firstOrFail();
 
-        // Pasar el destino y el diario a la vista
-        return view('destinos.show', compact('diario', 'destino'));
+        // // Pasar el destino y el diario a la vista
+        // return view('destinos.show', compact('diario', 'destino'));
     }
 
     /**

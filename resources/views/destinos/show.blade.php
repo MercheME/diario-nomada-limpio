@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
 <section class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-10">
@@ -65,7 +65,7 @@
             </form>
         @endif
     @endauth
-</section>
+</section> --}}
 
 <script>
     var map = L.map('mapa').setView([{{ $destino->latitud }}, {{ $destino->longitud }}], 13); // Centrado en las coordenadas del destino

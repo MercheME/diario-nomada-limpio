@@ -139,7 +139,7 @@ class DiarioController extends Controller
 
     public function update(Request $request, $slug)
     {
-        $diario = Diario::where('slug', $slug)->firstOrFail();
+         $diario = Diario::where('slug', $slug)->with('destinos')->firstOrFail();
 
         // dd($request->all());
 

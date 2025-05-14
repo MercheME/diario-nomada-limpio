@@ -77,7 +77,7 @@
                         <div class="absolute inset-0 flex flex-col justify-end p-4 text-white bg-black bg-opacity-50">
                             <h3 class="text-lg font-semibold">{{ $destino->nombre }}</h3>
                             <p class="text-sm">{{ Str::limit($destino->descripcion, 100) }}</p>
-                            <a href="{{ route('destinos.show', $destino->slug) }}" class="mt-2 text-blue-500 hover:underline">Ver Destino</a>
+                            {{-- <a href="{{ route('destinos.show', $destino->slug) }}" class="mt-2 text-blue-500 hover:underline">Ver Destino</a> --}}
                         </div>
                     </div>
                 @endforeach
