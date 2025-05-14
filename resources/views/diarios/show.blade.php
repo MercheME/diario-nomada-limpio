@@ -61,7 +61,7 @@
     <p><strong>Fechas:</strong> {{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
 
 
-     {{-- Mostrar los destinos como tarjetas --}}
+    {{-- Mostrar los destinos como tarjetas --}}
     @if($diario->destinos->count())
         <div class="mt-10">
             <h2 class="text-2xl font-semibold mb-4">Destinos del Diario</h2>
@@ -71,13 +71,28 @@
                     <div class="relative rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
                         <div class="relative w-full h-120">
                             <!-- Card de destino -->
-                            <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ asset('storage/' . $destino->imagen_url) }}')"></div>
+                           <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('{{ asset('storage/' . ($destino->imagenes->first() ? $destino->imagenes->first()->url_imagen : 'default-image.jpg')) }}')"></div>
                         </div>
 
                         <div class="absolute inset-0 flex flex-col justify-end p-4 text-white bg-black bg-opacity-50">
-                            <h3 class="text-lg font-semibold">{{ $destino->nombre }}</h3>
+                            <h3 class="text-lg font-semibold">{{ $destino->nombre_destino }}</h3>
                             <p class="text-sm">{{ Str::limit($destino->descripcion, 100) }}</p>
-                            {{-- <a href="{{ route('destinos.show', $destino->slug) }}" class="mt-2 text-blue-500 hover:underline">Ver Destino</a> --}}
+                            {{-- Enlace al detalle del destino --}}
+                            <a href="{{ route('destinos.show', $destino->slug) }}" class="mt-2 text-blue-500 hover:underline">
+                                Ver Destino
+                            </a>
+
+                            <!-- Enlace al detalle del destino -->
+
+
+                        <!-- Botón de eliminar -->
+                        <form action="{{ route('destinos.destroy', $destino->slug) }}" method="POST" class="mt-2">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-500 hover:text-red-700">
+                                Eliminar
+                            </button>
+                        </form>
                         </div>
                     </div>
                 @endforeach

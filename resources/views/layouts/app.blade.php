@@ -48,7 +48,7 @@
     <div class="flex flex-1">
 
         {{-- Mostrar sidebar solo en diarios o proyectos (comunidades) --}}
-        @if (Request::is('diarios*') || Request::is('proyectos*') || Request::is('mapa*'))
+        @if (Request::is('diarios*') || Request::is('proyectos*') || Request::is('mapa*') || Request::is('destinos*'))
             @include('partials.sidebar')
         @endif
 

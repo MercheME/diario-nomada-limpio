@@ -4,7 +4,7 @@
 <section class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-10">
     <h1 class="text-2xl font-bold mb-6">Crear Destino</h1>
 
-    <form action="{{ route('destinos.store', $diario) }}" method="POST" class="space-y-6">
+    <form action="{{ route('destinos.store', $diario) }}" method="POST" class="space-y-6" enctype="multipart/form-data">
         @csrf
 
         <!-- Agregar Leaflet en tu vista -->
@@ -98,6 +98,11 @@
             <label for="mapa" class="block font-medium">Seleccionar ubicación en el mapa</label>
             <div id="mapa" style="height: 300px;"></div> <!-- Este div se llenará con un mapa -->
             @error('mapa') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="imagenes">Imágenes</label>
+            <input type="file" name="imagenes[]" id="imagenes" class="form-control" multiple>
         </div>
 
         <!-- Botón para guardar -->

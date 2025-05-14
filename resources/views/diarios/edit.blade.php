@@ -68,7 +68,7 @@
                 <ul>
                     @foreach($diario->destinos as $destino)
                         <li>{{ $destino->nombre_destino }}</li>
-
+                        
                     @endforeach
                 </ul>
             </div>

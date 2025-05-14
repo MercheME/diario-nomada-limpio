@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Destino;
+use App\Models\DestinoImagen;
 use App\Models\Diario;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -49,6 +50,7 @@ class DestinoController extends Controller
             'personas_conocidas' => 'nullable|string',
             'relato' => 'nullable|string',
             'etiquetas' => 'nullable|array',
+            'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         // Crear el destino
@@ -66,8 +68,22 @@ class DestinoController extends Controller
         }
 
         $destino->slug = $slug;
+
         // Guardar el destino
         $destino->save();
+
+        // Subir y guardar imágenes si existen
+        // Subir las imágenes (si existen)
+        if ($request->hasFile('imagenes')) {
+            foreach ($request->file('imagenes') as $image) {
+                $imagePath = $image->store('destino_imagenes', 'public');
+                DestinoImagen::create([
+                    'destino_id' => $destino->id,
+                    'url_imagen' => $imagePath,
+                    'descripcion' => $request->descripcion ?? null,
+                ]);
+            }
+        }
 
         return redirect(route('diarios.edit', ['slug' => $diario->slug]))->with('success', 'Destino creado correctamente.');
     }
@@ -75,20 +91,21 @@ class DestinoController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Diario $diario)
+    public function show($slug)
     {
-        // $destino = $diario->destinos()->where('slug', $slug)->firstOrFail();
+        // Buscar el destino por su slug
+        $destino = Destino::where('slug', $slug)->firstOrFail();
 
-        // // Pasar el destino y el diario a la vista
-        // return view('destinos.show', compact('diario', 'destino'));
+        // Retornar la vista con el destino
+        return view('destinos.show', compact('destino'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request, $slug)
     {
-        //
+
     }
 
     /**
@@ -102,8 +119,13 @@ class DestinoController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($slug)
     {
-        //
+        $destino = Destino::where('slug', $slug)->firstOrFail();
+
+        // Eliminar el destino
+        $destino->delete();
+
+        return redirect()->back()->with('success', 'Destino eliminado correctamente');
     }
 }
