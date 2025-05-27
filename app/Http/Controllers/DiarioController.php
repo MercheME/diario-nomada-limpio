@@ -17,13 +17,32 @@ class DiarioController extends Controller
     {
         $user = Auth::user();
         $amigos = $user->amigos;
-        $usuarios = $user->where('id', '!=', $user->id)->get(); // Obtener todos los usuarios excepto el autenticado
+
+        // Obtener todos los usuarios excepto el autenticado
+        $usuarios = $user->where('id', '!=', $user->id)->get();
+
+        // Solicitudes de amistad
         $solicitudesPendientes = $user->solicitudesRecibidas;
+
+        //Diarios propios publicados
         $diariosPublicos = Diario::where('is_public', true)->get();
+        $ultimosDiarios = Auth::user()->diarios()->latest()->take(6)->get(); // Obtener los últimos 6 diarios
 
-        $ultimosDiarios = Auth::user()->diarios()->latest()->take(3)->get(); // Obtener los últimos 3 diarios
+        // IDs de amigos
+        $amigosIds = $amigos->pluck('id');
 
-        return view('home', compact('usuarios','amigos','solicitudesPendientes','ultimosDiarios', 'diariosPublicos'));
+        // Diarios públicos de los amigos
+        $diariosAmigos = Diario::with(['imagenPrincipal', 'user'])
+            ->where('is_public', true)
+            ->whereIn('user_id', $amigosIds)
+            ->latest()
+            ->take(10)
+            ->get();
+
+        // Diarios públicos de cualquier usuario (si aún quieres mostrarlos por separado)
+        $diariosPublicosTodos = Diario::where('is_public', true)->latest()->take(10)->get();
+
+        return view('home', compact('usuarios','amigos','solicitudesPendientes','ultimosDiarios', 'diariosPublicos', 'diariosAmigos', 'diariosPublicosTodos'));
     }
 
     public function index( Request $request)
@@ -112,6 +131,22 @@ class DiarioController extends Controller
         return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
     }
 
+     public function togglePublicStatus(Request $request, $slug)
+    {
+        $diario = Diario::where('slug', $slug)->firstOrFail();
+
+        if (Auth::id() !== $diario->user_id) {
+            return redirect()->back()->with('error', 'No tienes permiso para modificar este diario.');
+        }
+
+        $diario->is_public = !$diario->is_public;
+        $diario->save();
+
+        $message = $diario->is_public ? 'Tu diario ahora es público.' : 'Tu diario ahora es privado.';
+
+        return redirect()->back()->with('success', $message);
+    }
+
     public function mapa()
     {
         $user = Auth::user();
@@ -139,17 +174,32 @@ class DiarioController extends Controller
 
     public function update(Request $request, $slug)
     {
-         $diario = Diario::where('slug', $slug)->with('destinos')->firstOrFail();
+        $diario = Diario::where('slug', $slug)->with('destinos')->firstOrFail();
 
-        // dd($request->all());
+        if (Auth::id() !== $diario->user_id) {
+            return redirect()->route('diarios.index')->with('error', 'No tienes permiso para editar este diario.');
+        }
 
-       // Validar los datos del formulario
+        // Transformar 'etiquetas' de string a array ANTES de la validación
+        if ($request->has('etiquetas') && is_string($request->input('etiquetas'))) {
+            // Divide el string por comas, quita espacios en blanco de cada etiqueta,
+            // y filtra elementos vacíos.
+            $etiquetasArray = array_filter(array_map('trim', explode(',', $request->input('etiquetas'))));
+            $request->merge(['etiquetas' => $etiquetasArray]);
+        } elseif ($request->input('etiquetas') === null && $request->has('etiquetas')) {
+            // Si el campo 'etiquetas' se envía explícitamente como null (ej. campo vacío),
+            // lo convertimos a un array vacío para que la regla 'nullable|array' pase correctamente.
+            $request->merge(['etiquetas' => []]);
+        }
+
+        // Validar los datos del formulario
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string',
             'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-            'is_public' => 'boolean',
+            'is_public' => 'required|boolean',
+            'estado' => 'required|in:planificado,en_curso,realizado',
             'impacto_ambiental' => 'nullable|string',
             'impacto_cultural' => 'nullable|string',
             'libros' => 'nullable|string',
@@ -157,69 +207,62 @@ class DiarioController extends Controller
             'peliculas' => 'nullable|string',
             'documentales' => 'nullable|string',
             'etiquetas' => 'nullable|array',
+            'etiquetas.*' => 'sometimes|string|max:50', // Validar cada etiqueta (opcional, 'sometimes' si el array 'etiquetas' es nullable)
             'destinos' => 'nullable|array',
             'destinos.*' => 'exists:destinos,id',
-            // 'planificaciones' => 'nullable|array',
-            // 'planificaciones.*.fecha' => 'required|date',
-            // 'planificaciones.*.descripcion' => 'nullable|string',
         ]);
 
-        // Actualizar los campos básicos del diario
-        $diario->titulo = $validated['titulo'];
+        // Preparar los datos para la actualización
+        $updateData = [
+            'titulo' => $validated['titulo'],
+            'contenido' => $validated['contenido'],
+            'fecha_inicio' => $validated['fecha_inicio'],
+            'fecha_final' => $validated['fecha_final'],
+            'is_public' => $validated['is_public'],
+            'estado' => $validated['estado'],
+            'impacto_ambiental' => $validated['impacto_ambiental'] ?? null,
+            'impacto_cultural' => $validated['impacto_cultural'] ?? null,
+            'libros' => $validated['libros'] ?? null,
+            'musica' => $validated['musica'] ?? null,
+            'peliculas' => $validated['peliculas'] ?? null,
+            'documentales' => $validated['documentales'] ?? null,
+            'etiquetas' => $validated['etiquetas'] ?? [],
+        ];
 
         // Solo actualizar el slug si el título ha cambiado
         if ($diario->titulo !== $validated['titulo']) {
-            $diario->slug = Str::slug($validated['titulo'] . '-' . uniqid()); // Generar nuevo slug
+            $updateData['slug'] = Str::slug($validated['titulo'] . '-' . uniqid());
         }
 
-        $diario->contenido = $validated['contenido'];
-        $diario->fecha_inicio = $validated['fecha_inicio'];
-        $diario->fecha_final = $validated['fecha_final'];
-        $diario->is_public = $validated['is_public'] ?? true;
-        $diario->impacto_ambiental = $validated['impacto_ambiental'] ?? null;
-        $diario->impacto_cultural = $validated['impacto_cultural'] ?? null;
-        $diario->libros = $validated['libros'] ?? null;
-        $diario->musica = $validated['musica'] ?? null;
-        $diario->peliculas = $validated['peliculas'] ?? null;
-        $diario->documentales = $validated['documentales'] ?? null;
-        $diario->etiquetas = $validated['etiquetas'] ?? [];
+        $diario->update($updateData);
 
-        // // Guardar los cambios en el diario
-        // $diario->save();
-
-        // dd($request->all());
 
         // Actualizar destinos
         if ($request->has('destinos') && is_array($request->destinos)) {
-            // Eliminar destinos existentes
-            $diario->destinos()->delete();
+            $currentDestinoIds = $diario->destinos->pluck('destino_id')->toArray();
+            $newDestinoIds = $validated['destinos'] ?? [];
 
-            // Crear nuevos destinos
-            foreach ($request->destinos as $destinoId) {
-                $diario->destinos()->create(['destino_id' => $destinoId]);
+            // Destinos a eliminar: los que están en current pero no en new
+            $destinosAEliminar = array_diff($currentDestinoIds, $newDestinoIds);
+            if (!empty($destinosAEliminar)) {
+                $diario->destinos()->whereIn('destino_id', $destinosAEliminar)->delete();
             }
+
+            // Destinos a añadir: los que están en new pero no en current
+            $destinosAAnadir = array_diff($newDestinoIds, $currentDestinoIds);
+            foreach ($destinosAAnadir as $destinoId) {
+                if (!empty($destinoId)) { // Evitar IDs vacíos si el array puede tenerlos
+                    $diario->destinos()->create(['destino_id' => $destinoId]); // Ajusta según tu modelo de relación
+                }
+            }
+        } elseif (!$request->has('destinos')) {
+            // Si no se envía el campo 'destinos', quizás quieras eliminar todos los asociados.
+            // O no hacer nada si 'nullable' significa que no se actualizan.
+            // $diario->destinos()->delete(); // Descomenta si este es el comportamiento deseado.
         }
 
-        // Guardar otros campos del diario
-        $diario->update($request->except('destinos'));
 
-        // Actualizar planificaciones (si las hay)
-        // if ($request->has('planificaciones')) {
-        //     // Eliminar planificaciones anteriores
-        //     $diario->planificaciones()->delete();
-
-        //     // Añadir nuevas planificaciones
-        //     foreach ($validated['planificaciones'] as $planificacionData) {
-        //         $diario->planificaciones()->create([
-        //             'fecha' => $planificacionData['fecha'],
-        //             'descripcion' => $planificacionData['descripcion'] ?? null,
-        //         ]);
-        //     }
-        // }
-
-        return redirect()->route('diarios.show', $diario->slug)
-            ->with('success', 'Diario actualizado correctamente.');
-        // return redirect()->route('diarios.edit', $diario->slug)->with('success', 'Diario actualizado correctamente');
+        return redirect()->route('diarios.show', $diario->slug)->with('success', 'Diario actualizado correctamente.');
     }
 
     public function destroy($slug)

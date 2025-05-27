@@ -53,11 +53,13 @@ Route::post('/diarios', [DiarioController::class, 'store'])->middleware('auth')-
 Route::get('/diarios/{slug}', [DiarioController::class, 'show'])->name('diarios.show');
 Route::get('/diarios/{slug}/editar', [DiarioController::class, 'edit'])->middleware('auth')->name('diarios.edit');
 Route::put('/diarios/{slug}', [DiarioController::class, 'update'])->middleware('auth')->name('diarios.update');
+Route::patch('/diarios/{slug}/toggle-public', [DiarioController::class, 'togglePublicStatus'])
+       ->name('diarios.togglePublic')
+       ->middleware('auth');
 Route::delete('/diarios/{slug}', [DiarioController::class, 'destroy'])->middleware('auth')->name('diarios.destroy');
-Route::post('/diarios/{slug}/imagenes', [DiarioController::class, 'agregarImagen'])->name('diarios.agregarImagen');
-Route::delete('/imagenes/{imagen}', [DiarioImagenController::class, 'destroy'])->name('diario-imagenes.destroy');
-Route::patch('/diario-imagenes/{imagen}/establecer-principal', [DiarioImagenController::class, 'establecerPrincipal'])->name('diario-imagenes.establecerPrincipal');
-
+Route::post('/diarios/{slug}/imagenes', [DiarioController::class, 'agregarImagen'])->name('diarios.agregarImagen')->middleware('auth');
+Route::delete('/imagenes/{imagen}', [DiarioImagenController::class, 'destroy'])->name('diario-imagenes.destroy')->middleware('auth');
+Route::patch('/diario-imagenes/{imagen}/establecer-principal', [DiarioImagenController::class, 'establecerPrincipal'])->name('diario-imagenes.establecerPrincipal')->middleware('auth');
 
 // Imágenes de diarios
 Route::post('/diarios/{diario}/imagenes', [DiarioImagenController::class, 'store']);

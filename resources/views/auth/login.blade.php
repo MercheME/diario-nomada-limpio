@@ -5,13 +5,12 @@
     <div class="w-full max-w-md space-y-8">
 
       <div class="relative w-60 h-40 mx-auto">
-        <div id="loginAnim" class="absolute inset-x-0 top-1/7 w-full h-full"></div>
-        <h2 class="text-center text-3xl font-bold italic tracking-tight text-gray-900">Log In</h2>
+        <div id="loginAnim" class="absolute inset-x-0 top-1/3 w-full h-full"></div>
+        <h2 class="text-center text-3xl italic tracking-tight text-gray-900">Inicia sesión en <span class="italic text-violet-400 thin-underline underline-offset-6">Diarios Nómadas</span></h2>
       </div>
 
       <form class="flex-[0.5]" method="POST" action="/login">
         @csrf
-
         <div class="space-y-12">
           <div class="border-b border-gray-900/10 pb-12">
             <div class="flex flex-col gap-3">
@@ -48,9 +47,9 @@
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
             <p class="text-sm text-gray-500">¡Crea una cuenta y comienza ahora!</p>
-            <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-50 bg-violet-400 rounded-xl hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">Registro </a>
+            <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-violet-200 rounded-xl hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">Registro </a>
 
-          <input type="submit" value="Log In" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-violet-200 rounded-xl hover:bg-violet-400 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500" />
+            <input type="submit" value="Log In"  class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-50 bg-violet-500 rounded-xl hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500"   />
         </div>
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
