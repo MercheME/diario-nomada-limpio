@@ -22,8 +22,8 @@
                 <a href="{{ route('home') }}"
                 class="flex items-center text-2xl mx-4 font-playfair font-semibold italic
                         text-transparent bg-clip-text
-                        bg-gradient-to-r from-amber-400 via-red-500 to-fuchsia-600
-                        hover:from-amber-500 hover:via-red-600 hover:to-fuchsia-700
+                        bg-gradient-to-r from-amber-400 via-pink-400 to-violet-600
+                        hover:from-amber-500 hover:via-pink-500 hover:to-violet-700
                         transition-all duration-300 ease-in-out
                         group
                         ">
@@ -110,17 +110,19 @@
     <!-- CONTENIDO CON/SIN SIDEBAR -->
     <div class="flex flex-1 bg-gray-50">
 
-        {{-- Mostrar sidebar solo en diarios o proyectos (comunidades) --}}
-        @if (Request::is('diarios*') || Request::is('proyectos*') || Request::is('mapa*') || Request::is('destinos*'))
+        {{-- Mostrar sidebar solo en diarios o proyectos --}}
+        @if (Request::is('diarios*') || Request::is('proyectos*') || Request::is('mapa*') || Request::is('destinos*') || Request::is('mis-favoritos*'))
             @include('partials.sidebar')
         @endif
 
-        <!-- MAIN CONTENT -->
+        <!-- MAIN -->
         <main class="flex-1 p-6">
             @yield('content')
         </main>
 
     </div>
 
+    {{-- O tus scripts principales --}}
+    @stack('scripts') {{-- Aquí se insertará el script de Flatpickr --}}
 </body>
 </html>

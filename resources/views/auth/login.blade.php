@@ -46,15 +46,13 @@
         </div>
 
         <div class="mt-6 flex items-center justify-end gap-x-6">
-            <p class="text-sm text-gray-500">¡Crea una cuenta y comienza ahora!</p>
+            <p class="text-sm text-gray-500">¿Aún no tienes cuenta? ¡Crea una cuenta y comienza ahora!</p>
             <a href="{{ route('register') }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-violet-200 rounded-xl hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">Registro </a>
 
             <input type="submit" value="Log In"  class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-50 bg-violet-500 rounded-xl hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500"   />
         </div>
 
-        <div class="mt-6 flex items-center justify-end gap-x-6">
-            <a href="/" class="text-sm font-semibold leading-6 text-gray-900 hover:text-red-400">Cancelar</a>
-        </div>
+        
       </form>
     </div>
   </div>

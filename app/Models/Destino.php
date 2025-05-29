@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Destino extends Model
 {
+    protected $casts = [
+        'fecha_inicio_destino' => 'date:Y-m-d',
+        'fecha_final_destino' => 'date:Y-m-d',
+    ];
 
     protected $fillable = [
         'diario_id',

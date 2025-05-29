@@ -9,6 +9,8 @@ class Diario extends Model
 
     protected $casts = [
         'etiquetas' => 'array',
+        'fecha_inicio' => 'date:Y-m-d',
+        'fecha_final' => 'date:Y-m-d',
     ];
 
     protected $fillable = [
@@ -16,6 +18,17 @@ class Diario extends Model
         'titulo',
         'slug',
         'estado',
+        'is_public',
+        'fecha_inicio',
+        'fecha_final',
+        'contenido',
+        'impacto_ambiental',
+        'impacto_cultural',
+        'libros',
+        'musica',
+        'peliculas',
+        'documentales',
+        'etiquetas'
     ];
 
     public function user()

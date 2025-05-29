@@ -7,20 +7,26 @@
         <ul class="ml-4 space-y-1">
             <li>
                 <a href="{{ route('diarios.create') }}"
-                   class="{{ Request::routeIs('diarios.create') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('diarios.create') ? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
                     Crear Diario
                 </a>
             </li>
             <li>
                 <a href="{{ route('diarios.index') }}"
-                   class="{{ Request::routeIs('diarios.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('diarios.index')? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
                     Mis Diarios
                 </a>
             </li>
             <li>
                 <a href="{{ route('diariosPublicados') }}"
-                   class="{{ Request::routeIs('diariosPublicados') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('diariosPublicados') ? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
                     Diarios Publicados
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('diarios.favoritos.index') }}"
+                class="block py-1 hover:text-pink-500 {{ Request::routeIs('diarios.favoritos.index') ? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
+                    Mis Favoritos
                 </a>
             </li>
 
@@ -52,13 +58,13 @@
         <ul class="ml-4 space-y-1">
             <li>
                 <a href="{{ route('proyectos.index') }}"
-                   class="{{ Request::routeIs('proyectos.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('proyectos.mapa') ? 'text-violet-700 font-bold underline' : 'text-violet-500'}}">
                     Calendario
                 </a>
             </li>
             <li>
                 <a href="{{ route('diarios.mapa') }}"
-                   class="{{ Request::routeIs('diarios.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
+                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('diarios.mapa') ? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
                     Mapas
                 </a>
             </li>

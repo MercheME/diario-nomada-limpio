@@ -7,8 +7,8 @@
 
     <div class="flex flex-col lg:flex-row items-start gap-x-8 gap-y-6">
 
-        {{-- Imagen Principal y Botones de Acción --}}
-        <div class="w-full lg:w-2/5 space-y-6"> {{-- Ancho ajustado para imagen y botones --}}
+        {{-- Imagen Principal y Botones para editar, eliminar, cambiar de público a privado --}}
+        <div class="w-full lg:w-2/5 space-y-6">
             @if($diario->imagenPrincipal)
                 <div class="group relative overflow-hidden rounded-xl shadow-lg">
                     <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}"
@@ -300,7 +300,7 @@
                                     Ver Detalles &rarr;
                                 </a>
                                 @auth
-                                    @if(auth()->id() === $diario->user_id) 
+                                    @if(auth()->id() === $diario->user_id)
                                         <form action="{{ route('destinos.destroy', $destinoItem->slug) }}" method="POST" onsubmit="return confirm('¿Eliminar este destino del diario?');">
                                             @csrf
                                             @method('DELETE')
@@ -316,10 +316,10 @@
         </div>
     @endif
 
-</div> {{-- Fin del contenedor principal max-w-6xl --}}
+</div>
 
 <script>
-      function displaySingleFileName(inputElement, textDisplayElementId) {
+    function displaySingleFileName(inputElement, textDisplayElementId) {
         const textContainer = document.getElementById(textDisplayElementId);
         if (textContainer) {
             // Asegurarse de que hay archivos y al menos uno seleccionado
@@ -327,7 +327,6 @@
                 // Mostrar el nombre del primer (y único) archivo
                 textContainer.textContent = inputElement.files[0].name;
             } else {
-                // Si no hay archivos (ej. el usuario canceló la selección)
                 textContainer.textContent = 'Ningún archivo seleccionado.';
             }
         }

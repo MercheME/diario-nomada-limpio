@@ -9,14 +9,8 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -37,9 +31,9 @@ class User extends Authenticatable
     public function amigos()
     {
         return $this->belongsToMany(User::class, 'friendships', 'user_id', 'friend_id')
-                    ->withPivot('status')
-                    ->wherePivot('status', 'aceptada')
-                    ->orderBy('name', 'asc'); // Ordenar alfabéticamente los amigos
+            ->withPivot('status')
+            ->wherePivot('status', 'aceptada')
+            ->orderBy('name', 'asc');
     }
 
     /**
@@ -49,7 +43,7 @@ class User extends Authenticatable
     public function solicitudesEnviadas()
     {
         return $this->hasMany(Friendship::class, 'user_id')
-        ->where('status', 'pendiente'); // Filtramos las solicitudes pendientes
+        ->where('status', 'pendiente'); // Filtrar las solicitudes por pendientes
     }
 
     /**
@@ -62,19 +56,8 @@ class User extends Authenticatable
                     ->where('status', 'pendiente'); // Solo las solicitudes pendientes
     }
 
-     /**
-     * Método para saber si el usuario ya es amigo de otro.
-     */
-    // public function esAmigoDe(User $user)
-    // {
-    //     return $this->amigos()->where('friend_id', $user->id)->exists();
-    // }
-
     public function tieneSolicitudPendienteCon(User $user): bool
     {
-        // return Friendship::between($this, $user)
-        //     ->where('status', 'pendiente')
-        //     ->exists();
         return Friendship::where(function ($query) use ($user) {
             $query->where('user_id', $this->id)
                   ->where('friend_id', $user->id);
@@ -89,6 +72,16 @@ class User extends Authenticatable
         return Friendship::between($this, $user)
             ->where('status', 'aceptada')
             ->exists();
+    }
+
+    /**
+     * Los diarios que el usuario ha marcado como favoritos.
+     * Se accede a ellos a través de la tabla pivot 'favoritos_diarios'.
+     */
+    public function diariosFavoritos()
+    {
+        return $this->belongsToMany(Diario::class, 'favoritos_diarios', 'user_id', 'diario_id')
+                    ->withTimestamps();
     }
 
     /**
