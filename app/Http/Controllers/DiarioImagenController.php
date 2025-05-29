@@ -15,7 +15,7 @@ class DiarioImagenController extends Controller
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif',
         ]);
 
-        $path = $request->file('imagen')->store('imagenes/diarios');
+        $path = $request->file('imagen')->store('imagenes/diarios', 'public');
 
         DiarioImagen::create([
             'diario_id' => $diario->id,

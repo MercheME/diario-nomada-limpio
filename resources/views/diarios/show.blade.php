@@ -74,7 +74,7 @@
 
                     {{-- Subir imágen a la Galería del diario --}}
                     <div class="mt-6 border-t border-gray-300 pt-6">
-                        <form action="{{ route('diarios.agregarImagen', $diario->slug) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+                        <form action="{{ route('diarios.imagenStore', $diario->id) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
                             @csrf
                             <div>
                                 <div class="mb-4 p-3 bg-violet-50 border-l-4 border-violet-500 rounded-r-md">
@@ -120,6 +120,7 @@
                             <button type="submit" class="inline-flex items-center justify-center px-4 py-2 rounded-md font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                 Subir Imágen
                             </button>
+
                         </form>
                     </div>
                 @endif

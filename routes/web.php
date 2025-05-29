@@ -58,7 +58,9 @@ Route::delete('/diarios/{diario}/favorito', [FavoritoController::class, 'quitarF
 Route::get('/mis-favoritos', [FavoritoController::class, 'index'])->name('diarios.favoritos.index')->middleware('auth');
 
 // Imágenes de diarios
-Route::post('/diarios/{diario}/imagenes', [DiarioImagenController::class, 'store']);
+// La URL ahora es '/diarios/{diario:slug}/galeria'
+Route::post('/diarios/{diario:id}/galeria', [DiarioImagenController::class, 'store'])->name('diarios.imagenStore');
+// Route::post('/diarios/{diario}/imagenes', [DiarioImagenController::class, 'store']);
 Route::delete('/diarios/imagenes/{id}', [DiarioImagenController::class, 'destroy']);
 
 // Mapa para diarios

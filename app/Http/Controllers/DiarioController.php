@@ -169,6 +169,36 @@ class DiarioController extends Controller
         return redirect()->back()->with('success', $message);
     }
 
+    public function getFechasOcupadas(Request $request)
+    {
+        \Illuminate\Support\Facades\Log::info('Accediendo a getFechasOcupadas (TEST - SIN AUTH)'); // Para logs del servidor
+
+        // Devuelve datos de prueba directamente
+        $rangosDePrueba = [
+            ['from' => '2025-07-10', 'to' => '2025-07-15'], // Cambia estas fechas si es necesario para tus pruebas
+            ['from' => '2025-08-01', 'to' => '2025-08-05']
+        ];
+        return response()->json($rangosDePrueba);
+        // $userId = Auth::id();
+        // $diarioActualId = $request->query('excluir_diario_id');
+
+        // $query = Diario::where('user_id', $userId)
+        //             ->whereNotNull('fecha_inicio')
+        //             ->whereNotNull('fecha_final');
+
+        // if ($diarioActualId) { $query->where('id', '!=', $diarioActualId); }
+
+        // $diarios = $query->get(['fecha_inicio', 'fecha_final']);
+
+        // $rangosOcupados = $diarios->map(function ($diario) {
+        //     return [
+        //         'from' => \Illuminate\Support\Carbon::parse($diario->fecha_inicio)->format('Y-m-d'),
+        //         'to' => \Illuminate\Support\Carbon::parse($diario->fecha_final)->format('Y-m-d'),
+        //     ];
+        // });
+        // return response()->json($rangosOcupados);
+    }
+
     public function mapa()
     {
         $user = Auth::user();
@@ -255,7 +285,6 @@ class DiarioController extends Controller
         }
 
         $diario->update($updateData);
-
 
         // Actualizar destinos
         if ($request->has('destinos') && is_array($request->destinos)) {
