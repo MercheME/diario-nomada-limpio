@@ -30,7 +30,7 @@
     <form action="{{ route('destinos.store', $diario) }}" method="POST" class="space-y-6" enctype="multipart/form-data">
         @csrf
 
-        <!-- Agregar Leaflet en tu vista -->
+        <!-- Agregar Leaflet -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 

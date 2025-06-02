@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DestinoController;
+use App\Http\Controllers\DestinoImagenController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\DiarioController;
 use App\Http\Controllers\DiarioImagenController;
@@ -60,20 +61,34 @@ Route::get('/mis-favoritos', [FavoritoController::class, 'index'])->name('diario
 // Imágenes de diarios
 // La URL ahora es '/diarios/{diario:slug}/galeria'
 Route::post('/diarios/{diario:id}/galeria', [DiarioImagenController::class, 'store'])->name('diarios.imagenStore');
-// Route::post('/diarios/{diario}/imagenes', [DiarioImagenController::class, 'store']);
 Route::delete('/diarios/imagenes/{id}', [DiarioImagenController::class, 'destroy']);
 
 // Mapa para diarios
 Route::get('/mapa-diarios', [\App\Http\Controllers\DiarioController::class, 'mapa'])->name('diarios.mapa');
 
 //Rutas para destinos
-
 Route::get('/destinos/buscar-direccion', [DestinoController::class, 'buscarDireccion'])->name('destinos.buscar')->middleware('auth');
 Route::get('/destinos/obtener-direccion', [DestinoController::class, 'obtenerDireccion'])->middleware('auth');
 Route::get('/diarios/{diario}/destinos/crear', [DestinoController::class, 'create'])->name('destinos.create');
 Route::post('/diarios/{diario}/destinos', [DestinoController::class, 'store'])->name('destinos.store');
 Route::get('/destinos/{slug}', [DestinoController::class, 'show'])->name('destinos.show');
+Route::get('/destinos/{destino:slug}/editar', [DestinoController::class, 'edit'])->name('destinos.edit')->middleware('auth');
+Route::put('/destinos/{destino:slug}', [DestinoController::class, 'update'])->name('destinos.update')->middleware('auth');
 Route::delete('destinos/{slug}', [DestinoController::class, 'destroy'])->name('destinos.destroy');
+
+//Rutas imagenes de destinos
+// Rutas para imágenes de Destinos
+Route::post('/destinos/{destino:slug}/imagenes', [DestinoImagenController::class, 'store'])
+    ->name('destinos.imagenes.store')
+    ->middleware('auth');
+
+Route::delete('/destino-imagenes/{imagen}', [DestinoImagenController::class, 'destroy'])
+    ->name('destino_imagenes.destroy')
+    ->middleware('auth');
+
+Route::patch('/destino-imagenes/{imagen}/establecer-principal', [DestinoImagenController::class, 'establecerPrincipal'])
+    ->name('destino_imagenes.establecerPrincipal')
+    ->middleware('auth');
 
 // Proyectos comunitarios
 Route::get('/proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');

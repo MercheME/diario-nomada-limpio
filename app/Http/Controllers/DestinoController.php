@@ -163,17 +163,74 @@ class DestinoController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, $slug)
+    public function edit(Destino $destino)
     {
+        if ($destino->diario->user_id !== Auth::id()) {
+            abort(403, 'Acción no autorizada.');
+        }
 
+        // Pasamos el destino y su diario padre a la vista
+        return view('destinos.edit', [
+            'destino' => $destino,
+            'diario' => $destino->diario // Necesario para las fechas límite del diario
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Destino $destino)
     {
-        //
+        if ($destino->diario->user_id !== Auth::id()) {
+            abort(403, 'Acción no autorizada.');
+        }
+
+        // Validación
+        $diario = $destino->diario;
+
+        $reglas = [
+            'nombre_destino' => 'required|string|max:255',
+            'ubicacion' => 'required|string',
+            'fecha_inicio_destino' => ['required', 'date'],
+            'fecha_final_destino' => ['required', 'date', 'after_or_equal:fecha_inicio_destino'],
+            'alojamiento' => 'nullable|string',
+            'personas_conocidas' => 'nullable|string',
+            'relato' => 'nullable|string',
+        ];
+
+        if ($diario->fecha_inicio) {
+            $reglas['fecha_inicio_destino'][] = 'after_or_equal:' . $diario->fecha_inicio->format('d-m-Y');
+        }
+        if ($diario->fecha_final) {
+            $reglas['fecha_final_destino'][] = 'before_or_equal:' . $diario->fecha_final->format('d-m-Y');
+        }
+
+        $validatedData = $request->validate($reglas);
+
+        // Actualizar el slug si el nombre ha cambiado
+        if ($destino->nombre_destino !== $validatedData['nombre_destino']) {
+            $slugBase = Str::slug($validatedData['nombre_destino']);
+            $slugUnico = $slugBase;
+            $counter = 1;
+            // Asegurar que el nuevo slug es único, excluyendo el propio destino actual
+            while (Destino::where('slug', $slugUnico)->where('id', '!=', $destino->id)->exists()) {
+                $slugUnico = $slugBase . '-' . $counter++;
+            }
+            $destino->slug = $slugUnico;
+        }
+
+        // Actualizar los campos
+        $destino->nombre_destino = $validatedData['nombre_destino'];
+        $destino->ubicacion = $validatedData['ubicacion'];
+        $destino->fecha_inicio_destino = $validatedData['fecha_inicio_destino'];
+        $destino->fecha_final_destino = $validatedData['fecha_final_destino'];
+        $destino->alojamiento = $validatedData['alojamiento'];
+        $destino->personas_conocidas = $validatedData['personas_conocidas'];
+        $destino->relato = $validatedData['relato'];
+
+        $destino->save();
+
+        return redirect()->route('destinos.show', $destino->slug)->with('success', 'Destino actualizado correctamente.');
     }
 
     /**

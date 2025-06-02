@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('titulo');
             $table->string('slug')->unique();
             $table->text('contenido')->nullable();
-            
+
             // Privacidad
             $table->boolean('is_public')->default(false);
 
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->text('peliculas')->nullable();
             $table->text('documentales')->nullable();
 
-            // Etiquetas específicas del diario
+            // Etiquetas del diario
             $table->json('etiquetas')->nullable();
 
             // Estado del diario

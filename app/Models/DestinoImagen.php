@@ -11,7 +11,8 @@ class DestinoImagen extends Model
     protected $fillable = [
         'destino_id',
         'url_imagen',
-        'descripcion'
+        'descripcion',
+        'is_principal',
     ];
 
     public function destino()

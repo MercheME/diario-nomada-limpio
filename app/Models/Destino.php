@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Destino extends Model
 {
     protected $casts = [
-        'fecha_inicio_destino' => 'date:Y-m-d',
-        'fecha_final_destino' => 'date:Y-m-d',
+        'fecha_inicio_destino' => 'date:d-m-Y',
+        'fecha_final_destino' => 'date:d-m-Y',
     ];
 
     protected $fillable = [
@@ -26,6 +26,11 @@ class Destino extends Model
     public function imagenes()
     {
         return $this->hasMany(DestinoImagen::class);
+    }
+
+    public function imagenPrincipal()
+    {
+        return $this->hasOne(DestinoImagen::class)->where('is_principal', true);
     }
 
     public function diario()

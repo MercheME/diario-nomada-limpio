@@ -45,8 +45,9 @@
             <div>
                 <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
                 <input type="date" name="fecha_inicio" id="fecha_inicio"
-                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-                       value="{{ old('fecha_inicio') }}" required>
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
+                    value="{{ old('fecha_inicio') }}" required>
+                    @error('fecha_inicio') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label for="fecha_final" class="block text-sm font-medium text-gray-700 mb-1">Fecha Final</label>
@@ -73,7 +74,7 @@
             <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
             <select name="estado" id="estado" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm">
                 <option value="planificado" {{ old('estado', 'planificado') == 'planificado' ? 'selected' : '' }}>Planificado</option>
-                <option value="en_curso" {{ old('estado') == 'en_curso' ? 'selected' : '' }}>En Curso</option>
+                <option value="en_curso" {{ old('estado') == 'en_curso' ? 'selected' : '' }}>En curso</option>
                 <option value="realizado" {{ old('estado') == 'realizado' ? 'selected' : '' }}>Realizado</option>
             </select>
             @error('estado') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror

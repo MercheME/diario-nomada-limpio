@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('destino_imagenes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('destino_id')->constrained()->onDelete('cascade');
+            $table->foreignId('destino_id')->constrained('destinos')->onDelete('cascade');
             $table->string('url_imagen');
             $table->text('descripcion')->nullable();
+            $table->boolean('is_principal')->default(false); 
             $table->timestamps();
         });
     }

@@ -63,7 +63,7 @@ class DiarioController extends Controller
         return view('diarios.index', compact('diarios'));
     }
 
-    // Para lavista de Diairois Publicos en sidebar
+    // Para la vista de Diairois Publicos en sidebar
     public function publicados(Request $request)
     {
         $query = $request->input('query');
@@ -98,12 +98,12 @@ class DiarioController extends Controller
             'titulo' => 'required|string|max:255',
             'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-            'estado' => 'in:planificado,en_progreso,completado',
+            'estado' => 'in:planificado,en_curso,completado',
             'is_public' => 'boolean',
             'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Validación Manual de Solapamiento de Fechas
+        // Validación de Solapamiento de Fechas
         $fechaInicioSeleccionada = Carbon::parse($validated['fecha_inicio'])->startOfDay();
         $fechaFinalSeleccionada = Carbon::parse($validated['fecha_final'])->endOfDay(); // endOfDay para incluir el día completo
 
@@ -171,32 +171,24 @@ class DiarioController extends Controller
 
     public function getFechasOcupadas(Request $request)
     {
-        \Illuminate\Support\Facades\Log::info('Accediendo a getFechasOcupadas (TEST - SIN AUTH)'); // Para logs del servidor
+        $userId = Auth::id();
+        $diarioActualId = $request->query('excluir_diario_id');
 
-        // Devuelve datos de prueba directamente
-        $rangosDePrueba = [
-            ['from' => '2025-07-10', 'to' => '2025-07-15'], // Cambia estas fechas si es necesario para tus pruebas
-            ['from' => '2025-08-01', 'to' => '2025-08-05']
-        ];
-        return response()->json($rangosDePrueba);
-        // $userId = Auth::id();
-        // $diarioActualId = $request->query('excluir_diario_id');
+        $query = Diario::where('user_id', $userId)
+                    ->whereNotNull('fecha_inicio')
+                    ->whereNotNull('fecha_final');
 
-        // $query = Diario::where('user_id', $userId)
-        //             ->whereNotNull('fecha_inicio')
-        //             ->whereNotNull('fecha_final');
+        if ($diarioActualId) { $query->where('id', '!=', $diarioActualId); }
 
-        // if ($diarioActualId) { $query->where('id', '!=', $diarioActualId); }
+        $diarios = $query->get(['fecha_inicio', 'fecha_final']);
 
-        // $diarios = $query->get(['fecha_inicio', 'fecha_final']);
-
-        // $rangosOcupados = $diarios->map(function ($diario) {
-        //     return [
-        //         'from' => \Illuminate\Support\Carbon::parse($diario->fecha_inicio)->format('Y-m-d'),
-        //         'to' => \Illuminate\Support\Carbon::parse($diario->fecha_final)->format('Y-m-d'),
-        //     ];
-        // });
-        // return response()->json($rangosOcupados);
+        $rangosOcupados = $diarios->map(function ($diario) {
+            return [
+                'from' => \Illuminate\Support\Carbon::parse($diario->fecha_inicio)->format('Y-m-d'),
+                'to' => \Illuminate\Support\Carbon::parse($diario->fecha_final)->format('Y-m-d'),
+            ];
+        });
+        return response()->json($rangosOcupados);
     }
 
     public function mapa()
