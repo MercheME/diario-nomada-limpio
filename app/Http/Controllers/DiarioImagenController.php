@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Diario;
 use App\Models\DiarioImagen;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DiarioImagenController extends Controller
@@ -13,6 +14,7 @@ class DiarioImagenController extends Controller
     {
         $request->validate([
             'imagen' => 'required|image|mimes:jpeg,png,jpg,gif',
+            'descripcion' => 'nullable|string|max:2000'
         ]);
 
         $path = $request->file('imagen')->store('imagenes/diarios', 'public');
@@ -29,6 +31,10 @@ class DiarioImagenController extends Controller
 
     public function destroy(DiarioImagen $imagen)
     {
+        if (!$imagen->diario || $imagen->diario->user_id !== Auth::id()) {
+            abort(403, 'Acción no autorizada.');
+        }
+        
         // Proteger imagen principal
         if ($imagen->is_principal) {
             return back()->withErrors('No puedes eliminar la imagen principal.');
@@ -45,6 +51,10 @@ class DiarioImagenController extends Controller
 
     public function establecerPrincipal(DiarioImagen $imagen)
     {
+         if ($imagen->diario->user_id !== Auth::id()) {
+            abort(403, 'Acción no autorizada.');
+        }
+
         $diario = $imagen->diario;
 
         // Desactivar la actual imagen principal

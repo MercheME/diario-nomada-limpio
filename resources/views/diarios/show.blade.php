@@ -279,7 +279,7 @@
                     {{-- Foto Instantánea --}}
                     <div class="bg-white p-3 pt-3 pb-12 md:p-4 md:pt-4 md:pb-16 rounded-md shadow-xl hover:shadow-2xl transform group hover:-rotate-2 hover:scale-[1.03] transition-all duration-300 ease-in-out relative">
                         <div class="w-full aspect-square bg-gray-200 overflow-hidden rounded-sm">
-                            <img src="{{ asset('storage/' . $imagen->url_imagen) }}" alt="Recuerdo de {{ $diario->titulo }}" class="w-full h-full object-cover"/>
+                            <img src="{{ asset('storage/' . $imagen->url_imagen) }}" alt=" {{ $diario->titulo }}" class="w-full h-full object-cover"/>
                         </div>
                         <div class="mt-3 px-1">
                             <p class="text-sm text-gray-700 font-mono truncate" title="{{ $imagen->caption ?? $diario->titulo }}">
@@ -321,7 +321,7 @@
                 @foreach($diario->destinos as $destinoItem)
                     <div class="bg-white rounded-md shadow-sm overflow-hidden group transform hover:scale-105 transition-transform duration-300">
                         <div class="relative h-56 bg-gray-200">
-                            <img src="{{ asset('storage/' . ($destinoItem->imagenes->first() ? $destinoItem->imagenes->first()->url_imagen : 'imagenes/diarios/default.png')) }}"
+                            <img src="{{ asset('storage/' . ($destinoItem->imagenPrincipal ? $destinoItem->imagenPrincipal->url_imagen : ($destinoItem->imagenes->first() ? $destinoItem->imagenes->first()->url_imagen : 'imagenes/diarios/default.png'))) }}"
                                 alt="Imagen de {{ $destinoItem->nombre_destino }}"
                                 class="w-full h-full object-cover">
                         </div>
