@@ -28,7 +28,7 @@
 
 
     <div class="text-center">
-        <p class="text-gray-800 text-6xl"><span class="italic text-violet-400 thin-underline underline-offset-6">Descubre</span> los últimos <span class="italic text-violet-400 thin-underline underline-offset-6">diarios</span> publicados por <span class="italic text-violet-400 thin-underline underline-offset-6">la comunidad</span></p>
+        <p class="text-gray-800 text-4xl"><span class="italic text-violet-400 thin-underline underline-offset-6">Descubre</span> los últimos <span class="italic text-violet-400 thin-underline underline-offset-6">diarios publicados</span> por la <span class="italic text-violet-400 thin-underline underline-offset-6">comunidad</span></p>
     </div>
     <div class="flex overflow-x-auto mt-12 space-x-4 pb-4 w-full md:w-auto">
         @forelse ($diariosPublicosTodos as $diario)

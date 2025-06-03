@@ -36,7 +36,7 @@ class PerfilController extends Controller
                         ->latest()
                         ->paginate(10);
 
-        return view('perfil.show', [
+        return view('perfils.show', [
             'user'    => $user,
             'diarios' => $diarios,
         ]);
@@ -49,7 +49,7 @@ class PerfilController extends Controller
      */
     public function edit()
     {
-        return view('perfil.edit', [
+        return view('perfils.edit', [
             'user' => Auth::user(),
         ]);
     }

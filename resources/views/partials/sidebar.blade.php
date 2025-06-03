@@ -25,7 +25,7 @@
             </li>
             <li>
                 <a href="{{ route('diarios.favoritos.index') }}"
-                class="block py-1 hover:text-pink-500 {{ Request::routeIs('diarios.favoritos.index') ? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
+                    class="block py-1 hover:text-pink-500 {{ Request::routeIs('diarios.favoritos.index') ? 'text-violet-700 font-bold underline' : 'text-violet-500' }}">
                     Mis Favoritos
                 </a>
             </li>

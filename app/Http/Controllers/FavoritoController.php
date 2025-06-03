@@ -20,7 +20,7 @@ class FavoritoController extends Controller
                                     ->latest('favoritos_diarios.created_at')
                                     ->paginate(10);
 
-        return view('favoritos.index', compact('diariosFavoritos')); // Necesitarás crear esta vista
+        return view('favoritos.index', compact('diariosFavoritos'));
     }
 
     /**
