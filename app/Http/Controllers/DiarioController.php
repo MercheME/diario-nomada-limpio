@@ -42,7 +42,7 @@ class DiarioController extends Controller
         // Diarios públicos de cualquier usuario
         $diariosPublicosTodos = Diario::where('is_public', true)->latest()->take(10)->get();
 
-        return view('home', compact('usuarios','amigos','solicitudesPendientes','ultimosDiarios', 'diariosPublicos', 'diariosAmigos', 'diariosPublicosTodos'));
+        return view('home', compact('user','usuarios','amigos','solicitudesPendientes','ultimosDiarios', 'diariosPublicos', 'diariosAmigos', 'diariosPublicosTodos'));
     }
 
     public function index( Request $request)

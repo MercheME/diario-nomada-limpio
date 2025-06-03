@@ -3,12 +3,11 @@
 @section('content')
 <section class="w-full max-w-4xl mx-auto bg-gray-50 p-6 space-y-10">
 
-    <!-- mensaje de bienvenida -->
     <div class="text-center mt-4">
         <p class="text-gray-800 text-6xl mt-4 "><span class="italic text-violet-400 thin-underline underline-offset-6">Registra</span> tus viajes, <span class="italic text-violet-400 thin-underline underline-offset-6">planifica</span> tus aventuras y <span class="italic text-violet-400 thin-underline underline-offset-6">reflexiona</span> sobre cada paso</p>
     </div>
 
-    <div class="my-8 p-6 bg-violet-50 rounded-xl border border-violet-200 text-gray-700">
+    <div class="my-8 p-6 bg-violet-50 rounded-md border border-violet-200 text-gray-700">
         <h1 class="text-2xl md:text-3xl font-bold text-violet-700 mb-3 text-center">
             ¡Qué bueno verte viajero/a, {{ Auth::user()->name ?? 'Viajero/a' }}!
         </h1>
@@ -27,9 +26,13 @@
         </a>
     </div>
 
+
+    <div class="text-center">
+        <p class="text-gray-800 text-6xl"><span class="italic text-violet-400 thin-underline underline-offset-6">Descubre</span> los últimos <span class="italic text-violet-400 thin-underline underline-offset-6">diarios</span> publicados por <span class="italic text-violet-400 thin-underline underline-offset-6">la comunidad</span></p>
+    </div>
     <div class="flex overflow-x-auto mt-12 space-x-4 pb-4 w-full md:w-auto">
         @forelse ($diariosPublicosTodos as $diario)
-            <div class="w-[300px] h-[400px] flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="w-[300px] h-[400px] flex-shrink-0 bg-white rounded-sm shadow-lg overflow-hidden">
                 <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                     @if($diario->imagenPrincipal)
                         <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
@@ -37,7 +40,7 @@
 
                             <!-- Información del autor-->
                             <div class="absolute top-2 right-2 flex items-center space-x-2 bg-orange-200 bg-opacity-50 text-gray rounded-full px-3 py-1 shadow-md">
-                                <img src="{{ asset('storage/' . $diario->user->profile_image) }}" alt="Foto de {{$diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-purple-600">
+                                <img src="{{ $diario->user->profile_image_url }}" alt="Foto de {{$diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-purple-600">
                                 <span class="text-sm font-semibold">{{ $diario->user->name }}</span>
                             </div>
 
@@ -66,28 +69,25 @@
                 </a>
             </div>
         @empty
-            <p class="text-gray-500">No hay diarios recientes de tus amigos.</p>
+            <p class="text-gray-500">No hay diarios recientes publicados</p>
         @endforelse
     </div>
 
     <div class="max-w-7xl mx-auto p-6">
         <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Información del usuario (Izquierda) -->
+            <!-- Información del usuario -->
             <div class="flex-1 bg-white border border-gray-300 rounded-sm p-6">
                 <div class="flex items-center space-x-6">
-                    <!-- Foto del usuario -->
-                    <img src="{{ asset('storage/' . Auth::user()->profile_image) }}" alt="Foto de perfil" class="w-24 h-24 rounded-sm border-2 border-violet-500">
+                    <!-- Foto del usuario: Al pedir $user->profile_image_url, Laravel ejecuta el método getProfileImageUrlAttribute() y pone la URL resultante (ya sea la de storage o la de por defecto) en el atributo src. -->
+                    <img src="{{ Auth::user()->profile_image_url }}" alt="Foto de perfil" class="w-24 h-24 rounded-sm border-2 border-violet-500">
 
-                    <!-- Información del usuario -->
                     <div class="flex flex-col justify-center">
-                        <div class="flex items-center space-x-2"> <!-- Añadimos un flex para la alineación -->
+                        <div class="flex items-center space-x-2">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-violet-400">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                             </svg>
                             <h2 class="text-2xl font-semibold text-gray-900">{{ Auth::user()->name }}</h2>
                         </div>
-                        <p class="text-sm text-gray-500 mt-1">{{ Auth::user()->email }}</p>
-
                     </div>
                 </div>
 
@@ -96,9 +96,13 @@
                     <p>{{ Auth::user()->bio }}</p>
                 </div>
 
-                <!-- Botón de edición de perfil -->
+                <!-- Botones -->
                 <div class="mt-6 text-center">
-                    <a href="" class="inline-flex items-center justify-center px-3 py-1 border border-gray-300 text-gray-700 bg-violet-200 rounded-xl hover:bg-violet-400 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">
+
+                    <a href="{{ route('perfil.show', auth()->user()) }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-pink-200 rounded-sm hover:bg-pink-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-pink-500">
+                        Ver mi Perfil
+                    </a>
+                    <a href="{{ route('perfil.edit') }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-violet-200 rounded-sm hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">
                         Editar Perfil
                     </a>
                 </div>
@@ -121,7 +125,7 @@
                             @foreach ($solicitudesPendientes as $solicitud)
                                 <li class="flex items-center justify-between bg-violet-50 p-3 rounded-lg">
                                     <div class="flex items-center space-x-3">
-                                        <img src="{{ asset('storage/' . $solicitud->user->profile_image) }}" alt="Foto de {{ $solicitud->user->name }}" class="w-10 h-10 rounded-full border-2 border-violet-500">
+                                        <img src="{{ $solicitud->user->profile_image_url }}" alt="Foto de {{ $solicitud->user->name }}" class="w-10 h-10 rounded-full border-2 border-violet-500">
                                         <span class="font-medium">{{ $solicitud->user->name }}</span>
                                     </div>
                                     <div class="flex space-x-2">
@@ -157,11 +161,13 @@
                 <ul class="space-y-4">
                     @foreach ($amigos as $amigo)
                         <li class="bg-white p-4 rounded-lg flex flex-col md:flex-row justify-between items-center">
-                            <!-- Imagen + nombre alineados -->
-                            <div class="flex items-center space-x-4">
-                                <img src="{{ asset('storage/' . $amigo->profile_image) }}" alt="Foto de {{ $amigo->name }}" class="w-12 h-12 rounded-full border-2 border-violet-500">
-                                <strong class="text-lg">{{ $amigo->name }}</strong>
-                            </div>
+                            <!-- Imagen y nombre -->
+                             <a href="{{ route('perfil.show', $amigo) }}" class="flex items-center space-x-4 group">
+                                <img src="{{ $amigo->profile_image_url }}" alt="Foto de {{ $amigo->name }}" class="w-12 h-12 rounded-full border-2 border-violet-500">
+                                <strong class="text-lg text-gray-800 group-hover:text-violet-600 group-hover:underline">
+                                    {{ $amigo->name }}
+                                </strong>
+                            </a>
 
                             <!-- Botón eliminar -->
                             <form action="{{ route('amigos.eliminar', $amigo->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar a este amigo?')">
@@ -171,7 +177,7 @@
                                     <svg xmlns="http://www.w3.org/2000/svg"
                                         fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                         stroke="currentColor"
-                                        class="size-6 text-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                        class="size-6 text-red-400">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
                                     </svg>
                                 </button>
@@ -194,7 +200,7 @@
                 @foreach ($usuarios as $usuario)
                     <li class="bg-white p-4 rounded-lg border border-gray-300 rounded-sm flex flex-col md:flex-row justify-between items-center">
                         <div class="flex items-center space-x-4">
-                            <img src="{{ asset('storage/' . $usuario->profile_image) }}" alt="Foto de {{ $usuario->name }}" class="w-12 h-12 rounded-full border-2 border-violet-500">
+                            <img src="{{ $usuario->profile_image_url }}" alt="Foto de {{ $usuario->name }}" class="w-12 h-12 rounded-full border-2 border-violet-500">
                             <div>
                                 <strong class="text-lg">{{ $usuario->name }}</strong><br>
                             </div>
@@ -216,7 +222,7 @@
                             @else
                                 <form action="{{ route('solicitudes.enviar', $usuario) }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="inline-flex items-center justify-center px-3 py-1 border border-gray-300 text-gray-700 bg-violet-200 rounded-xl hover:bg-violet-400 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">
+                                    <button type="submit" class="inline-flex items-center justify-center px-3 py-1 border border-gray-300 text-gray-700 bg-violet-200 rounded-full hover:bg-violet-400 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mx-2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
                                         </svg>
@@ -243,11 +249,11 @@
                     <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                         @if($diario->imagenPrincipal)
                             <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                                <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
+                                <img src="{{ $diario->user->profile_image_url }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
                                 <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-white">
                                     <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
                                     <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
-                                    <p class="text-sm">{{ $diario->fecha_inicio }} - {{ $diario->fecha_final }}</p>
+                                    <p class="text-sm">{{ $diario->fecha_inicio->format('Y-m-d') }} / {{ $diario->fecha_final->format('Y-m-d') }}</p>
                                     <div class="flex items-center space-x-2 mt-2">
                                         <img src="{{ asset('storage/' . $diario->user->profile_image) }}" alt="Foto de {{ $diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-white">
                                         <span class="text-sm">{{ $diario->user->name }}</span>

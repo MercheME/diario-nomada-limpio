@@ -3,9 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -22,6 +25,28 @@ class User extends Authenticatable
     public function diarios()
     {
         return $this->hasMany(Diario::class);
+    }
+
+    public function getProfileImageUrlAttribute(): string
+    {
+
+        if ($this->profile_image) {
+            return asset('storage/' . $this->profile_image);
+        }
+
+       return url('profile_images/avatar-default.png');
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function ($user) {
+            $user->uuid = Str::uuid();
+        });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
     }
 
     /**
@@ -53,7 +78,7 @@ class User extends Authenticatable
     public function solicitudesRecibidas()
     {
         return $this->hasMany(Friendship::class, 'friend_id')
-                    ->where('status', 'pendiente'); // Solo las solicitudes pendientes
+                    ->where('status', 'pendiente');
     }
 
     public function tieneSolicitudPendienteCon(User $user): bool

@@ -20,7 +20,7 @@ class RegisterController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email|unique:users', // PLURAL
-            'password' => 'required|min:6',
+            'password' => 'required|min:8',
             'bio' => 'nullable|string|max:1000',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);

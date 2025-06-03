@@ -106,8 +106,7 @@
                 @endif
             @endauth
 
-            {{-- Mostrar imágenes existentes (VISIBLE PARA TODOS) --}}
-
+            {{-- Mostrar imágenes existentes --}}
             <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic">Galería de Imágenes del Destino</h2>
             @if($destino->imagenes->count() > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -119,7 +118,7 @@
                                 <p class="text-xs text-gray-600 truncate" title="{{$imagen->descripcion}}">{{ $imagen->descripcion }}</p>
                             @endif
 
-                            {{-- Botones de acción para CADA imagen (SOLO PARA EL PROPIETARIO) --}}
+                            {{-- Botones para cada imagen  --}}
                             @auth
                                 @if(Auth::id() === $destino->diario->user_id)
                                     <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col space-y-1 z-10">
@@ -152,7 +151,7 @@
                                 @endif
                             @endauth
 
-                            {{-- Etiqueta "Principal" (VISIBLE PARA TODOS) --}}
+                            {{-- Etiqueta "Principal" --}}
                             @if($imagen->is_principal)
                                 <div class="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-0.5 text-xs rounded">Principal</div>
                             @endif
@@ -160,7 +159,7 @@
                     @endforeach
                 </div>
             @else
-                <p class="text-gray-600 text-center">Este destino aún no tiene imágenes en su galería.</p> {{-- VISIBLE PARA TODOS --}}
+                <p class="text-gray-600 text-center">Este destino aún no tiene imágenes en su galería.</p> 
             @endif
         </div>
 

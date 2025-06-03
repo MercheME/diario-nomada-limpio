@@ -81,27 +81,7 @@
                 </select>
             </div>
 
-            {{-- Etiquetas --}}
-            <div>
-                <label for="etiquetas" class="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
-                @php
-                    $etiquetasString = '';
-                    if (old('etiquetas')) {
-                        $etiquetasString = old('etiquetas');
-                    } elseif (is_array($diario->etiquetas)) {
-                        $etiquetasString = implode(',', $diario->etiquetas);
-                    } elseif (is_string($diario->etiquetas)) {
-                        $decoded = json_decode($diario->etiquetas, true);
-                        // Si es un string JSON, intenta decodificarlo, sino, lo usa como está
-                        $etiquetasString = is_array($decoded) ? implode(',', $decoded) : $diario->etiquetas;
-                    }
-                @endphp
-                <input type="text" name="etiquetas" id="etiquetas"
-                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-                    value="{{ $etiquetasString }}"
-                    placeholder="Ej: aventura, europa, gastronomía, senderismo">
-                <p class="mt-1 text-xs text-gray-500">Añade palabras clave que describan tu viaje, por ejemplo: "gastronomía,cultura"</p>
-            </div>
+
 
             {{-- Destinos Asociados --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
@@ -154,6 +134,28 @@
                     class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                     required>{{ old('contenido', $diario->contenido) }}
                 </textarea>
+            </div>
+
+            {{-- Etiquetas --}}
+            <div>
+                <label for="etiquetas" class="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
+                @php
+                    $etiquetasString = '';
+                    if (old('etiquetas')) {
+                        $etiquetasString = old('etiquetas');
+                    } elseif (is_array($diario->etiquetas)) {
+                        $etiquetasString = implode(',', $diario->etiquetas);
+                    } elseif (is_string($diario->etiquetas)) {
+                        $decoded = json_decode($diario->etiquetas, true);
+                        // Si es un string JSON, intenta decodificarlo, sino, lo usa como está
+                        $etiquetasString = is_array($decoded) ? implode(',', $decoded) : $diario->etiquetas;
+                    }
+                @endphp
+                <input type="text" name="etiquetas" id="etiquetas"
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
+                    value="{{ $etiquetasString }}"
+                    placeholder="Ej: aventura, europa, gastronomía, senderismo">
+                <p class="mt-1 text-xs text-gray-500">Añade palabras clave que describan tu viaje, por ejemplo: "gastronomía,cultura"</p>
             </div>
 
             {{-- SECCIÓN: REFLEXIONES --}}
@@ -224,7 +226,7 @@
                             </svg>
                             <span>Películas o series relacionadas</span>
                         </label>
-                        
+
                         <textarea name="peliculas" id="peliculas" rows="2" placeholder="Ej: 'Diarios de motocicleta', 'Lost in Translation'"
                             class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm">{{ old('peliculas', $diario->peliculas) }}</textarea>
                     </div>

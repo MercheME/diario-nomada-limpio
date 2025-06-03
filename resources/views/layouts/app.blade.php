@@ -15,7 +15,7 @@
 <body class="min-h-screen bg-orange-50 flex flex-col">
 
     <!-- HEADER -->
-    <header class="bg-gray-500 text-white">
+    <header class="bg-stone-100 text-white">
         <nav class="flex items-center bg-gray-200 justify-between p-4 border-b border-gray-300">
 
             <div class="flex items-center">

@@ -7,6 +7,7 @@ use App\Http\Controllers\DiarioController;
 use App\Http\Controllers\DiarioImagenController;
 use App\Http\Controllers\FavoritoController;
 use App\Http\Controllers\FriendshipCrontroller;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\ProyectoImagenController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
@@ -52,6 +53,10 @@ Route::delete('/diarios/{slug}', [DiarioController::class, 'destroy'])->middlewa
 Route::post('/diarios/{slug}/imagenes', [DiarioController::class, 'agregarImagen'])->name('diarios.agregarImagen')->middleware('auth');
 Route::delete('/imagenes/{imagen}', [DiarioImagenController::class, 'destroy'])->name('diario-imagenes.destroy')->middleware('auth');
 Route::patch('/diario-imagenes/{imagen}/establecer-principal', [DiarioImagenController::class, 'establecerPrincipal'])->name('diario-imagenes.establecerPrincipal')->middleware('auth');
+
+Route::get('/perfil/editar', [PerfilController::class, 'edit'])->name('perfil.edit')->middleware('auth');
+Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update')->middleware('auth');
+Route::get('/perfil/{user}', [PerfilController::class, 'show'])->name('perfil.show');
 
 //Diarios favoritos
 Route::post('/diarios/{diario}/favorito', [FavoritoController::class, 'agregarFavorito'])->name('diarios.favorito.agregar')->middleware('auth');
