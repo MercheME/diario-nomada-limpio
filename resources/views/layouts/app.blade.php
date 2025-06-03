@@ -110,8 +110,7 @@
     <!-- CONTENIDO CON/SIN SIDEBAR -->
     <div class="flex flex-1 bg-gray-50">
 
-        {{-- Mostrar sidebar solo en diarios o proyectos --}}
-        @if (Request::is('diarios*') || Request::is('proyectos*') || Request::is('mapa*') || Request::is('destinos*') || Request::is('mis-favoritos*'))
+        @if (Request::is('diarios*') || Request::is('mapa*') || Request::is('destinos*') || Request::is('mis-favoritos*') || Request::is('calendario*'))
             @include('partials.sidebar')
         @endif
 

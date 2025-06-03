@@ -71,6 +71,10 @@ Route::delete('/diarios/imagenes/{id}', [DiarioImagenController::class, 'destroy
 // Mapa para diarios
 Route::get('/mapa-diarios', [\App\Http\Controllers\DiarioController::class, 'mapa'])->name('diarios.mapa');
 
+//Calendario
+Route::get('/calendario', [DiarioController::class, 'showCalendario'])->name('calendario.index');
+Route::get('/calendario/eventos', [DiarioController::class, 'getEventosCalendario'])->name('calendario.eventos');
+
 //Rutas para destinos
 Route::get('/destinos/buscar-direccion', [DestinoController::class, 'buscarDireccion'])->name('destinos.buscar')->middleware('auth');
 Route::get('/destinos/obtener-direccion', [DestinoController::class, 'obtenerDireccion'])->middleware('auth');

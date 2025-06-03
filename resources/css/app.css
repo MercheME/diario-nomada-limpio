@@ -23,3 +23,14 @@
     text-decoration: underline;
     text-decoration-thickness: 1px; /* Ajusta el grosor del subrayado */
   }
+
+
+#calendario {
+    width: 100%;
+}
+
+.fc-event.evento-destino {
+    border: 2px dashed #444;
+    background-color: #ffffff !important;
+    color: #000 !important;
+}

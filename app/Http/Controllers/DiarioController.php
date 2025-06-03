@@ -191,6 +191,51 @@ class DiarioController extends Controller
         return response()->json($rangosOcupados);
     }
 
+    public function showCalendario()
+    {
+        return view('diarios.calendario');
+    }
+
+    public function getEventosCalendario()
+    {
+        $usuario = Auth::user();
+
+        // Obtener los diarios del usuario autenticado con sus destinos
+        $diarios = Diario::with('destinos')->where('user_id', $usuario->id)->get();
+
+        $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
+
+        $eventos = [];
+
+        foreach ($diarios as $diario) {
+            $color = '#' . substr(md5($diario->id), 0, 6); // Color consistente por diario
+
+            // Evento principal del diario
+            $eventos[] = [
+                'title' => 'Diario: ' . $diario->titulo,
+                'start' => $diario->fecha_inicio->toDateString(),
+                'end' => $diario->fecha_final->copy()->addDay()->toDateString(),
+                'description' => 'Diario completo',
+                'color' => $color,
+            ];
+
+            // Eventos para cada destino
+            foreach ($diario->destinos as $destino) {
+                $eventos[] = [
+                    'title' => 'Destino: ' . $destino->nombre_destino,
+                    'start' => $destino->fecha_inicio_destino->toDateString(),
+                    'end' => $destino->fecha_final_destino->copy()->addDay()->toDateString(),
+                    'description' => 'Diario: ' . $diario->titulo,
+                    'color' => $color,
+                    'className' => ['evento-destino'],
+                ];
+            }
+        }
+
+        return response()->json($eventos);
+    }
+
+
     public function mapa()
     {
         $user = Auth::user();

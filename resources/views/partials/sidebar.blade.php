@@ -30,35 +30,13 @@
                 </a>
             </li>
 
-            {{-- <li>
-                <a href="{{ route('diarios.index') }}"
-                   class="{{ Request::is('diarios*') && !Request::routeIs('diarios.create') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
-                    Calendario
-                </a>
-            </li> --}}
         </ul>
 
-        <!-- Sección Proyectos Locales (Comunidades) -->
-        <li class="font-semibold text-gray-600 mt-4">Proyectos Locales</li>
-        <ul class="ml-4 space-y-1">
-            <li>
-                {{-- <a href="{{ route('proyectos.mapa') }}"
-                   class="{{ Request::routeIs('proyectos.mapa') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
-                    Mapa
-                </a> --}}
-            </li>
-            <li>
-                <a href="{{ route('proyectos.index') }}"
-                   class="{{ Request::routeIs('proyectos.index') ? 'text-blue-700 font-bold underline' : 'text-blue-500' }}">
-                    Proyectos Locales
-                </a>
-            </li>
-        </ul>
         <li class="font-semibold text-gray-600 mt-4">Opciones</li>
         <ul class="ml-4 space-y-1">
             <li>
-                <a href="{{ route('proyectos.index') }}"
-                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('proyectos.mapa') ? 'text-violet-700 font-bold underline' : 'text-violet-500'}}">
+                <a href="{{ route('calendario.index') }}"
+                   class="block py-1 hover:text-pink-500 {{ Request::routeIs('calendario.index') ? 'text-violet-700 font-bold underline' : 'text-violet-500'}}">
                     Calendario
                 </a>
             </li>
