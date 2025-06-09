@@ -4,7 +4,7 @@
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-8">
         <div>
-            <h2 class="text-center text-3xl italic tracking-tight text-gray-900">Editar Perfil</h2>
+            <h2 class="text-gray-800 text-5xl text-center"><span class="italic text-violet-400 thin-underline underline-offset-6">Editar</span> Perfil</h2>
         </div>
 
         {{-- Bloque para mostrar el mensaje de éxito después de actualizar --}}
@@ -58,7 +58,7 @@
                     <label for="profile_image" class="block text-sm font-medium text-gray-700">Imagen de Perfil</label>
                     <div class="mt-2 flex items-center space-x-4">
                         {{-- Mostramos la imagen actual --}}
-                        <img src="{{ $user->profile_image }}" alt="Imagen actual" class="h-16 w-16 rounded-full object-cover">
+                        <img src="{{ $user->profile_image_url }}" alt="Imagen actual" class="h-16 w-16 rounded-full object-cover">
                         {{-- Botón para subir una nueva --}}
                         <input type="file" name="profile_image" id="profile_image" accept="image/*"
                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200 cursor-pointer">
@@ -70,7 +70,12 @@
 
                 {{-- Sección opcional para cambiar la contraseña --}}
                 <div class="border-t border-gray-200 pt-6">
-                    <p class="text-sm text-gray-600 mb-4">Rellena los siguientes campos solo si deseas cambiar tu contraseña.</p>
+                    <div class="block text-sm font-medium text-gray-600 mb-6 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2 text-orange-500 shrink-0">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                        </svg>
+                        <pre class="text-xs text-orange-600 ">Rellena estos campos si deseas cambiar la contraseña</pre>
+                    </div>
 
                     <div class="mb-4">
                         <label for="password" class="block text-sm font-medium text-gray-700">Nueva Contraseña</label>

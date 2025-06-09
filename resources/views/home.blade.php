@@ -28,7 +28,7 @@
 
 
     <div class="text-center">
-        <p class="text-gray-800 text-4xl"><span class="italic text-violet-400 thin-underline underline-offset-6">Descubre</span> los últimos <span class="italic text-violet-400 thin-underline underline-offset-6">diarios publicados</span> por la <span class="italic text-violet-400 thin-underline underline-offset-6">comunidad</span></p>
+        <p class="text-gray-800 text-6xl"><span class="italic text-violet-400 thin-underline underline-offset-6">Descubre</span> los últimos <span class="italic text-violet-400 thin-underline underline-offset-6">diarios</span> publicados por la <span class="italic text-violet-400 thin-underline underline-offset-6">comunidad</span></p>
     </div>
     <div class="flex overflow-x-auto mt-12 space-x-4 pb-4 w-full md:w-auto">
         @forelse ($diariosPublicosTodos as $diario)
@@ -96,7 +96,6 @@
             <!-- Información del usuario -->
             <div class="flex-1 bg-white border border-gray-300 rounded-sm p-6">
                 <div class="flex items-center space-x-6">
-                    <!-- Foto del usuario: Al pedir $user->profile_image_url, Laravel ejecuta el método getProfileImageUrlAttribute() y pone la URL resultante (ya sea la de storage o la de por defecto) en el atributo src. -->
                     <img src="{{ Auth::user()->profile_image_url }}" alt="Foto de perfil" class="w-24 h-24 rounded-sm border-2 border-violet-500">
 
                     <div class="flex flex-col justify-center">

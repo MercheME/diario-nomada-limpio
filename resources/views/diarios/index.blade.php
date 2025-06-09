@@ -23,15 +23,17 @@
         @if ($diarios->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 @foreach ($diarios as $diario)
-                    <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[700px] w-full">
+                    <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[500px] w-full">
                         <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                             @if($diario->imagenPrincipal)
                                 <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
 
-                                    <div class="absolute top-2 right-2 flex items-center space-x-2 bg-orange-300 bg-opacity-50 text-gray rounded-full px-3 py-1 shadow-md">
-                                         <img src="{{ asset('storage/' . $diario->user->profile_image) }}" alt="Foto d{{$diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-white">
-                                        <span class="text-sm font-semibold">{{ $diario->user->name }}</span>
-                                    </div>
+                                    @if (Request::routeIs('diariosPublicados'))
+                                        <div class="absolute top-2 right-2 flex items-center space-x-2 bg-orange-300 bg-opacity-50 text-gray rounded-full px-3 py-1 shadow-md">
+                                            <img src="{{ asset('storage/' . $diario->user->profile_image) }}" alt="Foto d{{$diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-white">
+                                            <span class="text-sm font-semibold">{{ $diario->user->name }}</span>
+                                        </div>
+                                    @endif
 
                                     <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
 

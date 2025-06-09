@@ -6,7 +6,7 @@
 
         <div class="text-center mb-6">
         <p class="text-gray-700 text-lg leading-relaxed">
-           En esta sección, podrás ver el <span class="italic text-violet-600">calendario de tus diarios</span>. Consulta fácilmente las fechas de cada viaje y gestiona los detalles de cada lugar, sabiendo siempre a qué diario pertenece
+           Este es el <span class="italic text-violet-600">calendario de tus aventuras</span>.  Utilízalo para visualizar rápidamente las fechas de tus viajes, consultar los detalles de cada destino y ver al instante a qué diario pertenece cada experiencia.
         </p>
     </div>
 

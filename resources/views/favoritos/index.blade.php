@@ -14,7 +14,7 @@
         @if ($diariosFavoritos->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 @foreach ($diariosFavoritos as $diario)
-                    <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[700px] w-full">
+                    <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[500px] w-full">
                         <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                             @if($diario->imagenPrincipal)
                                 <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">

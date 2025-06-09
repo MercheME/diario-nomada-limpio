@@ -126,10 +126,8 @@
             <div class="bg-white p-6 rounded-md shadow-sm">
                 <div class="text-center mb-6">
                     <p class="text-gray-700 text-4xl leading-relaxed">
-                        “Cada diario guarda una <span class="italic thin-underline underline-offset-6 text-violet-600">historia</span>.
-                        Escribe lo que <span class="italic text-violet-600">viviste</span>, <span class="italic text-violet-600">sentiste</span>
-                        y <span class="italic text-violet-600">conociste</span>.
-                        <span class="italic text-violet-600 thin-underline underline-offset-6">Recordar</span> también es volver a <span class="italic text-violet-600 thin-underline underline-offset-6">viajar</span>”
+                        “Escribe lo que <span class="italic text-violet-400 thin-underline underline-offset-6">viviste, sentiste y conociste</span>.
+                        Recordar también es volver a <span class="italic text-violet-400 thin-underline underline-offset-6">viajar</span>”
                     </p>
                 </div>
 
@@ -301,7 +299,8 @@
     {{-- SECCIÓN DE GALERÍA --}}
     @if($diario->imagenes->where('is_principal', false)->count() > 0)
         <div class="mt-12">
-            <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic"><span class="italic thin-underline underline-offset-6 text-violet-600">Galería</span> de Recuerdos</h2>
+            <h2 class="text-4xl font-semibold mb-6 text-gray-700 text-center italic"><span class="italic text-violet-400 thin-underline underline-offset-6">Galería</span> de Recuerdos
+            </h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 xl:gap-8">
                 @foreach($diario->imagenes->where('is_principal', false) as $imagen)
                     {{-- Foto Instantánea --}}
@@ -343,37 +342,42 @@
 
     {{-- SECCIÓN DE DESTINOS --}}
     @if($diario->destinos->count())
-        <div class="mt-12">
-            <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic"><span class="italic thin-underline underline-offset-6 text-violet-600">Destinos Explorados</span> en este Viaje</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="mt-15">
+            <h2 class="text-4xl font-semibold mb-6 text-gray-700 text-center italic mb-10"><span class="italic text-violet-400 thin-underline underline-offset-6">Destinos</span> explorados en este viaje
+            </h2>
+
+            <div class="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-10">
                 @foreach($diario->destinos as $destinoItem)
-                    <div class="bg-white rounded-md shadow-sm overflow-hidden group transform hover:scale-105 transition-transform duration-300">
+                    <div class="bg-white rounded-md shadow-md overflow-hidden group transform hover:scale-105 transition-transform duration-300">
                         <div class="relative h-56 bg-gray-200">
                             <img src="{{ asset('storage/' . ($destinoItem->imagenPrincipal ? $destinoItem->imagenPrincipal->url_imagen : ($destinoItem->imagenes->first() ? $destinoItem->imagenes->first()->url_imagen : 'imagenes/diarios/default.png'))) }}"
                                 alt="Imagen de {{ $destinoItem->nombre_destino }}"
                                 class="w-full h-full object-cover">
                         </div>
-                        <div class="p-4">
-                            <h3 class="text-sm font-semibold font-playfair text-gray-700 mb-2">{{ $destinoItem->nombre_destino }}</h3>
-                            @php
-                                $partesUbicacion = array_map('trim', explode(',', $destinoItem->ubicacion));
-                                $pais = end($partesUbicacion);
-                                $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
-                            @endphp
-                            <p class="text-xs text-gray-600 font-raleway mb-3 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-3 shrink-0">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                                </svg>
-                                <span>{{ $ciudad }}, {{ $pais }}</span>
-                            </p>
-                            <p class="text-xs text-gray-600 font-raleway mb-3 flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-3 shrink-0">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
-                                </svg>
-                                <span>{{ $destinoItem->fecha_inicio_destino->format('d-m-Y') }} / {{ $destinoItem->fecha_final_destino->format('d-m-Y') }}</span>
-                            </p>
-                            <div class="flex justify-between items-center">
+                        <div>
+                            <div class="p-3">
+                                <h3 class="text-sm font-semibold font-playfair text-gray-700 mb-2">{{ $destinoItem->nombre_destino }}</h3>
+                                @php
+                                    $partesUbicacion = array_map('trim', explode(',', $destinoItem->ubicacion));
+                                    $pais = end($partesUbicacion);
+                                    $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
+                                @endphp
+                                <p class="text-xs text-gray-600 font-raleway mb-3 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-3 shrink-0">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                    </svg>
+                                    <span>{{ $ciudad }}, {{ $pais }}</span>
+                                </p>
+                                <p class="text-xs text-gray-600 font-raleway mb-3 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 mr-3 shrink-0">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                                    </svg>
+                                    <span>{{ $destinoItem->fecha_inicio_destino->format('d-m-Y') }} / {{ $destinoItem->fecha_final_destino->format('d-m-Y') }}</span>
+                                </p>
+                            </div>
+
+                            <div class="px-6 py-3 flex flex-row items-center justify-between bg-gray-100">
                                 <a href="{{ route('destinos.show', $destinoItem->slug) }}" class="text-sm text-violet-500 hover:text-violet-800 font-semibold">
                                     Ver Destino &rarr;
                                 </a>
