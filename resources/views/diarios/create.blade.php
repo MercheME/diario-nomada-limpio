@@ -3,6 +3,7 @@
 
 @push('styles')
 <style>
+    /* Estilo personalizado para el input de Flatpickr */
     .flatpickr-alt.form-input {
         display: block;
         width: 100%;
@@ -21,7 +22,18 @@
 
 @section('content')
 <section class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-10">
-    <h1 class="text-2xl font-bold mb-6">Crear Diario</h1>
+    <h1 class="text-3xl sm:text-4xl font-playfair font-bold italic text-gray-700 mb-8 text-center">
+        <span class="italic text-violet-400 thin-underline underline-offset-6">Crea</span> tu Diario de Viaje
+    </h1>
+
+    <div class="my-8 p-6 bg-violet-50 rounded-md border border-violet-200 text-gray-700">
+        <p class="text-base md:text-lg mb-2 text-center md:text-left">
+            <strong>Comienza</strong> tu diario de viajes con lo más básico: el título, la fecha del viaje, una imágen principal y el estado del viaje.
+        </p>
+        <p class="text-base md:text-lg mt-3 font-medium text-gray-600 text-center md:text-left">
+           Una vez que tengas creado lo esencial, podrás editar cada diario para añadir mucha más información: desde los destinos explorados y tus reflexiones personales hasta las experiencias inolvidables y las anécdotas que hacen único cada viaje.
+        </p>
+    </div>
 
     <form action="{{ route('diarios.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
@@ -34,13 +46,6 @@
         </div>
 
         {{-- Fechas --}}
-        <p class="block text-sm font-medium text-gray-600 mb-6 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                class="size-5 mr-2 text-gray-500 shrink-0">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
-                </svg>
-                <span>Para elegir las fechas ten en cuenta que las fechas que coincidan con otros calendarios ya creados no estarán disponibles</span>
-        </p>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
@@ -54,17 +59,26 @@
                 <input type="date" name="fecha_final" id="fecha_final"
                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                        value="{{ old('fecha_final') }}" required>
-                {{-- Contenedor para mensaje de error de fecha_final --}}
                 <span id="error_fecha_final" class="text-red-600 text-xs block mt-1"></span>
             </div>
         </div>
-        {{-- Contenedor para mensaje de error de solapamiento general del rango --}}
+        <p class="block text-sm font-medium text-gray-600 mb-6 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="size-5 mr-2 text-orange-600 shrink-0">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+            </svg>
+            <span class="text-orange-600">Para elegir las fechas ten en cuenta que las fechas que coincidan con otros calendarios ya creados no estarán disponibles</span>
+        </p>
+
         <span id="error_rango_fechas" class="text-red-600 text-xs block mt-1"></span>
 
 
         {{-- Imagen principal --}}
         <div>
-            <label for="imagen_principal" class="block text-sm font-medium text-gray-700 mb-1">Imagen principal (Opcional)</label>
+            <label for="imagen_principal" class="block text-sm font-medium text-gray-700 mb-6">
+                Imagen principal
+                <span class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded-md">OPCIONAL</span>
+            </label>
             <input type="file" name="imagen_principal" id="imagen_principal" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100">
             @error('imagen_principal') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
         </div>
@@ -88,6 +102,7 @@
     </form>
 </section>
 @endsection
+
 
 @push('scripts')
 {{-- Flatpickr desde jsdelivr --}}

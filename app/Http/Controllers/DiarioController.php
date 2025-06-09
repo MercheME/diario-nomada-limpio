@@ -98,7 +98,7 @@ class DiarioController extends Controller
             'titulo' => 'required|string|max:255',
             'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
-            'estado' => 'in:planificado,en_curso,completado',
+            'estado' => 'in:planificado,en_curso,realizado',
             'is_public' => 'boolean',
             'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -273,18 +273,14 @@ class DiarioController extends Controller
             $etiquetasArray = array_filter(array_map('trim', explode(',', $request->input('etiquetas'))));
             $request->merge(['etiquetas' => $etiquetasArray]);
         } elseif ($request->input('etiquetas') === null && $request->has('etiquetas')) {
-            // Si el campo 'etiquetas' se envía explícitamente como null, lo convertimos a un array vacío para que la regla 'nullable|array' pase correctamente.
+            // Si el campo 'etiquetas' se envía como null, lo convertimos a un array vacío para que la regla 'nullable|array' no sea null
             $request->merge(['etiquetas' => []]);
         }
 
-        // Validar los datos del formulario
         $validated = $request->validate([
             'titulo' => 'required|string|max:255',
             'contenido' => 'required|string',
-            'fecha_inicio' => [
-                'required',
-                'date',
-            ],
+            'fecha_inicio' => 'required|date',
             'fecha_final' => 'required|date|after_or_equal:fecha_inicio',
             'is_public' => 'required|boolean',
             'estado' => 'required|in:planificado,en_curso,realizado',
@@ -298,6 +294,8 @@ class DiarioController extends Controller
             'etiquetas.*' => 'sometimes|string|max:50',
             'destinos' => 'nullable|array',
             'destinos.*' => 'exists:destinos,id',
+        ], [
+            'contenido.required' => 'El relato de tu viaje no puede quedar vacío',
         ]);
 
         $updateData = [
@@ -342,7 +340,7 @@ class DiarioController extends Controller
                 }
             }
         } elseif (!$request->has('destinos')) {
-            // Si no se envía el campo 'destinos', quizás quieras eliminar todos los asociados.
+            // Si no se envía el campo 'destinos'
             // O no hacer nada si 'nullable' significa que no se actualizan.
             // $diario->destinos()->delete(); // Descomenta si este es el comportamiento deseado.
         }

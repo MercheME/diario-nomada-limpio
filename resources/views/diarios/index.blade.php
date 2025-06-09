@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="flex flex-col gap-10 w-full justify-center">
+<section class="flex-grow p-6">
     <h1 class="text-center mt-10 text-gray-700">
         @if(Request::routeIs('diarios.index'))
             <p class="text-gray-800 text-6xl mt-4">
@@ -19,11 +19,11 @@
         @endif
     </h1>
 
-    <main class="lg:col-span-2 mt-8 lg:mt-0">
+    <main class="mt-8">
         @if ($diarios->count() > 0)
-            <div class="flex overflow-x-auto mt-12 space-x-4 pb-4 w-full md:w-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 @foreach ($diarios as $diario)
-                    <div class="w-[400px] h-[600px] flex-shrink-0 bg-white rounded-sm shadow-lg overflow-hidden">
+                    <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[700px] w-full">
                         <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                             @if($diario->imagenPrincipal)
                                 <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
@@ -36,26 +36,44 @@
                                     <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
 
                                     <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-gray-200 space-y-1">
-                                        <h2 class="text-md font-semibold uppercase">{{ $diario->titulo }}</h2>
+                                        <h2 class="text-4xl border-b border-gray-400 pb-2">{{ $diario->titulo }}</h2>
 
-                                        <div class="flex items-center text-gray text-sm space-x-1">
+                                        <div class="flex items-center text-md space-x-1">
+                                            <span class="font-mono">
+                                                {{ \Carbon\Carbon::parse($diario->fecha_inicio)->isoFormat('D [de] MMMM, YYYY') }} / {{ \Carbon\Carbon::parse($diario->fecha_final)->isoFormat('D [de] MMMM, YYYY') }}
+                                            </span>
+                                        </div>
+
+                                        <div class="flex items-center text-gray text-md space-x-1">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                             </svg>
-                                            <h1 class="text-sm font-semibold">
-                                                {{ $diario->destinos->pluck('nombre_destino')->take(3)->implode(', ') ?: 'Sin destinos' }}
-                                            </h1>
+
+                                            @php
+                                                $ciudadPais = 'Sin destinos';
+
+                                                if ($diario->destinos->isNotEmpty()) {
+                                                    $primerDestino = $diario->destinos->first();
+
+                                                    if ($primerDestino && isset($primerDestino->ubicacion)) {
+                                                        // Divide la ubicación por comas y quita los espacios
+                                                        $partesUbicacion = array_map('trim', explode(',', $primerDestino->ubicacion));
+
+                                                        $pais = end($partesUbicacion);
+
+                                                        //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
+                                                        $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
+
+                                                        $ciudadPais = $ciudad . ', ' . $pais;
+                                                    }
+                                                }
+                                            @endphp
+
+                                            {{ $ciudadPais }}
+
                                         </div>
 
-                                        <div class="flex items-center text-sm space-x-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75" />
-                                            </svg>
-                                            <span>
-                                                {{ \Carbon\Carbon::parse($diario->fecha_inicio)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($diario->fecha_final)->format('d/m/Y') }}
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
                             @else

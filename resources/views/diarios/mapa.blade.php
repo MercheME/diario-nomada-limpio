@@ -2,26 +2,41 @@
 
 @section('content')
 <div class="w-full max-w-6xl mx-auto py-10 px-4">
-    <h1 class="text-3xl italic text-violet-600 underline text-center mb-6"> Mapas de Tus Diarios de Viaje</h1>
+    <h1 class="text-gray-800 text-6xl mt-4 text-center mb-6"><span class="italic text-violet-400 thin-underline underline-offset-6"> Mapa</span> de Tus Diarios de Viajes</h1>
     <div class="text-center mb-6">
         <p class="text-gray-700 text-lg leading-relaxed">
-            Bienvenido/a al <span class="italic text-violet-600">mapa</span> de tus diarios de viaje. En esta sección, podrás ver todos los <span class="italic text-violet-600">destinos</span> de tus diarios ubicados geográficamente. Haz clic en cualquier <span class="italic text-violet-600">marcador</span> del mapa para conocer los <span class="italic text-violet-600">detalles</span> de ese lugar y el diario al que pertenece. Además, puedes usar las <span class="italic text-violet-600">listas </span> para mostrar solo los destinos de un diario específico o ver todos los viajes realizados a una misma ubicación. Si prefieres una vista completa, el botón 'Mostrar Todos los Destinos' te enseñará todas tus <span class="italic text-violet-600">aventuras</span> en el mapa a la vez. ¡Disfruta explorando tus <span class="italic text-violet-600">recuerdos de viaje</span> de una forma más visual!
+            En esta sección, podrás ver todos los <span class="italic text-violet-600">destinos</span> de tus diarios ubicados geográficamente. Haz clic en cualquier <span class="italic text-violet-600">marcador</span> del mapa para conocer los <span class="italic text-violet-600">detalles</span> de ese lugar y el diario al que pertenece.
         </p>
+        <p>¡Disfruta explorando tus <span class="italic text-violet-600">recuerdos de viaje</span> de una forma más visual!</p>
     </div>
 
     <!-- Mapa -->
-    <div id="map" class="w-full h-[400px] md:h-[600px] rounded-xl shadow-lg border border-gray-200 mb-6"></div>
+    <div id="map" class="w-full h-[400px] md:h-[600px] rounded-sm shadow-lg border border-gray-200 mb-6"></div>
 
     <div class="text-center mb-8">
-        <button id="ver-todos" class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-violet-100 hover:bg-violet-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-        Mostrar Todos los Destinos Visitados
+        <button id="ver-todos" class="cursor-pointer inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mx-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+            </svg>
+            Todos los Destinos Visitados
         </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div class="grid grid-cols-1 gap-2">
         <div>
-            <h2 class="text-2xl font-bold text-gray-800 mb-4">Ver todos los destinos de tus Diarios</h2>
-            <div id="diarios-list" class="space-y-1 max-h-72 overflow-y-auto border border-gray-200 p-3 rounded-md bg-white shadow-sm">
+            <h1 class="text-gray-800 text-4xl mt-4 mb-2"><span class="italic text-violet-400 thin-underline underline-offset-6"> Diarios</span> y sus rutas</h1>
+            <p class="text-gray-700 text-lg leading-relaxed">
+                Selecciona un diario para ver todos los destinos que has visitado durante ese viaje.
+            </p>
+            <div class="block text-sm font-medium text-gray-600 mb-6 my-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                class="size-5 mr-2 text-gray-500 shrink-0">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                </svg>
+                <pre class="text-xs"> Haz clic en cualquier marcador del mapa para conocer más detalles</pre>
+            </div>
+            <div id="diarios-list" class="space-y-1 max-h-72 overflow-y-auto border border-gray-200 p-3 rounded-sm bg-white shadow-sm my-5">
                 @forelse($diarios as $diario_item)
                     <p class="text-md text-sky-700 hover:text-sky-900 hover:bg-sky-50 cursor-pointer diario-item p-2 rounded transition-colors"
                         data-diario-id="{{ $diario_item->id }}">
@@ -34,33 +49,38 @@
         </div>
     </div>
 
-    <div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Filtrar por Ubicación del Destino:</h2>
-        @php
-            $nombresDestinosUnicos = [];
-            if (isset($diarios) && $diarios->count() > 0) {
-                foreach ($diarios as $diario_item) {
-                    if ($diario_item->destinos && $diario_item->destinos->count() > 0) {
-                        foreach ($diario_item->destinos as $destino_obj) {
-                            if (isset($destino_obj->ubicacion)) {
-                                $nombresDestinosUnicos[] = $destino_obj->ubicacion;
+    <div class="grid grid-cols-1 gap-2">
+        <div>
+            <h1 class="text-gray-800 text-4xl mt-4 mb-2"><span class="italic text-violet-400 thin-underline underline-offset-6"> Ubicaciones</span> de cada <span class="italic text-violet-400 thin-underline underline-offset-6">destino</span> visitado</h1>
+            <p class="text-gray-700 text-lg leading-relaxed mb-6 ">
+                Selecciona una ubicación para ver los diarios asociados a esa ubicación.
+            </p>
+            @php
+                $nombresDestinosUnicos = [];
+                if (isset($diarios) && $diarios->count() > 0) {
+                    foreach ($diarios as $diario_item) {
+                        if ($diario_item->destinos && $diario_item->destinos->count() > 0) {
+                            foreach ($diario_item->destinos as $destino_obj) {
+                                if (isset($destino_obj->ubicacion)) {
+                                    $nombresDestinosUnicos[] = $destino_obj->ubicacion;
+                                }
                             }
                         }
                     }
                 }
-            }
-            $destinosUnicosParaLista = array_unique($nombresDestinosUnicos);
-            sort($destinosUnicosParaLista);
-        @endphp
-        <div id="destinos-unicos-list" class="space-y-1 max-h-72 overflow-y-auto border border-gray-200 p-3 rounded-md bg-white shadow-sm">
-            @forelse($destinosUnicosParaLista as $nombreDestino)
-                <p class="text-md text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 cursor-pointer destino-nombre-item p-2 rounded transition-colors"
-                data-destino-nombre="{{ $nombreDestino }}">
-                    {{ $nombreDestino }}
-                </p>
-            @empty
-                <p class="text-gray-500 p-2">No hay destinos para mostrar.</p>
-            @endforelse
+                $destinosUnicosParaLista = array_unique($nombresDestinosUnicos);
+                sort($destinosUnicosParaLista);
+            @endphp
+            <div id="destinos-unicos-list" class="space-y-1 max-h-72 overflow-y-auto border border-gray-200 p-3 rounded-sm bg-white shadow-sm my-5">
+                @forelse($destinosUnicosParaLista as $nombreDestino)
+                    <p class="text-md text-indigo-700 hover:text-indigo-900 hover:bg-indigo-50 cursor-pointer destino-nombre-item p-2 rounded transition-colors"
+                    data-destino-nombre="{{ $nombreDestino }}">
+                        {{ $nombreDestino }}
+                    </p>
+                @empty
+                    <p class="text-gray-500 p-2">No hay destinos para mostrar.</p>
+                @endforelse
+            </div>
         </div>
     </div>
 
@@ -94,7 +114,6 @@
     async function crearMarcadores() {
         const promesaspeticiones = [];
 
-        // Itera sobre cada diario en los datos recibidos
         for (const diarioItem of diariosData) {
 
             // Inicializa un array vacío para los marcadores de este diario específico
@@ -112,7 +131,7 @@
                                 if (!response.ok) {
                                     throw new Error(`La petición a Nominatim falló para ${destino.ubicacion} con estado ${response.status}`);
                                 }
-                                return response.json(); // Convierte la respuesta a JSON
+                                return response.json();
                             })
                             .then(data => {
                                 // Comprueba si Nominatim devolvió algún resultado
@@ -121,17 +140,16 @@
                                     const lon = parseFloat(data[0].lon);
 
                                     const contenidoPopup = `
-                                        <div class="p-2 bg-white rounded shadow-sm" style="min-width: 200px; max-width: 280px;">
+                                        <div class="p-2 " style="min-width: 200px; max-width: 280px;">
                                             <h4 class="text-md font-semibold text-indigo-700 mb-1">
                                                 ${destino.nombre_destino || 'Destino'}
                                             </h4>
                                             <p class="text-xs text-gray-500 mb-2">${destino.ubicacion}</p>
-                                            <hr class="my-1">
+                                            <hr class="my-1 text-gray-200">
                                             <p class="text-xs text-gray-700 mb-0.5"><strong>Diario:</strong>
                                                 ${diarioItem.titulo}
                                             </p>
-                                            ${destino.descripcion ? `<p class="text-xs text-gray-600 mt-1">${destino.descripcion}</p>` : '<p class="text-xs text-gray-500 mt-1 italic">Sin descripción para este destino.</p>'}
-                                        </div>`;
+                                        `;
 
                                     // Crea un marcador Leaflet con las coordenadas y el popup
                                     const marker = L.marker([lat, lon]).bindPopup(contenidoPopup);

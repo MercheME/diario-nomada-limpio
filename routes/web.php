@@ -69,7 +69,7 @@ Route::post('/diarios/{diario:id}/galeria', [DiarioImagenController::class, 'sto
 Route::delete('/diarios/imagenes/{id}', [DiarioImagenController::class, 'destroy']);
 
 // Mapa para diarios
-Route::get('/mapa-diarios', [\App\Http\Controllers\DiarioController::class, 'mapa'])->name('diarios.mapa');
+Route::get('/mapa-diarios', [DiarioController::class, 'mapa'])->name('diarios.mapa');
 
 //Calendario
 Route::get('/calendario', [DiarioController::class, 'showCalendario'])->name('calendario.index');
@@ -98,14 +98,3 @@ Route::delete('/destino-imagenes/{imagen}', [DestinoImagenController::class, 'de
 Route::patch('/destino-imagenes/{imagen}/establecer-principal', [DestinoImagenController::class, 'establecerPrincipal'])
     ->name('destino_imagenes.establecerPrincipal')
     ->middleware('auth');
-
-// Proyectos comunitarios
-Route::get('/proyectos', [ProyectoController::class, 'index'])->name('proyectos.index');
-Route::get('/proyectos/{id}', [ProyectoController::class, 'show']);
-Route::post('/proyectos', [ProyectoController::class, 'store']);
-Route::put('/proyectos/{id}', [ProyectoController::class, 'update']);
-Route::delete('/proyectos/{id}', [ProyectoController::class, 'destroy']);
-
-// Imágenes de proyectos
-Route::post('/proyectos/{proyecto}/imagenes', [ProyectoImagenController::class, 'store']);
-Route::delete('/proyectos/imagenes/{id}', [ProyectoImagenController::class, 'destroy']);

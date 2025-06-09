@@ -18,8 +18,8 @@ class DestinoController extends Controller
      */
     public function index()
     {
-        // Muestra todos los destinos (puedes personalizar esto)
-        $destinos = Destino::all();
+        // Muestra todos los destinos
+        //$destinos = Destino::all();
         // return view('destinos.index', compact('destinos'));
     }
 
@@ -32,11 +32,11 @@ class DestinoController extends Controller
 
         $query = $request->q;
 
-        // Petición a la API de Nominatim
+        // Peticion a la API de Nominatim
         $url = "https://nominatim.openstreetmap.org/search?q=" . urlencode($query) . "&format=json&addressdetails=1&limit=5";
 
         $respuesta = Http::withHeaders([
-            'User-Agent' => 'TuApp/1.0 (tu-dominio.com)',
+            'User-Agent' => 'DiarioNomadaApp/1.0 (diario-nomada.com)',
         ])->get($url);
 
         if ($respuesta->successful()) {
@@ -57,11 +57,11 @@ class DestinoController extends Controller
         $lat = $request->lat;
         $lon = $request->lon;
 
-        // Petición a Nominatim
+        // Peticion a Nominatim
         $url = "https://nominatim.openstreetmap.org/reverse?format=json&lat={$lat}&lon={$lon}&zoom=18&addressdetails=1";
 
         $respuesta = Http::withHeaders([
-            'User-Agent' => 'DiarioNomadaApp/1.0 (diario-nomada.test)',
+            'User-Agent' => 'DiarioNomadaApp/1.0 (diario-nomada.com)',
         ])->get($url);
 
         if ($respuesta->successful()) {
@@ -79,8 +79,7 @@ class DestinoController extends Controller
      */
     public function create($diario_slug)
     {
-       // Aquí puedes buscar el diario usando el slug
-    $diario = Diario::where('slug', $diario_slug)->firstOrFail();
+        $diario = Diario::where('slug', $diario_slug)->firstOrFail();
 
         return view('destinos.create', compact('diario'));
     }
@@ -101,7 +100,7 @@ class DestinoController extends Controller
             'alojamiento' => 'nullable|string',
             'personas_conocidas' => 'nullable|string',
             'relato' => 'nullable|string',
-            'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'imagenes.*' => 'nullable|image|mimes:jpeg,png,jpg,svg|max:2048',
         ];
 
         if ($diario->fecha_inicio) {

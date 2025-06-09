@@ -3,10 +3,10 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-xl shadow-lg">
+    <div class="max-w-3xl mx-auto bg-white p-6 sm:p-8 rounded-sm shadow-sm">
 
         <h1 class="text-3xl sm:text-4xl font-playfair font-bold italic text-gray-700 mb-8 text-center">
-           <span class="text-violet-400 underline font-medium">Editando</span> tu Diario de Viaje
+           <span class="italic text-violet-400 thin-underline underline-offset-6">Editar</span> tu Diario de Viaje
         </h1>
 
         @if ($errors->any())
@@ -81,9 +81,7 @@
                 </select>
             </div>
 
-
-
-            {{-- Destinos Asociados --}}
+            {{-- Destinos --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">Destinos de este Diario</h2>
                 <p class="text-sm font-medium text-gray-700">Desglosa tu viaje en sus diferentes paradas o destinos que quieres visitar</p>
@@ -92,7 +90,7 @@
                     class="size-5 mr-2 text-gray-500 shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                     </svg>
-                    <p class="mt-1 text-xs text-gray-500">Cada <span class="font-extrabold">'destino' representa un lugar específico que exploraste o un momento destacado de tu aventura.</span> No dudes en añadir múltiples destinos para reflejar cada etapa de tu recorrido</p>
+                    <p class="mt-1 text-xs text-gray-500">Cada <span class="font-extrabold">'destino' representa un lugar específico que visitaste.</span> No dudes en añadir múltiples destinos para reflejar cada etapa de tu recorrido</p>
                 </div>
 
                 @if($diario->destinos->count() > 0)
@@ -100,16 +98,6 @@
                         @foreach($diario->destinos as $destino)
                             <li class="p-2 bg-gray-50 rounded-md border border-gray-200 text-sm text-gray-700">
                                 {{ $destino->nombre_destino }}
-                                {{-- Botón para eliminar el destino --}}
-                                {{-- <form action="{{ route('destinos.destroy', $destino->slug) }}" method="POST" onsubmit="return confirm('¿Estás seguro de que quieres eliminar este destino? Esta acción no se puede deshacer.');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50" title="Eliminar destino">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-                                </form> --}}
                             </li>
                         @endforeach
                     </ul>
@@ -129,16 +117,16 @@
             {{-- Contenido --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">Relato del Diario</h2>
-                <label for="contenido" class="block text-sm font-medium text-gray-700 mt-3 mb-1">Escribe aquí la historia de tu viaje, tus anécdotas y reflexiones</label>
+                <label for="contenido" class="block text-sm font-medium text-gray-700 mt-3 mb-1">Escribe aquí la historia de tu viaje, experiencia vivida o anécdota</label>
                 <textarea name="contenido" id="contenido" rows="10"
-                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
-                    required>{{ old('contenido', $diario->contenido) }}
+                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm">{{ old('contenido', $diario->contenido) }}
                 </textarea>
             </div>
 
             {{-- Etiquetas --}}
             <div>
-                <label for="etiquetas" class="block text-sm font-medium text-gray-700 mb-1">Categorías</label>
+                <h2 class="text-lg font-semibold text-gray-800 mb-3">Categorías</h2>
+                <label for="etiquetas" class="block text-sm font-medium text-gray-700 mb-1">Añade una o varias categorías para organizar y clasificar tu diario, facilitando su búsqueda y exploración</label>
                 @php
                     $etiquetasString = '';
                     if (old('etiquetas')) {
@@ -158,7 +146,7 @@
                 <p class="mt-1 text-xs text-gray-500">Añade palabras clave que describan tu viaje, por ejemplo: "gastronomía,cultura"</p>
             </div>
 
-            {{-- SECCIÓN: REFLEXIONES --}}
+            {{-- Reflexiones --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-baseline">Reflexiones del Viaje <pre class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded-md">OPCIONAL</pre></h2>
                 <p class="text-sm font-medium text-gray-700">Tras el viaje, llega la reflexión. Este espacio es para   tus ideas sobre el impacto de nuevos entornos y culturas
@@ -191,7 +179,7 @@
                 </div>
             </div>
 
-            {{-- SECCIÓN: INSPIRACION --}}
+            {{-- Inspiración --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-baseline">Inspiración del Viaje <pre class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded-md">OPCIONAL</pre></h2>
                 <div class="space-y-6">
@@ -247,7 +235,7 @@
             </div>
 
             {{-- Botones del formulario --}}
-            <div class="pt-8 mt-8 border-t border-gray-300 flex items-center justify-end space-x-3">
+            <div class="pt-8 mt-8 flex items-center justify-end space-x-3">
                 <a href="{{ route('diarios.show', $diario->slug) }}"
                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Cancelar
@@ -260,4 +248,5 @@
         </form>
     </div>
 </div>
+<x-flash-mensaje />
 @endsection

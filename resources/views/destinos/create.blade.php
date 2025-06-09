@@ -1,10 +1,10 @@
 @extends('layouts.app')
-{{-- CSS de Flatpickr (Local) --}}
+{{-- CSS de Flatpickr --}}
 <link rel="stylesheet" href="{{ asset('css/flatpickr.min.css') }}">
 
 @push('styles')
     <style>
-        /* Estilos personalizados para el input alternativo de Flatpickr */
+        /* Estilo personalizado para el input de Flatpickr */
         .flatpickr-alt.form-input {
             display: block; width: 100%; padding: 0.5rem 0.75rem;
             font-size: 0.875rem; line-height: 1.25rem; color: #1f2937;
@@ -18,14 +18,16 @@
 
 @section('content')
 <section class="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-md mt-10">
-    <h1 class="text-2xl font-bold mb-6">Crear Destino</h1>
+    <h1 class="text-3xl sm:text-4xl font-playfair font-bold italic text-gray-700 mb-8 text-center">
+        <span class="italic text-violet-400 thin-underline underline-offset-6">Crea</span> tu <span class="italic text-violet-400 thin-underline underline-offset-6">Destino</span> de Viaje
+    </h1>
 
-    <div class="mb-4 text-sm text-gray-600">
+    {{-- <div class="mb-4 text-sm text-gray-600">
         <p>Fechas del Diario (rango permitido para el destino):
             <span class="font-semibold">{{ $diario->fecha_inicio ? $diario->fecha_inicio->format('d/m/Y') : 'N/A' }}</span> -
             <span class="font-semibold">{{ $diario->fecha_final ? $diario->fecha_final->format('d/m/Y') : 'N/A' }}</span>
         </p>
-    </div>
+    </div> --}}
 
     <form action="{{ route('destinos.store', $diario) }}" method="POST" class="space-y-6" enctype="multipart/form-data">
         @csrf
@@ -34,15 +36,15 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-        <!-- Nombre del destino -->
+        <!-- Nombre  -->
         <div>
-            <label for="nombre_destino" class="block font-medium">Nombre del Destino</label>
-            <input type="text" id="nombre_destino" name="nombre_destino" class="w-full border p-2 rounded" placeholder="Buscar destino o selecciona en el mapa">
+            <label for="nombre_destino" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Destino</label>
+            <input type="text" id="nombre_destino" name="nombre_destino" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" value="{{ old('titulo') }}" placeholder="Buscar destino o selecciona en el mapa">
         </div>
 
         <!-- Ubicación  -->
         <div>
-            <label for="ubicacion" class="block text-sm font-medium text-gray-700 mb-1">Introduce la Ubicación del Destino</label>
+            <label for="ubicacion" class="block text-sm font-medium text-gray-700 mb-1">Introduce o selecciona en el mapa la Ubicación del Destino</label>
             <input type="text"
                 id="ubicacion"
                 name="ubicacion"
@@ -60,7 +62,7 @@
 
          <!-- Selección de ubicación en el mapa -->
          <div>
-            <label for="mapa" class="block font-medium">Seleccionar ubicación en el mapa</label>
+            <label for="mapa" class="block font-medium"></label>
             <div id="mapa" style="height: 300px;"></div>
             @error('mapa') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
@@ -86,34 +88,35 @@
 
         <!-- Alojamiento -->
         <div>
-            <label for="alojamiento" class="block font-medium">Alojamiento</label>
-            <input type="text" name="alojamiento" class="w-full border p-2 rounded" value="{{ old('alojamiento') }}">
+            <label for="alojamiento" class="block text-sm font-medium text-gray-700 mb-1">Alojamiento</label>
+            <input type="text" name="alojamiento" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" value="{{ old('alojamiento') }}">
             @error('alojamiento') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <!-- Personas conocidas -->
         <div>
-            <label for="personas_conocidas" class="block font-medium">Personas Conocidas</label>
-            <textarea name="personas_conocidas" class="w-full border p-2 rounded" rows="4">{{ old('personas_conocidas') }}</textarea>
+            <label for="personas_conocidas" class="block text-sm font-medium text-gray-700 mb-1">Personas Conocidas</label>
+            <textarea name="personas_conocidas" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" rows="4">{{ old('personas_conocidas') }}</textarea>
             @error('personas_conocidas') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <!-- Relato -->
         <div>
-            <label for="relato" class="block font-medium">Relato</label>
-            <textarea name="relato" class="w-full border p-2 rounded" rows="4">{{ old('relato') }}</textarea>
+            <label for="relato" class="block text-sm font-medium text-gray-700 mb-1">Relato sobre tu experiencia</label>
+            <textarea name="relato" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" rows="4">{{ old('relato') }}</textarea>
             @error('relato') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
         <div class="form-group">
-            <label for="imagenes">Imágenes</label>
-            <input type="file" name="imagenes[]" id="imagenes" class="form-control" multiple>
+            <label for="imagenes" class="block text-sm font-medium text-gray-700 mb-1">Añadir Imagen Principal</label>
+            <input type="file" name="imagenes[]" id="imagenes" class="form-control block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200 cursor-pointer">
         </div>
 
         <!-- Botón para guardar -->
         <div>
-           <!-- Formulario para crear destino -->
-        <button type="submit">Guardar Destino</button>
+            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
+                Guardar Destino
+            </button>
         </div>
     </form>
 </section>

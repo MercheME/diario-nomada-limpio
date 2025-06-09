@@ -2,7 +2,13 @@
 
 @section('content')
     <div class="container">
-        <h2 class="text-3xl text-center mb-4">Calendario de Diarios</h2>
+        <h1 class="text-gray-800 text-6xl mt-4 text-center mb-6"><span class="italic text-violet-400 thin-underline underline-offset-6">Calendario </span> de tus Diarios de Viajes</h1>
+
+        <div class="text-center mb-6">
+        <p class="text-gray-700 text-lg leading-relaxed">
+           En esta sección, podrás ver el <span class="italic text-violet-600">calendario de tus diarios</span>. Consulta fácilmente las fechas de cada viaje y gestiona los detalles de cada lugar, sabiendo siempre a qué diario pertenece
+        </p>
+    </div>
 
         <!-- Contenedor del calendario -->
         <div id="calendario"></div>
@@ -25,7 +31,7 @@
             // Inicializar FullCalendar
             $('#calendario').fullCalendar({
                  locale: 'es',         // idioma español
-        firstDay: 1,   
+        firstDay: 1,
                 aspectRatio: 2.5,
                 header: {
                     left: 'prev,next today',

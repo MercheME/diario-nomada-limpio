@@ -30,7 +30,7 @@ class FriendshipCrontroller extends Controller
         })->where('status', 'pendiente')->exists();
 
         if ($existeSolicitud) {
-            return back()->with('error', 'Ya has enviado una solicitud de amistad pendiente.');
+            return back()->with('error', 'Ya has enviado una solicitud de amistad.');
         }
 
         // Crear solicitud de amistad

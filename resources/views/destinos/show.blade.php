@@ -8,6 +8,16 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <h1 class="text-3xl md:text-4xl font-playfair font-bold italic text-gray-900 mb-3">{{ $destino->nombre_destino }}</h1>
+
+                        {{-- Fechas del Destino --}}
+                        <div class="font-cascadia block bg-gray-100 p-3 rounded-md text-sm text-gray-600 mb-4">
+                            <strong>Fechas del destino:</strong>
+                            <code>
+                                {{ $destino->fecha_inicio_destino ? \Carbon\Carbon::parse($destino->fecha_inicio_destino)->isoFormat('DD MMM, YYYY') : 'N/A' }} /
+                                {{ $destino->fecha_final_destino ? \Carbon\Carbon::parse($destino->fecha_final_destino)->isoFormat('DD MMM, YYYY') : 'N/A' }}
+                            </code>
+                        </div>
+
                         {{-- Ubicación --}}
                         <p class="text-md text-gray-700 font-raleway mb-1 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2 text-violet-600 shrink-0">
@@ -16,14 +26,7 @@
                             </svg>
                             <span>{{ $destino->ubicacion }}</span>
                         </p>
-                        {{-- Fechas del Destino (Visible para todos) --}}
-                        <div class="font-cascadia block bg-gray-100 p-3 rounded-md text-sm text-gray-600 mb-4">
-                            <strong>Fechas del destino:</strong>
-                            <code>
-                                {{ $destino->fecha_inicio_destino ? \Carbon\Carbon::parse($destino->fecha_inicio_destino)->isoFormat('DD MMM, YYYY') : 'N/A' }} /
-                                {{ $destino->fecha_final_destino ? \Carbon\Carbon::parse($destino->fecha_final_destino)->isoFormat('DD MMM, YYYY') : 'N/A' }}
-                            </code>
-                        </div>
+
                     </div>
                     {{-- Botón Editar Destino --}}
                     @auth
@@ -42,7 +45,12 @@
                 {{-- Relato del Destino --}}
                 @if($destino->relato)
                     <div class="prose prose-lg max-w-none font-raleway text-gray-700 mb-6 mt-4 pt-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Relato del Destino</h3>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2 text-violet-600 shrink-0">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                            </svg>
+                            Relato del Destino
+                        </h3>
                         {!! nl2br(e($destino->relato)) !!}
                     </div>
                 @endif
@@ -85,7 +93,7 @@
             @auth
                 @if(Auth::id() === $destino->diario->user_id)
                 <div class="mb-8 p-6 bg-white rounded-sm">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Añadir Nueva Imagen al Destino</h3>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Añadir Nueva Imagen a la galería de Imágenes</h3>
                     <form action="{{ route('destinos.imagenes.store', $destino->slug) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         <div>
@@ -132,26 +140,26 @@
                                                 </button>
                                             </form>
                                         @else
-                                        <button type="button" class="p-1.5 bg-gray-300 text-gray-500 rounded-full shadow cursor-not-allowed" title="No se puede eliminar la imagen principal" disabled>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                                        </button>
+                                            <button type="button" class="p-1.5 bg-gray-300 text-gray-500 rounded-full shadow cursor-not-allowed" title="No se puede eliminar la imagen principal" disabled>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
                                         @endif
 
                                         {{-- Botón Establecer Principal --}}
                                         @if(!$imagen->is_principal)
-                                        <form action="{{ route('destino_imagenes.establecerPrincipal', $imagen->id) }}" method="POST">
-                                            @csrf
-                                            @method('PATCH')
-                                            <button type="submit" class="p-1.5 bg-blue-500 text-white rounded-full shadow hover:bg-blue-600" title="Establecer como principal">
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
-                                            </button>
-                                        </form>
+                                            <form action="{{ route('destino_imagenes.establecerPrincipal', $imagen->id) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="p-1.5 bg-violet-500 text-white rounded-full shadow hover:bg-violet-600" title="Establecer como principal">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                                </button>
+                                            </form>
                                         @endif
                                     </div>
                                 @endif
                             @endauth
 
-                            {{-- Etiqueta "Principal" --}}
+                            {{-- Etiqueta Principal --}}
                             @if($imagen->is_principal)
                                 <div class="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-0.5 text-xs rounded">Principal</div>
                             @endif
@@ -159,7 +167,7 @@
                     @endforeach
                 </div>
             @else
-                <p class="text-gray-600 text-center">Este destino aún no tiene imágenes en su galería.</p> 
+                <p class="text-gray-600 text-center">Este destino aún no tiene imágenes en su galería.</p>
             @endif
         </div>
 

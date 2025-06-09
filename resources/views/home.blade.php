@@ -46,23 +46,41 @@
 
                             <!-- Información superpuesta -->
                             <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-gray-200 space-y-1">
-                                <h2 class="text-md font-semibold uppercase">{{ $diario->titulo }}</h2>
+                                <h2 class="text-xl border-b border-gray-400 pb-2">{{ $diario->titulo }}</h2>
 
-                                <div class="flex items-center text-gray text-sm space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                                    </svg>
-                                    <h1 class="text-lg font-semibold">{{ $diario->destinos->pluck('nombre_destino')->implode(', ') }}</h1>
+                                <div class="flex items-center text-sm space-x-1">
+                                    <span class="font-mono">
+                                        {{ \Carbon\Carbon::parse($diario->fecha_inicio)->isoFormat('D [de] MMMM, YYYY') }} / {{ \Carbon\Carbon::parse($diario->fecha_final)->isoFormat('D [de] MMMM, YYYY') }}
+                                    </span>
                                 </div>
 
                                 <div class="flex items-center text-gray text-sm space-x-1">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                     </svg>
-                                    <p class="text-sm">{{ $diario->fecha_inicio }} / {{ $diario->fecha_final }}</p>
-                                </div>
 
+                                    @php
+                                        $ciudadPais = 'Sin destinos';
+
+                                        if ($diario->destinos->isNotEmpty()) {
+                                            $primerDestino = $diario->destinos->first();
+
+                                            if ($primerDestino && isset($primerDestino->ubicacion)) {
+                                                // Divide la ubicación por comas y quita los espacios
+                                                $partesUbicacion = array_map('trim', explode(',', $primerDestino->ubicacion));
+
+                                                $pais = end($partesUbicacion);
+
+                                                //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
+                                                $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
+
+                                                $ciudadPais = $ciudad . ', ' . $pais;
+                                            }
+                                        }
+                                    @endphp
+                                    {{ $ciudadPais }}
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -99,10 +117,23 @@
                 <!-- Botones -->
                 <div class="mt-6 text-center">
 
-                    <a href="{{ route('perfil.show', auth()->user()) }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-pink-200 rounded-sm hover:bg-pink-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-pink-500">
+                    <a href="{{ route('perfil.show', auth()->user()) }}" class="w-full inline-flex items-center justify-center mb-4 px-5 py-2.5 text-sm font-medium rounded-md shadow-sm
+                    text-white bg-pink-600 hover:bg-pink-700
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500
+                    transition-colors duration-150 ease-in-out">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-4 w-4 mr-2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        </svg>
                         Ver mi Perfil
                     </a>
-                    <a href="{{ route('perfil.edit') }}" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-violet-200 rounded-sm hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">
+                    <a href="{{ route('perfil.edit') }}" class="w-full inline-flex items-center justify-center px-5 py-2.5 text-sm font-medium rounded-md shadow-sm
+                    text-white bg-slate-600 hover:bg-slate-700
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500
+                    transition-colors duration-150 ease-in-out">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
                         Editar Perfil
                     </a>
                 </div>
@@ -160,9 +191,9 @@
                 <!-- Lista de Amigos -->
                 <ul class="space-y-4">
                     @foreach ($amigos as $amigo)
-                        <li class="bg-white p-4 rounded-lg flex flex-col md:flex-row justify-between items-center">
-                            <!-- Imagen y nombre -->
-                             <a href="{{ route('perfil.show', $amigo) }}" class="flex items-center space-x-4 group">
+                        <li class="bg-white rounded-sm flex flex-col md:flex-row justify-between items-center">
+
+                            <a href="{{ route('perfil.show', $amigo) }}" class="flex items-center space-x-4 group">
                                 <img src="{{ $amigo->profile_image_url }}" alt="Foto de {{ $amigo->name }}" class="w-12 h-12 rounded-full border-2 border-violet-500">
                                 <strong class="text-lg text-gray-800 group-hover:text-violet-600 group-hover:underline">
                                     {{ $amigo->name }}
@@ -170,7 +201,7 @@
                             </a>
 
                             <!-- Botón eliminar -->
-                            <form action="{{ route('amigos.eliminar', $amigo->id) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar a este amigo?')">
+                            <form action="{{ route('amigos.eliminar', $amigo) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar a este amigo?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="relative group p-2">
@@ -198,7 +229,7 @@
             </h2>
             <ul class="space-y-4">
                 @foreach ($usuarios as $usuario)
-                    <li class="bg-white p-4 rounded-lg border border-gray-300 rounded-sm flex flex-col md:flex-row justify-between items-center">
+                    <li class="bg-white p-3 rounded-lg border border-gray-300 rounded-sm flex flex-col md:flex-row justify-between items-center">
                         <div class="flex items-center space-x-4">
                             <img src="{{ $usuario->profile_image_url }}" alt="Foto de {{ $usuario->name }}" class="w-12 h-12 rounded-full border-2 border-violet-500">
                             <div>
@@ -249,16 +280,56 @@
                     <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                         @if($diario->imagenPrincipal)
                             <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
-                                <img src="{{ $diario->user->profile_image_url }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
-                                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-white">
-                                    <h1 class="text-lg font-semibold">{{ $diario->destino }}</h1>
-                                    <h2 class="text-lg font-semibold">{{ $diario->titulo }}</h2>
-                                    <p class="text-sm">{{ $diario->fecha_inicio->format('Y-m-d') }} / {{ $diario->fecha_final->format('Y-m-d') }}</p>
-                                    <div class="flex items-center space-x-2 mt-2">
-                                        <img src="{{ asset('storage/' . $diario->user->profile_image) }}" alt="Foto de {{ $diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-white">
-                                        <span class="text-sm">{{ $diario->user->name }}</span>
-                                    </div>
+
+                                <div class="absolute top-2 right-2 flex items-center space-x-2 bg-orange-300 bg-opacity-50 text-gray rounded-full px-3 py-1 shadow-md">
+                                        <img src="{{ asset('storage/' . $diario->user->profile_image) }}" alt="Foto d{{$diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-white">
+                                    <span class="text-sm font-semibold">{{ $diario->user->name }}</span>
                                 </div>
+
+                                <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
+
+                                <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-gray-200 space-y-1">
+                                    <h2 class="text-4xl border-b border-gray-400 pb-2">{{ $diario->titulo }}</h2>
+
+                                    <div class="flex items-center text-md space-x-1">
+                                        <span class="font-mono">
+                                                {{ \Carbon\Carbon::parse($diario->fecha_inicio)->isoFormat('D [de] MMMM, YYYY') }} / {{ \Carbon\Carbon::parse($diario->fecha_final)->isoFormat('D [de] MMMM, YYYY') }}
+                                        </span>
+                                    </div>
+
+                                    <div class="flex items-center text-gray text-md space-x-1">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="size-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                                        </svg>
+
+                                        @php
+                                            $ciudadPais = 'Sin destinos';
+
+                                            if ($diario->destinos->isNotEmpty()) {
+                                                $primerDestino = $diario->destinos->first();
+
+                                                if ($primerDestino && isset($primerDestino->ubicacion)) {
+                                                    // Divide la ubicación por comas y quita los espacios
+                                                    $partesUbicacion = array_map('trim', explode(',',$primerDestino->ubicacion));
+
+                                                    $pais = end($partesUbicacion);
+
+                                                    //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
+                                                    $ciudad = (count($partesUbicacion) >= 4) ?$partesUbicacion[count($partesUbicacion) - 4] :$partesUbicacion[0];
+
+                                                    $ciudadPais = $ciudad . ', ' . $pais;
+                                                }
+                                            }
+                                        @endphp
+                                        {{ $ciudadPais }}
+                                    </div>
+
+                                </div>
+                            </div>
+                        @else
+                            <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+                                <span>Sin imagen</span>
                             </div>
                         @endif
                     </a>
@@ -268,6 +339,8 @@
             @endforelse
         </div>
     </div>
+
+    <x-flash-mensaje />
 
 </section>
 @endsection

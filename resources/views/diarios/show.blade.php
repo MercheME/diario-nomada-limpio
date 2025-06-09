@@ -2,7 +2,6 @@
 
 @section('content')
 
-{{-- Contenedor principal de la sección superior --}}
 <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
     <div class="flex flex-col lg:flex-row items-start gap-x-8 gap-y-6">
@@ -91,30 +90,25 @@
                                 <label for="imagen-upload-input"
                                     class="block text-sm font-medium text-gray-600 mb-6 flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                                        class="size-5 mr-2 text-gray-500 shrink-0">
+                                        class="size-5 mr-2 text-orange-500 shrink-0">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
                                     </svg>
-                                    <pre class="text-xs">En la galería puedes mostrar 12 imágenes como máximo</pre>
+                                    <pre class="text-xs text-orange-600 ">En la galería puedes mostrar 12 imágenes como máximo</pre>
                                 </label>
 
-                                {{-- Input de archivo oculto --}}
-                                <input type="file"
-                                    name="imagen"
-                                    id="imagen-upload-input"
-                                    class="hidden"
-                                    onchange="displaySingleFileName(this, 'file-chosen-text-display')">
+                                <div>
+                                    <label for="imagen-upload-input"
+                                    class="block text-sm font-medium text-gray-700 mb-3">
+                                        <span>Elige una imagen</span>
+                                    </label>
 
-                                {{-- Botón/Label personalizado para seleccionar archivos --}}
-                                <label for="imagen-upload-input"
-                                    class="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-violet-100 hover:bg-violet-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                                    </svg>
-                                    <span>Elige un archivo</span>
-                                </label>
-
-                                {{-- Span para mostrar el nombre del archivo seleccionado --}}
-                                <span id="file-chosen-text-display" class="ml-3 text-sm text-gray-600 align-middle">Ningún archivo seleccionado.</span>
+                                    <input type="file" name="imagen" id="imagen-upload-input" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200 cursor-pointer" required>
+                                    @error('imagen') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                                </div>
+                                <div class="mt-4">
+                                    <label for="descripcion" class="block text-sm font-medium text-gray-700 mb-1">Descripción para el pie de foto de la imagen</label>
+                                    <textarea name="descripcion" id="descripcion" rows="2" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"></textarea>
+                                </div>
                             </div>
 
                             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
@@ -211,7 +205,7 @@
                         <strong>Categorías:</strong>
                         <div class="mt-1 flex flex-wrap gap-2">
                             @foreach($diario->etiquetas as $etiqueta)
-                                <span class="px-2 py-0.5 text-xs font-medium text-violet-800 bg-violet-200 rounded-full">{{ $etiqueta }}</span>
+                                <span class="px-2 py-0.5 text-xs font-medium text-pink-700 bg-pink-200 rounded-full">{{ $etiqueta }}</span>
                             @endforeach
                         </div>
                     </div>
@@ -307,7 +301,7 @@
     {{-- SECCIÓN DE GALERÍA --}}
     @if($diario->imagenes->where('is_principal', false)->count() > 0)
         <div class="mt-12">
-            <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic">Galería de Recuerdos</h2>
+            <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic"><span class="italic thin-underline underline-offset-6 text-violet-600">Galería</span> de Recuerdos</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 xl:gap-8">
                 @foreach($diario->imagenes->where('is_principal', false) as $imagen)
                     {{-- Foto Instantánea --}}
@@ -316,11 +310,11 @@
                             <img src="{{ asset('storage/' . $imagen->url_imagen) }}" alt=" {{ $diario->titulo }}" class="w-full h-full object-cover"/>
                         </div>
                         <div class="mt-3 px-1">
-                            <p class="text-sm text-gray-700 font-mono truncate" title="{{ $imagen->caption ?? $diario->titulo }}">
-                                {{ $imagen->caption ?? Str::limit($diario->titulo, 30) }}
+                            <p class="text-sm text-gray-700 font-mono truncate" title="{{ $imagen->descripcion ?? $diario->titulo }}">
+                                {{ Str::limit($imagen->descripcion, 30) ?? Str::limit($diario->titulo, 30) }}
                             </p>
                             <p class="text-xs text-gray-500 font-mono pt-1">
-                                <code class="text-xsm"> {{ \Carbon\Carbon::parse($diario->fecha_inicio)->isoFormat('DD MMM, YYYY') }} / {{ \Carbon\Carbon::parse($diario->fecha_final)->isoFormat('DD MMM, YYYY') }}</code>
+                                <span class="text-xsm mono"> {{ \Carbon\Carbon::parse($diario->fecha_inicio)->isoFormat('DD MMM, YYYY') }} / {{ \Carbon\Carbon::parse($diario->fecha_final)->isoFormat('DD MMM, YYYY') }}</span>
                             </p>
                         </div>
                         @if(auth()->id() === $diario->user_id)
@@ -350,7 +344,7 @@
     {{-- SECCIÓN DE DESTINOS --}}
     @if($diario->destinos->count())
         <div class="mt-12">
-            <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic">Destinos Explorados en este Viaje</h2>
+            <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic"><span class="italic thin-underline underline-offset-6 text-violet-600">Destinos Explorados</span> en este Viaje</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($diario->destinos as $destinoItem)
                     <div class="bg-white rounded-md shadow-sm overflow-hidden group transform hover:scale-105 transition-transform duration-300">
@@ -420,20 +414,5 @@
     @endif
 
 </div>
-
-<script>
-    function displaySingleFileName(inputElement, textDisplayElementId) {
-        const textContainer = document.getElementById(textDisplayElementId);
-        if (textContainer) {
-            // Asegurarse de que hay archivos y al menos uno seleccionado
-            if (inputElement.files && inputElement.files.length > 0) {
-                // Mostrar el nombre del archivo selecionado
-                textContainer.textContent = inputElement.files[0].name;
-            } else {
-                textContainer.textContent = 'Ningún archivo seleccionado.';
-            }
-        }
-    }
-</script>
 
 @endsection
