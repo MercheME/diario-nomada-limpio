@@ -27,9 +27,7 @@
                         transition-all duration-300 ease-in-out
                         group
                         ">
-                    <svg class="w-8 h-10 mr-2
-                                fill-current text-fuchsia-600 group-hover:text-amber-500 transition-colors duration-300 ease-in-out"
-                        version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 337.602 337.602" xml:space="preserve">
+                    <svg class="size-6 mr-2 fill-current text-fuchsia-600 group-hover:text-amber-500 transition-colors duration-300 ease-in-out" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 337.602 337.602" xml:space="preserve">
                         <g>
                             <path style="fill:#808285;" d="M125.57,185.381c0-23.88,19.36-43.23,43.23-43.23s43.23,19.35,43.23,43.23
                                         c0,23.87-19.36,43.23-43.23,43.23S125.57,209.251,125.57,185.381z"/>
@@ -94,17 +92,10 @@
                         Cerrar sesión
                     </button>
                 </form>
-
-                <!-- Buscador -->
-                {{-- <form method="GET" action="{{ route('diarios.index') }}" class="flex items-center space-x-2">
-                    <input type="text" name="query" placeholder="Buscar diario..." class="px-3 py-2 rounded-md text-black">
-                    <div class="relative inline-flex group">
-                        <div class="absolute transition-all duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] rounded-xl blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
-                        <button type="submit" class="relative inline-flex items-center justify-center px-4 py-2 font-bold text-white transition-all duration-200 bg-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900">🔎 Buscar</button>
-                    </div>
-                </form> --}}
             </div>
+
         </nav>
+        
     </header>
 
     <!-- CONTENIDO CON/SIN SIDEBAR -->

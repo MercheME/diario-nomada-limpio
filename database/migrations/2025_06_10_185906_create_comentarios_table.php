@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('proyecto_imagenes', function (Blueprint $table) {
+        Schema::create('comentarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('proyecto_id')->constrained()->onDelete('cascade');
-            $table->string('url_imagen'); // Ruta o URL de la imagen
-            $table->text('descripcion')->nullable();
-            $table->boolean('is_principal')->default(false); // Imagen destacada o de portada
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('diario_id')->constrained()->onDelete('cascade');
+            $table->text('contenido');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('proyecto_imagenes');
+        Schema::dropIfExists('comentarios');
     }
 };

@@ -109,6 +109,11 @@ class User extends Authenticatable
                     ->withTimestamps();
     }
 
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class);
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

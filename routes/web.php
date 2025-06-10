@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ComentarioController;
 use App\Http\Controllers\DestinoController;
 use App\Http\Controllers\DestinoImagenController;
 use App\Http\Controllers\ProyectoController;
@@ -57,6 +58,7 @@ Route::patch('/diario-imagenes/{imagen}/establecer-principal', [DiarioImagenCont
 Route::get('/perfil/editar', [PerfilController::class, 'edit'])->name('perfil.edit')->middleware('auth');
 Route::put('/perfil', [PerfilController::class, 'update'])->name('perfil.update')->middleware('auth');
 Route::get('/perfil/{user}', [PerfilController::class, 'show'])->name('perfil.show');
+Route::post('/diarios/{diario}/comentarios', [ComentarioController::class, 'store'])->middleware('auth')->name('diarios.comentarios.store');
 
 //Diarios favoritos
 Route::post('/diarios/{diario}/favorito', [FavoritoController::class, 'agregarFavorito'])->name('diarios.favorito.agregar')->middleware('auth');

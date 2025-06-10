@@ -56,4 +56,9 @@ class Diario extends Model
         return 'slug';
     }
 
+    public function comentarios()
+    {
+        return $this->hasMany(Comentario::class)->latest(); // latest ordena por fecha de creacion desc
+    }
+
 }

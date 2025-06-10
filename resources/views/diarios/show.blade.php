@@ -292,6 +292,9 @@
                         </div>
                     </div>
                 @endif
+
+
+
             </div>
         </div>
     </div>
@@ -416,6 +419,58 @@
             </div>
         </div>
     @endif
+
+
+    <div class=" pt-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6">Comentarios ({{ $diario->comentarios->count() }})</h2>
+
+        {{-- Formulario para añadir un nuevo comentario --}}
+        @auth
+            <div class="mb-8 bg-gray-100 p-4 rounded-sm shadow-sm">
+                <form action="{{ route('diarios.comentarios.store', $diario) }}" method="POST">
+                @csrf
+                    <div class="mb-2">
+                        <label for="contenido" class="sr-only">Tu comentario</label>
+                        <textarea name="contenido" id="contenido" rows="3"
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
+                            placeholder="Escribe tu comentario..."></textarea>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
+                            Publicar Comentario
+                        </button>
+                    </div>
+                </form>
+            </div>
+        @else
+            <div class="mb-8 text-center bg-gray-50 p-4 rounded-md">
+                <p class="text-gray-600">Debes <a href="{{ route('login') }}" class="text-violet-600 hover:underline font-semibold">iniciar sesión</a> para poder comentar.</p>
+            </div>
+        @endauth
+
+        {{-- Lista de comentarios --}}
+        <div class="space-y-6">
+            @forelse ($diario->comentarios as $comentario)
+                <div class="flex items-start space-x-4">
+                    <img src="{{ $comentario->user->profile_image_url ?? asset('storage/profile_images/default.png') }}" alt="Foto de {{ $comentario->user->name }}" class="w-10 h-10 rounded-full">
+                    <div class="flex-1">
+                        <div class="bg-gray-100 p-3 rounded-lg rounded-tl-none">
+                            <div class="flex items-center justify-between mb-1">
+                                <p class="font-semibold text-gray-900">{{ $comentario->user->name }}</p>
+                                <p class="text-xs text-gray-500">{{ $comentario->created_at->diffForHumans() }}</p>
+                            </div>
+                            <p class="text-gray-700">{{ $comentario->contenido }}</p>
+                        </div>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-6">
+                    <p class="text-gray-500">Aún no hay comentarios. ¡Sé el primero en dejar uno!</p>
+                </div>
+            @endforelse
+        </div>
+    </div>
+    
 
 </div>
 

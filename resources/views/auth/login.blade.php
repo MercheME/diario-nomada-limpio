@@ -4,9 +4,9 @@
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-8">
 
-      <div class="relative w-60 h-40 mx-auto">
+      <div class="relative w-100 h-60 mx-auto">
         <div id="loginAnim" class="absolute inset-x-0 top-1/3 w-full h-full"></div>
-        <h2 class="text-center text-3xl italic tracking-tight text-gray-900">Inicia sesión en <span class="italic text-violet-400 thin-underline underline-offset-6">Diarios Nómadas</span></h2>
+        <h2 class="text-center text-6xl italic tracking-tight text-gray-900">Inicia sesión en <span class="italic text-violet-400 thin-underline underline-offset-6">Diarios Nómadas</span></h2>
       </div>
 
       <form class="flex-[0.5]" method="POST" action="/login">
