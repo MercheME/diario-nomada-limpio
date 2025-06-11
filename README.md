@@ -1,5 +1,7 @@
 # Diarios Nómadas 🌍✈️
 
+![image](https://github.com/user-attachments/assets/dfb0265d-8815-4b1b-9a01-841dbb04a86e)
+
 **Diario Nómadas** es una aplicación web construida con Laravel que resuelve el problema de tener los recuerdos de viaje fragmentados. En lugar de tener fotos en una carpeta, notas en el móvil y posts en redes sociales, esta plataforma unifica todo en un solo lugar. Permite a los viajeros crear diarios detallados, visualizar sus rutas en un mapa interactivo y conectar con una comunidad de amigos para compartir e inspirarse mutuamente.
 
 
@@ -26,5 +28,5 @@ Características Principales
 git clone [https://github.com/MercheME/diario-nomada-limpio.git]
 cd diario-nomada
 
-![image](https://github.com/user-attachments/assets/dfb0265d-8815-4b1b-9a01-841dbb04a86e)
+
 
