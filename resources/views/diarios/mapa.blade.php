@@ -10,7 +10,6 @@
         <p>¡Disfruta explorando tus <span class="italic text-violet-600">recuerdos de viaje</span> de una forma más visual!</p>
     </div>
 
-    <!-- Mapa -->
     <div id="map" class="w-full h-[400px] md:h-[600px] rounded-sm shadow-lg border border-gray-200 mb-6"></div>
 
     <div class="text-center mb-8">
@@ -92,10 +91,9 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
-    // Obtiene los datos de los diarios pasados desde PHP y los convierte a un JSON
+
     const diariosData = @json($diarios);
 
-    // Inicializa el mapa Leaflet en el div con id="map"
     const map = L.map('map').setView([40.4168, -3.7038], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -103,11 +101,11 @@
     }).addTo(map);
 
     const todosLosMarcadores = [];
-    // Objeto para agrupar marcadores por el nombre de su ubicación
+
     const marcadoresPorUbicacion = {};
-    // Objeto para agrupar marcadores por el ID del diario al que pertenecen
+
     const marcadoresPorDiarioId = {};
-    // Crea un grupo de características de Leaflet. Este grupo contendrá todos los marcadores y se añadirá al mapa
+    // grupo de características de Leaflet contendrá todos los marcadores
     const grupoMarcadores = L.featureGroup().addTo(map);
 
     // Función asíncrona que procesa los datos de los diarios, obtiene coordenadas para cada destino y crea los marcadores
@@ -123,7 +121,6 @@
                 for (const destino of diarioItem.destinos) {
                     if (destino.ubicacion) {
                         // Crea una promesa para la petición fetch
-                        // Nominatim es un servicio de geocodificación para OpenStreetMap
                         // encodeURIComponent asegura que la URL sea válida, escapando caracteres especiales
                         // limit=1 pide solo el primer resultado y addressdetails=1 pide más detalles de la dirección
                         const fetchPromesa = fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(destino.ubicacion)}&format=json&limit=1&addressdetails=1`)
@@ -134,7 +131,7 @@
                                 return response.json();
                             })
                             .then(data => {
-                                // Comprueba si Nominatim devolvió algún resultado
+
                                 if (data.length > 0) {
                                     const lat = parseFloat(data[0].lat);
                                     const lon = parseFloat(data[0].lon);
@@ -149,15 +146,14 @@
                                             <p class="text-xs text-gray-700 mb-0.5"><strong>Diario:</strong>
                                                 ${diarioItem.titulo}
                                             </p>
-                                        `;
+                                        </div>
+                                    `;
 
-                                    // Crea un marcador Leaflet con las coordenadas y el popup
                                     const marker = L.marker([lat, lon]).bindPopup(contenidoPopup);
 
                                     todosLosMarcadores.push(marker);
                                     marcadoresPorDiarioId[diarioItem.id].push(marker);
 
-                                    // Agrupa por nombre de ubicación
                                     if (!marcadoresPorUbicacion[destino.ubicacion]) {
                                         marcadoresPorUbicacion[destino.ubicacion] = [];
                                     }
@@ -183,6 +179,7 @@
     function mostrarMarcadores(marcadoresAMostrar) {
         grupoMarcadores.clearLayers();
         if (marcadoresAMostrar && marcadoresAMostrar.length > 0) {
+
             // Copia de los marcadores para no modificar los originales al distribuirlos
             const marcadoresCopia = marcadoresAMostrar.map(m => {
                 const popup = m.getPopup() ? m.getPopup().getContent() : "No hay contenido para el popup";
@@ -198,25 +195,27 @@
             // Si hay marcadores en el grupo, ajusta la vista del mapa para que todos sean visibles
             if (grupoMarcadores.getLayers().length > 0) {
                 map.fitBounds(grupoMarcadores.getBounds().pad(0.25));
+
             } else if (marcadoresAMostrar.length > 0 && marcadoresAMostrar[0]) {
                 // si la distribución no resultó en capas pero había marcadores, centra el mapa en el primer marcador
                 map.setView(marcadoresAMostrar[0].getLatLng(), 10);
+
             } else {
-                // Si no hay marcadores,muestra una vista por defecto
+                // Si no hay marcadores
                 map.setView([40.4168, -3.7038], 5);
             }
         } else {
-            // Si no se proporcionan marcadores para mostrar, establece la vista por defecto
-            map.setView([40.4168, -3.7038], 5);
+            // Si no se proporcionan marcadores para mostrar
+            map.setView([40.4168, -3.7038], 5); // vista por defexto
         }
     }
 
     // Esta función solucioa el solapamiento de marcadores que están exactamente en las mismas coordenadas
     function distribuirMarcadores(marcadores) {
-        // Objeto para indexar marcadores por sus coordenadas (redondeadas para agrupar los muy cercanos)
+
         const indiceCoordenadas = {};
         marcadores.forEach(marker => {
-            // Convierte LatLng a una cadena para usarla como clave. toFixed(6) usa 6 decimales de precisión
+            // Convierte LatLng a una cadena para usarla como clave
             const latLngStr = marker.getLatLng().lat.toFixed(6) + ',' + marker.getLatLng().lng.toFixed(6);
 
             if (!indiceCoordenadas[latLngStr]) {
@@ -249,7 +248,7 @@
         return marcadoresDistribuidosFinalmente;
     }
 
-    // --- Event Listeners ---
+    // Eventos
     // Manejador de clic a cada elemento de la lista de diarios
     document.querySelectorAll('.diario-item').forEach(item => {
         item.addEventListener('click', () => {
@@ -260,19 +259,21 @@
         });
     });
 
-    // Manejador de clic a cada elemento de la lista de nombres de destinos únicos (ubicaciones)
+    // Manejador de clic a cada elemento de la lista de nombres de destinos únicos
     document.querySelectorAll('.destino-nombre-item').forEach(item => {
         item.addEventListener('click', () => {
+
             // Obtiene el nombre de la ubicación desde 'data-destino-nombre'
             const ubicacionNombre = item.dataset.destinoNombre;
+
             // Obtiene los marcadores asociados a esta ubicación
             const marcadoresDeLaUbicacion = marcadoresPorUbicacion[ubicacionNombre] || [];
-            // Muestra solo los marcadores de esta ubicación
+
             mostrarMarcadores(marcadoresDeLaUbicacion);
         });
     });
 
-    // Añade un manejador de clic al botón "Mostrar Todos los Destinos Visitados"
+    // manejador de clic a "Mostrar Todos los Destinos Visitados"
     document.getElementById('ver-todos').addEventListener('click', () => {
         mostrarMarcadores(todosLosMarcadores);
     });

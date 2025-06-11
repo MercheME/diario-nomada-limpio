@@ -4,12 +4,11 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="bg-white rounded-md overflow-hidden mb-3">
             <div class="p-6">
-                {{--  título --}}
+
                 <div class="flex justify-between items-start">
                     <div>
                         <h1 class="text-3xl md:text-4xl font-playfair font-bold italic text-gray-900 mb-3">{{ $destino->nombre_destino }}</h1>
 
-                        {{-- Fechas del Destino --}}
                         <div class="font-cascadia block bg-gray-100 p-3 rounded-md text-sm text-gray-600 mb-4">
                             <strong>Fechas del destino:</strong>
                             <code>
@@ -18,7 +17,6 @@
                             </code>
                         </div>
 
-                        {{-- Ubicación --}}
                         <p class="text-md text-gray-700 font-raleway mb-1 flex items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2 text-violet-600 shrink-0">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -28,21 +26,22 @@
                         </p>
 
                     </div>
-                    {{-- Botón Editar Destino --}}
-                    @auth
-                        @if(Auth::id() === $destino->diario->user_id)
-                        <a href="{{ route('destinos.edit', $destino->slug) }}"
-                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                            </svg>
-                            Editar Destino
-                        </a>
-                        @endif
-                    @endauth
+                    <div class="flex-shrink-0 mt-4 md:mt-0">
+                        @auth
+                            @if(Auth::id() === $destino->diario->user_id)
+                            <a href="{{ route('destinos.edit', $destino->slug) }}"
+                            class="inline-flex items-center gap-x-1 p-2 border border-transparent shadow-sm text-sm rounded-md text-white bg-slate-600 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                                Editar Destino
+                            </a>
+                            @endif
+                        @endauth
+                    </div>
+
                 </div>
 
-                {{-- Relato del Destino --}}
                 @if($destino->relato)
                     <div class="prose prose-lg max-w-none font-raleway text-gray-700 mb-6 mt-4 pt-4">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
@@ -55,7 +54,6 @@
                     </div>
                 @endif
 
-                {{-- Alojamiento --}}
                 @if(!empty($destino->alojamiento))
                     <div class="mt-4 pt-4">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
@@ -70,7 +68,6 @@
                     </div>
                 @endif
 
-                {{-- Personas Conocidas --}}
                 @if(!empty($destino->personas_conocidas))
                     <div class="mt-4 pt-4">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2 flex items-center">
@@ -88,7 +85,6 @@
         </div>
 
 
-        {{-- SECCIÓN GALERÍA DE IMÁGENES DEL DESTINO --}}
         <div class="mt-3 pt-8">
             @auth
                 @if(Auth::id() === $destino->diario->user_id)
@@ -114,7 +110,6 @@
                 @endif
             @endauth
 
-            {{-- Mostrar imágenes existentes --}}
             <h2 class="text-3xl font-semibold mb-6 text-gray-700 text-center italic">Galería de Imágenes del Destino</h2>
             @if($destino->imagenes->count() > 0)
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -126,11 +121,10 @@
                                 <p class="text-xs text-gray-600 truncate" title="{{$imagen->descripcion}}">{{ $imagen->descripcion }}</p>
                             @endif
 
-                            {{-- Botones para cada imagen  --}}
                             @auth
                                 @if(Auth::id() === $destino->diario->user_id)
                                     <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col space-y-1 z-10">
-                                        {{-- Botón Eliminar Imagen --}}
+
                                         @if(!$imagen->is_principal)
                                             <form action="{{ route('destino_imagenes.destroy', $imagen->id) }}" method="POST" onsubmit="return confirm('¿Eliminar esta imagen?');">
                                                 @csrf
@@ -145,7 +139,6 @@
                                             </button>
                                         @endif
 
-                                        {{-- Botón Establecer Principal --}}
                                         @if(!$imagen->is_principal)
                                             <form action="{{ route('destino_imagenes.establecerPrincipal', $imagen->id) }}" method="POST">
                                                 @csrf
@@ -159,7 +152,6 @@
                                 @endif
                             @endauth
 
-                            {{-- Etiqueta Principal --}}
                             @if($imagen->is_principal)
                                 <div class="absolute top-2 left-2 bg-black bg-opacity-50 text-white px-2 py-0.5 text-xs rounded">Principal</div>
                             @endif

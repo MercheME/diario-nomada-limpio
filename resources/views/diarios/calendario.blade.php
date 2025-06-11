@@ -10,7 +10,6 @@
         </p>
     </div>
 
-        <!-- Contenedor del calendario -->
         <div id="calendario"></div>
     </div>
 
@@ -28,10 +27,10 @@
 
     <script>
         $(document).ready(function() {
-            // Inicializar FullCalendar
+
             $('#calendario').fullCalendar({
-                 locale: 'es',         // idioma español
-        firstDay: 1,
+                locale: 'es', // idioma español
+                firstDay: 1,
                 aspectRatio: 2.5,
                 header: {
                     left: 'prev,next today',

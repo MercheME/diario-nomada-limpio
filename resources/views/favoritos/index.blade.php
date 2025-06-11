@@ -48,12 +48,11 @@
                                                     $primerDestino = $diario->destinos->first();
 
                                                     if ($primerDestino && isset($primerDestino->ubicacion)) {
-                                                        // Divide la ubicación por comas y quita los espacios
+
                                                         $partesUbicacion = array_map('trim', explode(',', $primerDestino->ubicacion));
 
                                                         $pais = end($partesUbicacion);
 
-                                                        //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
                                                         $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
 
                                                         $ciudadPais = $ciudad . ', ' . $pais;
@@ -77,7 +76,6 @@
                 @endforeach
             </div>
 
-            {{-- Paginación --}}
             <div class="mt-10">
                 {{ $diariosFavoritos->links() }}
             </div>

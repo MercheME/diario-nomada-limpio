@@ -11,15 +11,7 @@ use Illuminate\Validation\Rule;
 
 class PerfilController extends Controller
 {
-    /**
-     * Muestra el perfil público de un usuario, junto con sus diarios públicos.
-     *
-     * Utiliza Route Model Binding para inyectar automáticamente el modelo User
-     * basado en el ID o slug de la URL.
-     *
-     * @param  \App\Models\User  $user El usuario cuyo perfil se va a mostrar.
-     * @return \Illuminate\View\View
-     */
+
     public function show(User $user)
     {
         if (!Auth::check()) {
@@ -30,7 +22,6 @@ class PerfilController extends Controller
             abort(403, 'No tienes permiso para ver este perfil. Hazte amigo/a de esta persona para poder verlo.');
         }
 
-        // Carga los diarios públicos del usuario, ordenados por el más reciente y paginados
         $diarios = $user->diarios()
                         ->where('is_public', true)
                         ->latest()
@@ -42,11 +33,6 @@ class PerfilController extends Controller
         ]);
     }
 
-    /**
-     * Muestra el formulario para que el usuario autenticado edite su propio perfil.
-     *
-     * @return \Illuminate\View\View
-     */
     public function edit()
     {
         return view('perfils.edit', [
@@ -54,12 +40,6 @@ class PerfilController extends Controller
         ]);
     }
 
-    /**
-     * Valida y guarda los datos actualizados del perfil del usuario autenticado.
-     *
-     * @param  \Illuminate\Http\Request  $request La petición HTTP con los datos del formulario.
-     * @return \Illuminate\Http\RedirectResponse
-     */
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -71,8 +51,7 @@ class PerfilController extends Controller
                 'string',
                 'email',
                 'max:255',
-                // La regla 'unique' debe ignorar el ID del usuario actual
-                // para evitar un error de "email ya en uso" con su propio email
+                // La regla 'unique' debe ignorar el ID del usuario actual para evitar un error de "email ya en uso" con su propio email
                 Rule::unique('users')->ignore($user->id),
             ],
             'bio' => 'nullable|string|max:1000',
@@ -93,7 +72,7 @@ class PerfilController extends Controller
         if (!empty($validatedData['password'])) {
             $validatedData['password'] = Hash::make($validatedData['password']);
         } else {
-            // Si el campo de contraseña está vacío, se elimina del array de datos para no sobreescribir la contraseña existente con un valor nulo
+            // Si contraseña está vacío, se elimina del array de datos para no sobreescribir la contraseña existente con valor nulo
             unset($validatedData['password']);
         }
 

@@ -40,13 +40,15 @@ class DestinoController extends Controller
         ])->get($url);
 
         if ($respuesta->successful()) {
-            // Devuelve la respuesta JSON al frontend
             return response()->json($respuesta->json());
         }
 
         return response()->json(['error' => 'No se pudo buscar la dirección'], 500);
     }
 
+    /**
+     * obtiene direcciones usando Nominatim para el mapa interactivo
+     */
     public function obtenerDireccion(Request $request)
     {
         $request->validate([
@@ -92,6 +94,7 @@ class DestinoController extends Controller
             return redirect()->route('home')->with('error', 'No tienes permiso para añadir destinos a este diario.');
         }
 
+        // validación
         $reglas = [
             'nombre_destino' => 'required|string|max:255',
             'ubicacion' => 'required|string',
@@ -152,10 +155,7 @@ class DestinoController extends Controller
      */
     public function show($slug)
     {
-        // Buscar el destino por su slug
         $destino = Destino::where('slug', $slug)->firstOrFail();
-
-        // Retornar la vista con el destino
         return view('destinos.show', compact('destino'));
     }
 
@@ -171,7 +171,7 @@ class DestinoController extends Controller
         // Pasamos el destino y su diario padre a la vista
         return view('destinos.edit', [
             'destino' => $destino,
-            'diario' => $destino->diario // Necesario para las fechas límite del diario
+            'diario' => $destino->diario // Necesario para las fechas limite del diario
         ]);
     }
 
@@ -211,14 +211,14 @@ class DestinoController extends Controller
             $slugBase = Str::slug($validatedData['nombre_destino']);
             $slugUnico = $slugBase;
             $counter = 1;
-            // Asegurar que el nuevo slug es único, excluyendo el propio destino actual
+            // Comprobar que el nuevo slug es único, excluyendo el propio destino actual
             while (Destino::where('slug', $slugUnico)->where('id', '!=', $destino->id)->exists()) {
                 $slugUnico = $slugBase . '-' . $counter++;
             }
             $destino->slug = $slugUnico;
         }
 
-        // Actualizar los campos
+        // Actualizar campos
         $destino->nombre_destino = $validatedData['nombre_destino'];
         $destino->ubicacion = $validatedData['ubicacion'];
         $destino->fecha_inicio_destino = $validatedData['fecha_inicio_destino'];
@@ -238,32 +238,35 @@ class DestinoController extends Controller
     public function destroy($slug)
     {
         $destino = Destino::where('slug', $slug)->firstOrFail();
-
-        // Eliminar el destino
         $destino->delete();
 
         return redirect()->back()->with('success', 'Destino eliminado correctamente');
     }
 
-     public function getDestinoFechasOcupadas(Diario $diario, Request $request)
+    public function getDestinoFechasOcupadas(Diario $diario, Request $request)
     {
-        // Verificar que el usuario autenticado sea el propietario del diario
         if ($diario->user_id !== Auth::id()) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
-        $destinoActualId = $request->query('excluir_destino_id', null); // Para el formulario de edición de un destino
+        // Se obtiene el ID de un destino que se quiera excluir de la consulta
+        // Para cuando se está EDITANDO un destino, que sus propias fechas no se marquen como ocupadas en el calendario y se puedan modificar
+        $destinoActualId = $request->query('excluir_destino_id', null);
 
+        // Consulta para buscar destinos que pertenecen al diario actual
         $query = Destino::where('diario_id', $diario->id)
-                        ->whereNotNull('fecha_inicio_destino')
-                        ->whereNotNull('fecha_final_destino');
+            ->whereNotNull('fecha_inicio_destino') // Ignorar destinos sin fechas definidas
+            ->whereNotNull('fecha_final_destino');
 
+        // Si se proporcionó un ID de destino para excluir (porque se está editando),se añade una condición a la consulta para que no lo incluya en los resultados
         if ($destinoActualId) {
             $query->where('id', '!=', $destinoActualId);
         }
 
+        // Se ejecuta la consulta y se obtienen solo las columnas de fecha
         $destinosHermanos = $query->get(['fecha_inicio_destino', 'fecha_final_destino']);
 
+        // Se usa map para transformar los resultados en un formato que la librería del calendario (Flatpickr) admita
         $rangosOcupados = $destinosHermanos->map(function ($destino) {
             return [
                 'from' => Carbon::parse($destino->fecha_inicio_destino)->format('Y-m-d'),

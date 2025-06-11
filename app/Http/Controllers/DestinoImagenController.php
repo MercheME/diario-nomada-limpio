@@ -10,9 +10,9 @@ use Illuminate\Support\Facades\Storage;
 
 class DestinoImagenController extends Controller
 {
-    public function store(Request $request, Destino $destino) // Cambiado de Diario a Destino
+    public function store(Request $request, Destino $destino)
     {
-        // Autorización: Solo el dueño del diario al que pertenece el destino puede añadir imágenes
+
         if ($destino->diario->user_id !== Auth::id()) {
             abort(403, 'Acción no autorizada.');
         }
@@ -22,27 +22,25 @@ class DestinoImagenController extends Controller
             'descripcion' => 'nullable|string|max:2000',
         ]);
 
-        $path = $request->file('imagen')->store('imagenes/destinos', 'public'); // Carpeta diferente
+        $path = $request->file('imagen')->store('imagenes/destinos', 'public');
 
         DestinoImagen::create([
-            'destino_id' => $destino->id, // Cambiado de diario_id
+            'destino_id' => $destino->id,
             'url_imagen' => $path,
             'descripcion' => $validatedData['descripcion'] ?? null,
-            'is_principal' => $request->has('is_principal'), // Considera si esto tiene sentido para imágenes de destino
+            'is_principal' => $request->has('is_principal'),
         ]);
 
-        // Redirigir a la vista show del destino
         return redirect()->route('destinos.show', $destino->slug)->with('success', 'Imagen añadida al destino.');
     }
 
-    public function destroy(DestinoImagen $imagen) // Recibe DestinoImagen
+    public function destroy(DestinoImagen $imagen)
     {
-        // Autorización
         if ($imagen->destino->diario->user_id !== Auth::id()) {
-             abort(403, 'Acción no autorizada.');
+            abort(403, 'Acción no autorizada.');
         }
 
-        if ($imagen->is_principal) { // Si tienes lógica de imagen principal para destinos
+        if ($imagen->is_principal) {
             return back()->withErrors('No puedes eliminar la imagen principal del destino.');
         }
 
@@ -52,9 +50,9 @@ class DestinoImagenController extends Controller
         return back()->with('success', 'Imagen del destino eliminada correctamente.');
     }
 
-    public function establecerPrincipal(DestinoImagen $imagen) // Recibe DestinoImagen
+    public function establecerPrincipal(DestinoImagen $imagen)
     {
-        // Autorización
+
         if ($imagen->destino->diario->user_id !== Auth::id()) {
             abort(403, 'Acción no autorizada.');
         }

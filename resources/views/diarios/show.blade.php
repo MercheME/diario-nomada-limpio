@@ -6,7 +6,6 @@
 
     <div class="flex flex-col lg:flex-row items-start gap-x-8 gap-y-6">
 
-        {{-- Imagen Principal y Botones para editar, eliminar, cambiar de público a privado --}}
         <div class="w-full lg:w-2/5 space-y-6">
             @if($diario->imagenPrincipal)
                 <div class="group relative overflow-hidden rounded-xl shadow-lg">
@@ -21,7 +20,7 @@
                 </div>
             @endif
 
-            {{-- BOTONES PARA EL DUEÑO DEL DIARIO --}}
+            {{-- Botones para dueño del diario --}}
             @auth
                 @if(auth()->id() === $diario->user_id)
                     <div class="pt-4 space-y-3">
@@ -209,7 +208,7 @@
                     </div>
                 @endif
 
-                {{-- Sección: Reflexiones  --}}
+                {{-- Sección Reflexiones  --}}
                 @if($diario->impacto_ambiental || $diario->impacto_cultural)
                     <div class="bg-gray-100 p-6 rounded-md mt-6">
                         <h2 class="text-lg font-semibold text-violet-700 mb-3 italic">Reflexiones</h2>
@@ -299,7 +298,7 @@
         </div>
     </div>
 
-    {{-- SECCIÓN DE GALERÍA --}}
+    {{-- Galería --}}
     @if($diario->imagenes->where('is_principal', false)->count() > 0)
         <div class="mt-12">
             <h2 class="text-4xl font-semibold mb-6 text-gray-700 text-center italic"><span class="italic text-violet-400 thin-underline underline-offset-6">Galería</span> de Recuerdos
@@ -343,7 +342,7 @@
         </div>
     @endif
 
-    {{-- SECCIÓN DE DESTINOS --}}
+    {{-- Destinos --}}
     @if($diario->destinos->count())
         <div class="mt-15">
             <h2 class="text-4xl font-semibold mb-6 text-gray-700 text-center italic mb-10"><span class="italic text-violet-400 thin-underline underline-offset-6">Destinos</span> explorados en este viaje
@@ -381,7 +380,7 @@
                             </div>
 
                             <div class="px-6 py-3 flex flex-row items-center justify-between bg-gray-100">
-                                <a href="{{ route('destinos.show', $destinoItem->slug) }}" class="text-sm text-violet-500 hover:text-violet-800 font-semibold">
+                                <a href="{{ route('destinos.show', $destinoItem->slug) }}" class="text-xs text-violet-500 hover:text-violet-800 font-semibold">
                                     Ver Destino &rarr;
                                 </a>
                                 @auth
@@ -392,7 +391,7 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                             </svg>
-                                            <span class="text-sm">Editar</span>
+                                            <span class="text-sm"></span>
                                         </a>
                                         <form action="{{ route('destinos.destroy', $destinoItem->slug) }}" method="POST" onsubmit="return confirm('¿Eliminar este destino del diario?');">
                                             @csrf
@@ -407,7 +406,7 @@
                                                 stroke-width="2.5">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                                             </svg>
-                                            <span class="text-sm">Eliminar</span>
+                                            <span class="text-sm"></span>
                                         </button>
                                         </form>
                                     @endif
@@ -422,11 +421,13 @@
 
 
     <div class=" pt-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Comentarios ({{ $diario->comentarios->count() }})</h2>
+        <h2 class="text-4xl font-semibold mb-6 text-gray-700 text-center italic mb-10"><span class="italic text-violet-400 thin-underline underline-offset-6">Comentarios</span> de usuarios
+            ({{ $diario->comentarios->count() }})
+        </h2>
 
-        {{-- Formulario para añadir un nuevo comentario --}}
+        {{-- añadir un comentario --}}
         @auth
-            <div class="mb-8 bg-gray-100 p-4 rounded-sm shadow-sm">
+            <div class="mb-8 p-4 rounded-sm ">
                 <form action="{{ route('diarios.comentarios.store', $diario) }}" method="POST">
                 @csrf
                     <div class="mb-2">
@@ -470,7 +471,6 @@
             @endforelse
         </div>
     </div>
-    
 
 </div>
 

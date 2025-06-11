@@ -34,16 +34,13 @@ class DiarioImagenController extends Controller
         if (!$imagen->diario || $imagen->diario->user_id !== Auth::id()) {
             abort(403, 'Acción no autorizada.');
         }
-        
-        // Proteger imagen principal
+
         if ($imagen->is_principal) {
             return back()->withErrors('No puedes eliminar la imagen principal.');
         }
 
-        // Eliminar el archivo físico
         Storage::disk('public')->delete($imagen->url_imagen);
 
-        // Eliminar de la base de datos
         $imagen->delete();
 
         return back()->with('success', 'Imagen eliminada correctamente.');
@@ -57,10 +54,8 @@ class DiarioImagenController extends Controller
 
         $diario = $imagen->diario;
 
-        // Desactivar la actual imagen principal
         $diario->imagenes()->update(['is_principal' => false]);
 
-        // Activar la nueva
         $imagen->is_principal = true;
         $imagen->save();
 

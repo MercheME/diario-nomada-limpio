@@ -108,7 +108,6 @@
                         @endforeach
                     </div>
 
-                    {{-- Paginación --}}
                     <div class="mt-10">
                         {{ $diarios->links() }}
                     </div>

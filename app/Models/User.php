@@ -50,8 +50,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Relación de muchos a muchos con otros usuarios a través de la tabla de amistades.
-     * Los amigos aceptados del usuario.
+     * Relación de muchos a muchos con otros usuarios a través de la tabla de amistades
+     * Los amigos aceptados del usuario
      */
     public function amigos()
     {
@@ -62,18 +62,18 @@ class User extends Authenticatable
     }
 
     /**
-     * Relación con las solicitudes de amistad enviadas por el usuario.
-     * Las solicitudes pendientes que ha enviado.
+     * Relación con las solicitudes de amistad enviadas por el usuario
+     * Las solicitudes pendientes que ha enviado
      */
     public function solicitudesEnviadas()
     {
         return $this->hasMany(Friendship::class, 'user_id')
-        ->where('status', 'pendiente'); // Filtrar las solicitudes por pendientes
+        ->where('status', 'pendiente');
     }
 
     /**
-     * Relación con las solicitudes de amistad recibidas por el usuario.
-     * Las solicitudes pendientes que ha recibido.
+     * Relación con las solicitudes de amistad recibidas por el usuario
+     * Las solicitudes pendientes que ha recibido
      */
     public function solicitudesRecibidas()
     {
@@ -100,8 +100,8 @@ class User extends Authenticatable
     }
 
     /**
-     * Los diarios que el usuario ha marcado como favoritos.
-     * Se accede a ellos a través de la tabla pivot 'favoritos_diarios'.
+     * Los diarios que el usuario ha marcado como favoritos
+     * Se accede a ellos a través de la tabla pivot 'favoritos_diarios'
      */
     public function diariosFavoritos()
     {

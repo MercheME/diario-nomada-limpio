@@ -36,13 +36,12 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-        <!-- Nombre  -->
         <div>
             <label for="nombre_destino" class="block text-sm font-medium text-gray-700 mb-1">Nombre del Destino</label>
             <input type="text" id="nombre_destino" name="nombre_destino" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" value="{{ old('titulo') }}" placeholder="Buscar destino o selecciona en el mapa">
         </div>
 
-        <!-- Ubicación  -->
+        <!-- Ubicación -->
         <div>
             <label for="ubicacion" class="block text-sm font-medium text-gray-700 mb-1">Introduce o selecciona en el mapa la Ubicación del Destino</label>
             <input type="text"
@@ -67,11 +66,10 @@
             @error('mapa') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Fechas -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
                 <label for="fecha_inicio_destino" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio del Destino</label>
-                <input type="date" name="fecha_inicio_destino" id="fecha_inicio_destino" {{-- ID añadido --}}
+                <input type="date" name="fecha_inicio_destino" id="fecha_inicio_destino"
                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                        value="{{ old('fecha_inicio_destino') }}" placeholder="Selecciona fecha" required>
                 @error('fecha_inicio_destino') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -79,28 +77,25 @@
 
             <div>
                 <label for="fecha_final_destino" class="block text-sm font-medium text-gray-700 mb-1">Fecha Final del Destino</label>
-                <input type="date" name="fecha_final_destino" id="fecha_final_destino" {{-- ID añadido --}}
+                <input type="date" name="fecha_final_destino" id="fecha_final_destino"
                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm"
                        value="{{ old('fecha_final_destino') }}" placeholder="Selecciona fecha" required>
                 @error('fecha_final_destino') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
             </div>
         </div>
 
-        <!-- Alojamiento -->
         <div>
             <label for="alojamiento" class="block text-sm font-medium text-gray-700 mb-1">Alojamiento</label>
             <input type="text" name="alojamiento" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" value="{{ old('alojamiento') }}">
             @error('alojamiento') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Personas conocidas -->
         <div>
             <label for="personas_conocidas" class="block text-sm font-medium text-gray-700 mb-1">Personas Conocidas</label>
             <textarea name="personas_conocidas" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" rows="4">{{ old('personas_conocidas') }}</textarea>
             @error('personas_conocidas') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
         </div>
 
-        <!-- Relato -->
         <div>
             <label for="relato" class="block text-sm font-medium text-gray-700 mb-1">Relato sobre tu experiencia</label>
             <textarea name="relato" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-violet-500 focus:border-violet-500 sm:text-sm" rows="4">{{ old('relato') }}</textarea>
@@ -112,7 +107,6 @@
             <input type="file" name="imagenes[]" id="imagenes" class="form-control block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200 cursor-pointer">
         </div>
 
-        <!-- Botón para guardar -->
         <div>
             <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-violet-600 hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500">
                 Guardar Destino
@@ -166,7 +160,7 @@
         const query = this.value;
 
         if (query.length < 3) {
-            document.getElementById('suggestions').innerHTML = ''; // Limpia si la busqueda es corta
+            document.getElementById('suggestions').innerHTML = '';
             return;
         }
 
@@ -185,7 +179,7 @@
             });
     });
 
-    // ACTUALIZAR MAPA AL SELECCIONAR SUGERENCIA
+    // Actualizar mapa al elegir sugerencia
     document.getElementById('ubicacion').addEventListener('change', function () {
         const val = this.value;
         const options = document.getElementById('suggestions').children;
@@ -212,7 +206,7 @@
     });
 </script>
 
-{{-- Tu script de Flatpickr para las fechas del destino --}}
+{{-- Flatpickr para las fechas del destino --}}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const diarioFechaInicio = "{{ $diario->fecha_inicio ? $diario->fecha_inicio->format('Y-m-d') : '' }}";

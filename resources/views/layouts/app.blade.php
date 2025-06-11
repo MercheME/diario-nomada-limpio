@@ -14,7 +14,6 @@
 </head>
 <body class="min-h-screen bg-orange-50 flex flex-col">
 
-    <!-- HEADER -->
     <header class="bg-stone-100 text-white">
         <nav class="flex items-center bg-gray-200 justify-between p-4 border-b border-gray-300">
 
@@ -84,8 +83,6 @@
                     </span>
                 @endauth
             </div>
-
-                <!-- Cerrar sesión -->
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="inline-flex items-center justify-center px-3 py-1 font-bold border border-gray-300 text-gray-700 bg-violet-200 rounded-xl hover:bg-violet-800 hover:text-gray-50 focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-violet-500">
@@ -95,24 +92,21 @@
             </div>
 
         </nav>
-        
+
     </header>
 
-    <!-- CONTENIDO CON/SIN SIDEBAR -->
     <div class="flex flex-1 bg-gray-50">
 
         @if (Request::is('diarios*') || Request::is('mapa*') || Request::is('destinos*') || Request::is('mis-favoritos*') || Request::is('calendario*'))
             @include('partials.sidebar')
         @endif
 
-        <!-- MAIN -->
         <main class="flex-1 p-6">
             @yield('content')
         </main>
 
     </div>
 
-    {{-- O tus scripts principales --}}
-    @stack('scripts') {{-- Aquí se insertará el script de Flatpickr --}}
+    @stack('scripts')
 </body>
 </html>

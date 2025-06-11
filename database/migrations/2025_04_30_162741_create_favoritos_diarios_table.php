@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('favoritos_diarios', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Relación con el usuario
-            $table->foreignId('diario_id')->constrained('diarios')->onDelete('cascade'); // Relación con el diario
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
+            $table->foreignId('diario_id')->constrained('diarios')->onDelete('cascade');
             $table->timestamps();
 
             // Aseguramos que un usuario solo pueda marcar un diario como favorito una vez

@@ -35,7 +35,6 @@
             @csrf
             @method('PUT')
 
-            {{-- Título --}}
             <div>
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">Información básica </h2>
                 <label for="titulo" class="block text-sm font-medium text-gray-700 mb-1">Título del Diario</label>
@@ -44,7 +43,6 @@
                     value="{{ old('titulo', $diario->titulo) }}" required>
             </div>
 
-            {{-- Fechas --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="fecha_inicio" class="block text-sm font-medium text-gray-700 mb-1">Fecha de Inicio</label>
@@ -60,7 +58,6 @@
                 </div>
             </div>
 
-            {{-- Estado del Viaje --}}
             <div>
                 <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">Estado del Viaje</label>
                 <select name="estado" id="estado"
@@ -71,7 +68,6 @@
                 </select>
             </div>
 
-            {{-- Estado (Público/Privado) --}}
             <div>
                 <label for="is_public" class="block text-sm font-medium text-gray-700 mb-1">Visibilidad del Diario</label>
                 <select name="is_public" id="is_public"
@@ -81,7 +77,6 @@
                 </select>
             </div>
 
-            {{-- Destinos --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">Destinos de este Diario</h2>
                 <p class="text-sm font-medium text-gray-700">Desglosa tu viaje en sus diferentes paradas o destinos que quieres visitar</p>
@@ -114,7 +109,6 @@
                 </a>
             </div>
 
-            {{-- Contenido --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">Relato del Diario</h2>
                 <label for="contenido" class="block text-sm font-medium text-gray-700 mt-3 mb-1">Escribe aquí la historia de tu viaje, experiencia vivida o anécdota</label>
@@ -123,7 +117,6 @@
                 </textarea>
             </div>
 
-            {{-- Etiquetas --}}
             <div>
                 <h2 class="text-lg font-semibold text-gray-800 mb-3">Categorías</h2>
                 <label for="etiquetas" class="block text-sm font-medium text-gray-700 mb-1">Añade una o varias categorías para organizar y clasificar tu diario, facilitando su búsqueda y exploración</label>
@@ -146,7 +139,6 @@
                 <p class="mt-1 text-xs text-gray-500">Añade palabras clave que describan tu viaje, por ejemplo: "gastronomía,cultura"</p>
             </div>
 
-            {{-- Reflexiones --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-baseline">Reflexiones del Viaje <pre class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded-md">OPCIONAL</pre></h2>
                 <p class="text-sm font-medium text-gray-700">Tras el viaje, llega la reflexión. Este espacio es para   tus ideas sobre el impacto de nuevos entornos y culturas
@@ -179,7 +171,6 @@
                 </div>
             </div>
 
-            {{-- Inspiración --}}
             <div class="pt-4 mt-6 border-t border-gray-200">
                 <h2 class="text-lg font-semibold text-gray-800 mb-3 flex items-baseline">Inspiración del Viaje <pre class="ml-2 px-2 py-0.5 bg-gray-200 text-gray-600 text-xs font-medium rounded-md">OPCIONAL</pre></h2>
                 <div class="space-y-6">
@@ -234,7 +225,6 @@
                 </div>
             </div>
 
-            {{-- Botones del formulario --}}
             <div class="pt-8 mt-8 flex items-center justify-end space-x-3">
                 <a href="{{ route('diarios.show', $diario->slug) }}"
                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
@@ -248,5 +238,7 @@
         </form>
     </div>
 </div>
+
 <x-flash-mensaje />
+
 @endsection

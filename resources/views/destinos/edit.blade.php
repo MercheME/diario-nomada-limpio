@@ -32,7 +32,7 @@
         @csrf
         @method('PUT')
 
-        <!-- Agregar Leaflet -->
+        <!-- Leaflet -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
@@ -114,162 +114,165 @@
 @endsection
 
 @push('scripts')
-{{-- JS de Leaflet (cdn) --}}
+{{-- JS de Leaflet --}}
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
 {{-- JS de Flatpickr y su localización en español --}}
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
 
-
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
 
-    // Obtiene la latitud y longitud inicial de los campos ocultos del formulario
-    // Si no existen usa coordenadas predeterminadas de España (Madrid).
-    const latitudInicial = parseFloat(document.getElementById('latitud').value) || 40.41;
-    const longitudInicial = parseFloat(document.getElementById('longitud').value) || -3.70;
-    // Establece el nivel de zoom inicial. Si ya hay coordenadas, hace un zoom más cercano (13),
-    // de lo contrario, un zoom más alejado (5) para ver una región más amplia
-    const zoomInicial = (document.getElementById('latitud').value && document.getElementById('longitud').value) ? 13 : 5;
+        // Obtiene la latitud y longitud inicial de los campos ocultos del formulario
+        // Si no existen usa coordenadas predeterminadas de España (Madrid)
+        const latitudInicial = parseFloat(document.getElementById('latitud').value) || 40.41;
+        const longitudInicial = parseFloat(document.getElementById('longitud').value) || -3.70;
 
-    // Inicializa el mapa de Leaflet, centrándolo en las coordenadas iniciales y con el zoom definido
-    const mapa = L.map('mapa').setView([latitudInicial, longitudInicial], zoomInicial);
-    let marcador;
+        // Si ya hay coordenadas, hace un zoom más cercano (13),sino un zoom más alejado (5) para ver una región más amplia
+        const zoomInicial = (document.getElementById('latitud').value && document.getElementById('longitud').value) ? 13 : 5;
 
-    // Añade la capa de tiles de OpenStreetMap al mapa.
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap'
-    }).addTo(mapa);
+        const mapa = L.map('mapa').setView([latitudInicial, longitudInicial], zoomInicial);
+        let marcador;
 
-    // Si ya existen coordenadas iniciales en el formulario, coloca un marcador en esa posicion
-    if (document.getElementById('latitud').value && document.getElementById('longitud').value) {
-        marcador = L.marker([latitudInicial, longitudInicial]).addTo(mapa);
-    }
+        // Añade OpenStreetMap al mapa
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap'
+        }).addTo(mapa);
 
-    // Elementos del DOM para la interacción del mapa y formulario
-    const inputUbicacion = document.getElementById('ubicacion');
-    const inputLatitud = document.getElementById('latitud');
-    const inputLongitud = document.getElementById('longitud');
-    const datalistSugerencias = document.getElementById('suggestions');
-
-    // Función para actualizar el marcador y las coordenadas en los inputs
-    function actualizarMarcador(lat, lon, zoom = 13) {
-        // Si ya existe un marcador, lo elimina del mapa antes de añadir uno nuevo
-        if (marcador) mapa.removeLayer(marcador);
-        // Crea un nuevo marcadory lo añade al mapa
-        marcador = L.marker([lat, lon]).addTo(mapa);
-        // Centra la vista del mapa en las nuevas coordenadas con el zoom especificado
-        mapa.setView([lat, lon], zoom);
-        // Actualiza los valores de latitud y longitud en los campos ocultos del formulario
-        inputLatitud.value = lat;
-        inputLongitud.value = lon;
-    }
-
-    // Lógica de búsqueda de ubicación (autocompletar)
-    inputUbicacion.addEventListener('input', function () {
-        // Si el texto de búsqueda es muy corto, limpia las sugerencias y no hace la búsqueda
-        if (this.value.length < 3) {
-            datalistSugerencias.innerHTML = '';
-            return;
+        // Si ya existen coordenadas iniciales en el formulario, coloca un marcador en esa posicion
+        if (document.getElementById('latitud').value && document.getElementById('longitud').value) {
+            marcador = L.marker([latitudInicial, longitudInicial]).addTo(mapa);
         }
-        // Realiza una petición fetch a la ruta de búsqueda de destinos en tu servidor
-        // Se asume que 'destinos.buscar' es una ruta de Laravel que devuelve datos de ubicación
-        fetch(`{{ route('destinos.buscar') }}?q=${encodeURIComponent(this.value)}`)
-            .then(response => response.json())
-            .then(data => {
-                datalistSugerencias.innerHTML = ''; // Limpia las sugerencias anteriores
-                // Para cada resultado de la búsqueda, crea una opción en el datalist
-                data.forEach(item => {
-                    const opcion = document.createElement('option');
-                    opcion.value = item.display_name; // El texto visible de la sugerencia
-                    opcion.setAttribute('data-lat', item.lat); // Almacena la latitud como un atributo de dato
-                    opcion.setAttribute('data-lon', item.lon); // Almacena la longitud como un atributo de dato
-                    datalistSugerencias.appendChild(opcion); // Añade la opción al datalist
-                });
-            });
-    });
 
-    // Lógica al seleccionar una sugerencia del autocompletar
-    inputUbicacion.addEventListener('change', function () {
-        const valorSeleccionado = this.value;
-        // Itera sobre las opciones del datalist para encontrar la que coincide con el valor seleccionado
-        for (let opcion of datalistSugerencias.options) {
-            if (opcion.value === valorSeleccionado) {
-                // Obtiene la latitud y longitud de los atributos de dato de la opción seleccionada
-                const lat = opcion.getAttribute('data-lat');
-                const lon = opcion.getAttribute('data-lon');
-                // Si se encontraron latitud y longitud, actualiza el marcador en el mapa
-                if (lat && lon) actualizarMarcador(parseFloat(lat), parseFloat(lon));
-                break;
+        const inputUbicacion = document.getElementById('ubicacion');
+        const inputLatitud = document.getElementById('latitud');
+        const inputLongitud = document.getElementById('longitud');
+        const datalistSugerencias = document.getElementById('suggestions');
+
+        // Función para actualizar el marcador y las coordenadas en los inputs
+        function actualizarMarcador(lat, lon, zoom = 13) {
+            if (marcador) mapa.removeLayer(marcador);
+
+            marcador = L.marker([lat, lon]).addTo(mapa);
+
+            mapa.setView([lat, lon], zoom);
+
+            inputLatitud.value = lat;
+            inputLongitud.value = lon;
+        }
+
+        // búsqueda de ubicación autocompletar
+        inputUbicacion.addEventListener('input', function () {
+
+            if (this.value.length < 3) {
+                datalistSugerencias.innerHTML = '';
+                return;
             }
-        }
-    });
 
-    // Lógica al hacer clic en el mapa
-    mapa.on('click', function (evento) {
-        // Obtiene las coordenadas de latitud y longitud del clic, redondeadas a 6 decimales
-        const latClic = evento.latlng.lat.toFixed(6);
-        const lonClic = evento.latlng.lng.toFixed(6);
-        // Actualiza el marcador del mapa a la posición del clic
-        actualizarMarcador(parseFloat(latClic), parseFloat(lonClic));
-        // Realiza una petición fetch a tu servidor para obtener la dirección inversa (nombre de lugar a partir de coordenadas).
-        fetch(`/destinos/obtener-direccion?lat=${latClic}&lon=${lonClic}`)
-            .then(response => response.json())
-            .then(data => {
-                // Si la respuesta tiene un nombre de visualización, actualiza el campo de ubicación
-                if (data && data.display_name) inputUbicacion.value = data.display_name;
-            });
-    });
+            // Realiza una petición fetch a la ruta de búsqueda de destinos
+            // 'destinos.buscar' es una ruta que devuelve datos de ubicación
+            fetch(`{{ route('destinos.buscar') }}?q=${encodeURIComponent(this.value)}`)
+                .then(response => response.json())
+                .then(data => {
+                    datalistSugerencias.innerHTML = '';
 
-    // Configuración de Flatpickr para las fechas de inicio y fin del destino
-    // Obtiene las fechas de inicio y fin del diario principal
-    const fechaInicioDiario = "{{ $diario->fecha_inicio ? $diario->fecha_inicio->format('Y-m-d') : '' }}";
-    const fechaFinalDiario = "{{ $diario->fecha_final ? $diario->fecha_final->format('Y-m-d') : '' }}";
-
-    const elementoFechaInicioDestino = document.getElementById('fecha_inicio_destino');
-    const elementoFechaFinalDestino = document.getElementById('fecha_final_destino');
-
-    // Solo inicializa Flatpickr si ambos elementos de fecha existen en el DOM
-    if (elementoFechaInicioDestino && elementoFechaFinalDestino) {
-        // Localiza Flatpickr al español si el paquete de idioma está cargado
-        if (flatpickr.l10ns && flatpickr.l10ns.es) {
-            flatpickr.localize(flatpickr.l10ns.es);
-        }
-
-        // Configuración común para ambos selectores de fecha Flatpickr
-        const configuracionFlatpickrComun = {
-            altInput: true,         // Habilita un input alternativo para un formato de fecha más legible
-            altFormat: "j F, Y",    // Formato de fecha para el input alternativo (ej: "1 Enero, 2023")
-            dateFormat: "Y-m-d",    // Formato de fecha real que se enviará en el formulario
-            allowInput: false,      // No permite la entrada manual de la fecha
-            minDate: fechaInicioDiario || undefined, // La fecha mínima seleccionable es la fecha de inicio del diario
-            maxDate: fechaFinalDiario || undefined, // La fecha máxima seleccionable es la fecha final del diario
-        };
-
-        // Inicializa Flatpickr para la fecha final del destino
-        const fpFinalDestino = flatpickr(elementoFechaFinalDestino, {
-            ...configuracionFlatpickrComun,
+                    // Para cada resultado de la búsqueda, crea una opción en el datalist
+                    data.forEach(item => {
+                        const opcion = document.createElement('option');
+                        opcion.value = item.display_name; // El texto visible de la sugerencia
+                        opcion.setAttribute('data-lat', item.lat); // Almacena la latitud como un atributo de dato
+                        opcion.setAttribute('data-lon', item.lon); // Almacena la longitud como un atributo de dato
+                        datalistSugerencias.appendChild(opcion);
+                    });
+                });
         });
 
-        // Inicializa Flatpickr para la fecha de inicio del destino
-        const fpInicioDestino = flatpickr(elementoFechaInicioDestino, {
-            ...configuracionFlatpickrComun,
-            // Función que se ejecuta cuando se selecciona una fecha de inicio
-            onChange: function(fechasSeleccionadas, cadenaFecha) {
-                // Establece la fecha mínima seleccionable para el selector de fecha final
-                fpFinalDestino.set('minDate', cadenaFecha);
-                // Si la fecha final ya seleccionada es anterior a la nueva fecha de inicio, la limpia
-                if (fpFinalDestino.selectedDates.length > 0 && new Date(fpFinalDestino.selectedDates[0]) < new Date(cadenaFecha)) {
-                    fpFinalDestino.clear();
+        // al seleccionar una sugerencia del autocompletar
+        inputUbicacion.addEventListener('change', function () {
+            const valorSeleccionado = this.value;
+
+            // Itera sobre las opciones del datalist para encontrar la que coincide con el valor seleccionado
+            for (let opcion of datalistSugerencias.options) {
+                if (opcion.value === valorSeleccionado) {
+
+                    const lat = opcion.getAttribute('data-lat');
+                    const lon = opcion.getAttribute('data-lon');
+
+                    if (lat && lon) actualizarMarcador(parseFloat(lat), parseFloat(lon));
+
+                    break;
                 }
             }
         });
 
-        // Si ya hay una fecha de inicio en el campo al cargar la página, ajusta la fecha mínima del selector de fecha final para que no sea anterior
-        if (elementoFechaInicioDestino.value) {
-            fpFinalDestino.set('minDate', elementoFechaInicioDestino.value);
+        // al hacer clic en el mapa
+        mapa.on('click', function (evento) {
+            // Obtiene las coordenadas de latitud y longitud del clic, redondeadas a 6 decimales
+            const latClic = evento.latlng.lat.toFixed(6);
+            const lonClic = evento.latlng.lng.toFixed(6);
+
+            actualizarMarcador(parseFloat(latClic), parseFloat(lonClic));
+            // Realiza una petición fetch para obtener nombre de lugar a partir de coordenadas
+            fetch(`/destinos/obtener-direccion?lat=${latClic}&lon=${lonClic}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Si la respuesta tiene un nombre de visualización, actualiza el campo de ubicación
+                    if (data && data.display_name) inputUbicacion.value = data.display_name;
+                });
+        });
+
+        // Flatpickr para las fechas
+        // fechas de inicio y fin del diario principal
+        const fechaInicioDiario = "{{ $diario->fecha_inicio ? $diario->fecha_inicio->format('Y-m-d') : '' }}";
+        const fechaFinalDiario = "{{ $diario->fecha_final ? $diario->fecha_final->format('Y-m-d') : '' }}";
+
+        const elementoFechaInicioDestino = document.getElementById('fecha_inicio_destino');
+        const elementoFechaFinalDestino = document.getElementById('fecha_final_destino');
+
+        if (elementoFechaInicioDestino && elementoFechaFinalDestino) {
+            // Localiza Flatpickr al español
+            if (flatpickr.l10ns && flatpickr.l10ns.es) {
+                flatpickr.localize(flatpickr.l10ns.es);
+            }
+
+            // Configuración para selectores de fecha Flatpickr
+            const configuracionFlatpickrComun = {
+                altInput: true,         // Habilita un input alternativo para un formato de fecha más legibl
+                altFormat: "j F, Y",    // Formato de fecha para el input alternativo (ej: "1 Enero, 2023")
+                dateFormat: "Y-m-d",    // Formato de fecha real que se enviará en el formulario
+                allowInput: false,      // No permite la entrada manual de la fecha
+                minDate: fechaInicioDiario || undefined, // La fecha mínima seleccionable es la fecha de inicio del diario
+                maxDate: fechaFinalDiario || undefined, // La fecha máxima seleccionable es la fecha final del diario
+            };
+
+            // Inicializa Flatpickr para la fecha final del destino
+            const fpFinalDestino = flatpickr(elementoFechaFinalDestino, {
+                ...configuracionFlatpickrComun,
+            });
+
+            // Inicializa Flatpickr para la fecha de inicio del destino
+            const fpInicioDestino = flatpickr(elementoFechaInicioDestino, {
+                ...configuracionFlatpickrComun,
+
+                // Función que se ejecuta cuando se selecciona una fecha de inicio
+                onChange: function(fechasSeleccionadas, cadenaFecha) {
+
+                    // Establece la fecha mínima seleccionable para el selector de fecha final
+                    fpFinalDestino.set('minDate', cadenaFecha);
+
+                    // Si la fecha final ya seleccionada es anterior a la nueva fecha de inicio, la limpia
+                    if (fpFinalDestino.selectedDates.length > 0 && new Date(fpFinalDestino.selectedDates[0]) < new Date(cadenaFecha)) {
+                        fpFinalDestino.clear();
+                    }
+                }
+            });
+
+            // Si ya hay una fecha de inicio en el campo al cargar la página, ajusta la fecha mínima del selector de fecha final para que no sea anterior
+            if (elementoFechaInicioDestino.value) {
+                fpFinalDestino.set('minDate', elementoFechaInicioDestino.value);
+            }
         }
-    }
-});
+    });
 </script>
 @endpush

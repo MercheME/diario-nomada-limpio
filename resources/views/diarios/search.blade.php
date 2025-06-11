@@ -1,29 +1,38 @@
 @extends('layouts.app')
 
 @section('content')
-<section class="flex-grow p-6">
-    <h1 class="text-center mt-10 text-gray-700">
-        @if(Request::routeIs('diarios.index'))
-            <p class="text-gray-800 text-6xl mt-4">
-                Tus
-                <span class="italic text-violet-400 thin-underline underline-offset-6">Diarios</span> de viaje
-            </p>
-            <p class="text-gray-800 text-6xl mt-4">
-                Haz un recorrido por las <span class="italic text-violet-400 thin-underline underline-offset-6">experiencias</span> que has escrito
-            </p>
-        @elseif(Request::routeIs('diariosPublicados'))
-            <p class="text-gray-800 text-6xl mt-4">
-                Todos los
-                <span class="italic text-violet-400 thin-underline underline-offset-6">Diarios</span> de viaje </p><p class="text-gray-800 text-6xl mt-4"> publicados por la <span class="italic text-violet-400 thin-underline underline-offset-6">Comunidad</span></p>
-            </p>
-        @endif
-    </h1>
 
-    <main class="mt-8">
-        @if ($diarios->count() > 0)
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                @foreach ($diarios as $diario)
-                    <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[500px] w-full">
+<div class="container mx-auto px-4">
+
+    <div class="max-w-2xl mx-auto mb-12">
+       <p class="text-gray-800 text-6xl mt-4">
+            <span class="italic text-violet-400 thin-underline underline-offset-6">Buscador</span> de Diarios
+        </p>
+    </div>
+
+    <form action="{{ route('diarios.search') }}" method="GET" class="relative">
+        <label for="search-page" class="sr-only">Buscar</label>
+        <input type="text" name="q" id="search-page"
+            class="block w-full pl-5 pr-12 py-3 border border-gray-300 rounded-sm shadow-md focus:ring-2 focus:ring-violet-500 focus:border-violet-500 text-lg"
+            placeholder="Ej: Patagonia, Japón, comida callejera..."
+            value="{{ request('query', '') }}"
+            required minlength="3">
+        <button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-4" aria-label="Buscar">
+            <svg class="h-6 w-6 text-violet-600 hover:text-violet-800" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+        </button>
+    </form>
+
+    @isset($diarios)
+        <div class="border-t border-gray-200 pt-8">
+            @if ($diarios->count() > 0)
+                <p class="text-sm text-gray-500 mb-6">Se encontraron <strong class="font-medium">{{ $diarios->total() }}</strong> {{ Str::plural('resultado', $diarios->total()) }} para tu búsqueda "<strong class="font-medium">{{ $query }}</strong>".</p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    @foreach ($diarios as $diario)
+
+                        <div class="flex-shrink-0 bg-white rounded-xl shadow-lg overflow-hidden h-[500px] w-full">
                         <a href="{{ route('diarios.show', $diario->slug) }}" class="block h-full">
                             @if($diario->imagenPrincipal)
                                 <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
@@ -51,7 +60,6 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                                             </svg>
-
                                             @php
                                                 $ciudadPais = 'Sin destinos';
 
@@ -59,21 +67,14 @@
                                                     $primerDestino = $diario->destinos->first();
 
                                                     if ($primerDestino && isset($primerDestino->ubicacion)) {
-                                                        // Divide la ubicación por comas y quita los espacios
                                                         $partesUbicacion = array_map('trim', explode(',', $primerDestino->ubicacion));
-
                                                         $pais = end($partesUbicacion);
-
-                                                        //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
                                                         $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
-
                                                         $ciudadPais = $ciudad . ', ' . $pais;
                                                     }
                                                 }
                                             @endphp
-
                                             {{ $ciudadPais }}
-
                                         </div>
 
                                     </div>
@@ -85,25 +86,25 @@
                             @endif
                         </a>
                     </div>
-                @endforeach
-            </div>
+                        @endforeach
+                    </div>
 
-            <div class="mt-10">
-                {{ $diarios->links() }}
-            </div>
-        @else
-            <div class="text-center bg-white rounded-sm shadow-sm p-12">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto h-16 w-16 text-gray-300">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
-                </svg>
-                <h3 class="mt-4 text-xl font-semibold text-gray-800">Los Diarios están por Escribirse</h3>
-                    <p class="text-gray-500 mt-2">Aún no se han escrito aventuras. ¡Vuelve pronto!</p>
-            </div>
-        @endif
-    </main>
 
-    <div class="mt-6">
-        {{ $diarios->links() }}
-    </div>
-</section>
+                    <div class="mt-10">
+                        {{-- para que los parametros de busqueda se mantengan al cambiar de página --}}
+                        {{ $diarios->appends(request()->query())->links() }}
+                    </div>
+                </div>
+            @else
+                <div class="text-center py-16 px-6 bg-white rounded-lg shadow-sm">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                        <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-semibold text-gray-900">No se encontraron diarios</h3>
+                    <p class="mt-1 text-sm text-gray-500">No hemos encontrado ningún diario que coincida con tu búsqueda de "<strong class="font-medium">{{ $query }}</strong>". Inténtalo con otras palabras.</p>
+                </div>
+            @endif
+        </div>
+        @endisset
+
 @endsection

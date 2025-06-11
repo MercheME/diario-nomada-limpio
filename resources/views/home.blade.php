@@ -38,13 +38,11 @@
                         <div class="group relative w-full h-full overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300">
                             <img src="{{ asset('storage/' . $diario->imagenPrincipal->url_imagen) }}" alt="Imagen Principal" class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105 rounded-xl">
 
-                            <!-- Información del autor-->
                             <div class="absolute top-2 right-2 flex items-center space-x-2 bg-orange-200 bg-opacity-50 text-gray rounded-full px-3 py-1 shadow-md">
                                 <img src="{{ $diario->user->profile_image_url }}" alt="Foto de {{$diario->user->name }}" class="w-8 h-8 rounded-full border-2 border-purple-600">
                                 <span class="text-sm font-semibold">{{ $diario->user->name }}</span>
                             </div>
 
-                            <!-- Información superpuesta -->
                             <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-4 text-gray-200 space-y-1">
                                 <h2 class="text-xl border-b border-gray-400 pb-2">{{ $diario->titulo }}</h2>
 
@@ -67,12 +65,11 @@
                                             $primerDestino = $diario->destinos->first();
 
                                             if ($primerDestino && isset($primerDestino->ubicacion)) {
-                                                // Divide la ubicación por comas y quita los espacios
+
                                                 $partesUbicacion = array_map('trim', explode(',', $primerDestino->ubicacion));
 
                                                 $pais = end($partesUbicacion);
 
-                                                //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
                                                 $ciudad = (count($partesUbicacion) >= 4) ? $partesUbicacion[count($partesUbicacion) - 4] : $partesUbicacion[0];
 
                                                 $ciudadPais = $ciudad . ', ' . $pais;
@@ -93,19 +90,17 @@
 
     <div class="max-w-7xl mx-auto p-6">
         <div class="flex flex-col lg:flex-row gap-6">
-            <!-- Información del usuario -->
+
             <div class="flex-1 bg-white border border-gray-300 rounded-sm p-6">
                 <div class="flex items-center space-x-6">
                     <img src="{{ Auth::user()->profile_image_url }}" alt="Foto de perfil" class="w-24 h-24 rounded-sm border-2 border-violet-500">
                     <h2 class="text-xl font-semibold text-gray-900">{{ Auth::user()->name }}</h2>
                 </div>
 
-                <!-- Bio del usuario -->
                 <div class="mt-4 text-gray-700 text-sm">
                     <p>{{ Auth::user()->bio }}</p>
                 </div>
 
-                <!-- Botones -->
                 <div class="mt-6 text-center">
 
                     <a href="{{ route('perfil.show', auth()->user()) }}" class="w-full inline-flex items-center justify-center mb-4 px-5 py-2.5 text-sm font-medium rounded-md shadow-sm
@@ -131,7 +126,7 @@
             </div>
 
             <div class="flex-1 bg-white border border-gray-300 rounded-sm p-6">
-                <!-- Título -->
+
                 <h2 class="text-2xl font-semibold text-gray-700 mb-4 flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-violet-400">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.182 15.182a4.5 4.5 0 0 1-6.364 0M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM9.75 9.75c0 .414-.168.75-.375.75S9 10.164 9 9.75 9.168 9 9.375 9s.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Zm5.625 0c0 .414-.168.75-.375.75s-.375-.336-.375-.75.168-.75.375-.75.375.336.375.75Zm-.375 0h.008v.015h-.008V9.75Z" />
@@ -139,7 +134,6 @@
                     <span>Mis Amigos</span>
                 </h2>
 
-                <!-- Sección de Solicitudes Pendientes -->
                 @if ($solicitudesPendientes->count() > 0)
                     <div class="mb-6">
                         <h3 class="text-lg font-semibold text-gray-600 mb-2">Solicitudes de Amistad</h3>
@@ -151,7 +145,7 @@
                                         <span class="font-medium">{{ $solicitud->user->name }}</span>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <!-- Botón aceptar -->
+
                                         <form action="{{ route('solicitudes.aceptar', $solicitud) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="relative group p-2">
@@ -160,7 +154,7 @@
                                                 </svg>
                                             </button>
                                         </form>
-                                        <!-- Botón rechazar -->
+
                                         <form action="{{ route('solicitudes.rechazar', $solicitud) }}" method="POST">
                                             @csrf
                                             <button type="submit" class="relative group p-2">
@@ -172,6 +166,7 @@
                                                 </svg>
                                             </button>
                                         </form>
+
                                     </div>
                                 </li>
                             @endforeach
@@ -179,7 +174,6 @@
                     </div>
                 @endif
 
-                <!-- Lista de Amigos -->
                 <ul class="space-y-4">
                     @foreach ($amigos as $amigo)
                         <li class="bg-white rounded-sm flex flex-col md:flex-row justify-between items-center">
@@ -191,7 +185,6 @@
                                 </strong>
                             </a>
 
-                            <!-- Botón eliminar -->
                             <form action="{{ route('amigos.eliminar', $amigo) }}" method="POST" onsubmit="return confirm('¿Estás seguro de eliminar a este amigo?')">
                                 @csrf
                                 @method('DELETE')
@@ -228,7 +221,6 @@
                             </div>
                         </div>
 
-                        <!-- Acciones -->
                         <div class="mt-3 md:mt-0">
                             @if ($amigos->contains($usuario))
                                 <div class="flex items-center text-green-600 text-sm space-x-1">
@@ -301,12 +293,11 @@
                                                 $primerDestino = $diario->destinos->first();
 
                                                 if ($primerDestino && isset($primerDestino->ubicacion)) {
-                                                    // Divide la ubicación por comas y quita los espacios
+
                                                     $partesUbicacion = array_map('trim', explode(',',$primerDestino->ubicacion));
 
                                                     $pais = end($partesUbicacion);
 
-                                                    //la ciudad es la cuarta parte empezando por el final,o la primera si no hay suficientes partes
                                                     $ciudad = (count($partesUbicacion) >= 4) ?$partesUbicacion[count($partesUbicacion) - 4] :$partesUbicacion[0];
 
                                                     $ciudadPais = $ciudad . ', ' . $pais;

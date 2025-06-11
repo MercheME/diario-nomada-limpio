@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Http;
 
 class DiarioController extends Controller
@@ -19,7 +20,7 @@ class DiarioController extends Controller
         $user = Auth::user();
         $amigos = $user->amigos;
 
-        // Obtener todos los usuarios excepto el autenticado
+        //traer todos los usuarios menos el autenticado
         $usuarios = $user->where('id', '!=', $user->id)->get();
 
         $solicitudesPendientes = $user->solicitudesRecibidas;
@@ -28,7 +29,7 @@ class DiarioController extends Controller
         $diariosPublicos = Diario::where('is_public', true)->get();
         $ultimosDiarios = Auth::user()->diarios()->latest()->take(6)->get();
 
-        // IDs de amigos
+        // arrancar ids de amigos
         $amigosIds = $amigos->pluck('id');
 
         // Diarios públicos de los amigos
@@ -49,26 +50,22 @@ class DiarioController extends Controller
     {
         $query = $request->input('query');
 
-        // Obtener los diarios del usuario autenticado
         $diariosQuery = Auth::user()->diarios();
 
-        // Si hay una consulta de búsqueda, aplicarla sobre la descripción del diario
         if ($query) {
             $diariosQuery = $diariosQuery->where('descripcion', 'LIKE', "%{$query}%");
         }
 
-        // Obtener los diarios con la búsqueda aplicada (si la hay), paginados
         $diarios = $diariosQuery->latest()->paginate(10);
 
         return view('diarios.index', compact('diarios'));
     }
 
-    // Para la vista de Diairois Publicos en sidebar
+    // Para la vista de Diairois Publicos en sidebar Menu
     public function publicados(Request $request)
     {
         $query = $request->input('query');
 
-        // Obtener los diarios públicos
         $diariosQuery = Diario::where('is_public', true);
 
         if ($query) {
@@ -82,10 +79,8 @@ class DiarioController extends Controller
 
     public function create()
     {
-        $usuario = Auth::user();
-
+        // $usuario = Auth::user();
         $diario = new Diario();
-        //$diario->usuario_id = $usuario->id; // Relacionar con el usuario autenticado
 
         return view('diarios.create', compact('diario'));
     }
@@ -103,7 +98,7 @@ class DiarioController extends Controller
             'imagen_principal' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        // Validación de Solapamiento de Fechas
+        // Validación Solapamiento de Fechas
         $fechaInicioSeleccionada = Carbon::parse($validated['fecha_inicio'])->startOfDay();
         $fechaFinalSeleccionada = Carbon::parse($validated['fecha_final'])->endOfDay(); // endOfDay para incluir el día completo
 
@@ -114,19 +109,16 @@ class DiarioController extends Controller
             });
 
         if ($solapamientoQuery->exists()) {
-            // Si hay solapamiento, redirige atrás con un error específico
             return redirect()->back()
                 ->withErrors(['fecha_inicio' => 'El rango de fechas seleccionado se solapa con un diario existente.'])
-                ->withInput(); // Para rellenar el formulario con los datos previos
+                ->withInput(); // rellenar el formulario con los datos previos
         }
 
-        // Crear un nuevo diario utilizando los datos validados
         $diario = new Diario();
         $diario->user_id = Auth::id();
         $diario->titulo = $validated['titulo'];
         $diario->slug = Str::slug($validated['titulo'] . '-' . uniqid());
 
-        // Asigna las fechas validadas
         $diario->fecha_inicio = $validated['fecha_inicio'];
         $diario->fecha_final = $validated['fecha_final'];
 
@@ -135,11 +127,9 @@ class DiarioController extends Controller
 
         $diario->save();
 
-        // Procesar la imagen principal
         if ($request->hasFile('imagen_principal')) {
             $path = $request->file('imagen_principal')->store('imagenes/diarios', 'public');
         } else {
-            // Imagen por defecto
             $path = 'imagenes/diarios/default.png';
         }
 
@@ -150,10 +140,9 @@ class DiarioController extends Controller
         ]);
 
         return redirect()->route('diarios.edit', $diario->slug)->with('success', 'Diario creado. Ahora puedes añadir más detalles y destinos.');
-        // return redirect("/diarios/{$diario->slug}")->with('success', 'Diario creado correctamente.');
     }
 
-     public function togglePublicStatus(Request $request, $slug)
+    public function togglePublicStatus(Request $request, $slug)
     {
         $diario = Diario::where('slug', $slug)->firstOrFail();
 
@@ -200,7 +189,6 @@ class DiarioController extends Controller
     {
         $usuario = Auth::user();
 
-        // Obtener los diarios del usuario autenticado con sus destinos
         $diarios = Diario::with('destinos')->where('user_id', $usuario->id)->get();
 
         $color = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
@@ -210,7 +198,7 @@ class DiarioController extends Controller
         foreach ($diarios as $diario) {
             $color = '#' . substr(md5($diario->id), 0, 6); // Color consistente por diario
 
-            // Evento principal del diario
+            // Evento del diario
             $eventos[] = [
                 'title' => 'Diario: ' . $diario->titulo,
                 'start' => $diario->fecha_inicio->toDateString(),
@@ -267,7 +255,7 @@ class DiarioController extends Controller
             return redirect()->route('diarios.index')->with('error', 'No tienes permiso para editar este diario.');
         }
 
-        // Transformar 'etiquetas' de string a array ANTES de la validación
+        // Transformar 'etiquetas' de string a array antes de la validacion
         if ($request->has('etiquetas') && is_string($request->input('etiquetas'))) {
             // Divide el string por comas, quita espacios en blanco de cada etiqueta,y filtra elementos vacíos
             $etiquetasArray = array_filter(array_map('trim', explode(',', $request->input('etiquetas'))));
@@ -314,7 +302,7 @@ class DiarioController extends Controller
             'etiquetas' => $validated['etiquetas'] ?? [],
         ];
 
-        // Solo actualizar el slug si el título ha cambiado
+        // actualizar el slug solo si el titulo ha cambiado
         if ($diario->titulo !== $validated['titulo']) {
             $updateData['slug'] = Str::slug($validated['titulo'] . '-' . uniqid());
         }
@@ -335,16 +323,11 @@ class DiarioController extends Controller
             // Destinos a añadir: los que están en new pero no en current
             $destinosAAnadir = array_diff($newDestinoIds, $currentDestinoIds);
             foreach ($destinosAAnadir as $destinoId) {
-                if (!empty($destinoId)) { // Evitar IDs vacíos si el array puede tenerlos
-                    $diario->destinos()->create(['destino_id' => $destinoId]); // Ajusta según tu modelo de relación
+                if (!empty($destinoId)) { // Evitar ids vacios si el array puede tenerlos
+                    $diario->destinos()->create(['destino_id' => $destinoId]);
                 }
             }
-        } elseif (!$request->has('destinos')) {
-            // Si no se envía el campo 'destinos'
-            // O no hacer nada si 'nullable' significa que no se actualizan.
-            // $diario->destinos()->delete(); // Descomenta si este es el comportamiento deseado.
         }
-
 
         return redirect()->route('diarios.show', $diario->slug)->with('success', 'Diario actualizado correctamente.');
     }
@@ -410,6 +393,42 @@ class DiarioController extends Controller
         }
 
         return redirect()->back()->with('success', 'Imágenes agregadas correctamente.');
+    }
 
+    public function search(Request $request)
+    {
+        // Si la petición no tiene un parámetro 'q', solo muestra la vista de busqueda
+        if (!$request->has('q') || empty($request->input('q'))) {
+            return view('diarios.search');
+        }
+
+        // Si tiene 'q', hace la validación y la búsqueda
+        $request->validate([
+            'q' => 'required|string|min:3',
+        ], [
+            'q.required' => 'Por favor, introduce un término de búsqueda.',
+            'q.min' => 'La búsqueda debe tener al menos :min caracteres.',
+        ]);
+
+        $query = $request->input('q');
+
+        $diarios = Diario::with(['user', 'imagenPrincipal'])
+            ->where(function ($q) {
+                $q->where('is_public', true)
+                ->orWhere('user_id', Auth::user()->id);
+            })
+            ->where(function ($q) use ($query) {
+                $q->where('titulo', 'LIKE', "%{$query}%")
+                ->orWhere('contenido', 'LIKE', "%{$query}%")
+                ->orWhereJsonContains('etiquetas', $query)
+                ->orWhereHas('destinos', function ($destinoQuery) use ($query) {
+                    $destinoQuery->where('nombre_destino', 'LIKE', "%{$query}%");
+                });
+            })
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('diarios.search', compact('diarios', 'query'));
     }
 }

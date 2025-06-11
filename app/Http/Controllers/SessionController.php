@@ -30,11 +30,8 @@ class SessionController extends Controller
     public function destroy(Request $request)
     {
         Auth::logout();
-
-        // Invalidar la sesión
         $request->session()->invalidate();
 
-        // Redirección a la página de inicio
         return redirect( route('login'));
     }
 }

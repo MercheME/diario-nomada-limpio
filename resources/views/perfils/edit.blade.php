@@ -7,14 +7,12 @@
             <h2 class="text-gray-800 text-5xl text-center"><span class="italic text-violet-400 thin-underline underline-offset-6">Editar</span> Perfil</h2>
         </div>
 
-        {{-- Bloque para mostrar el mensaje de éxito después de actualizar --}}
         @if (session('status'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative" role="alert">
                 <span class="block sm:inline">{{ session('status') }}</span>
             </div>
         @endif
 
-        {{-- El formulario apunta a la ruta de actualización y usa el método PUT --}}
         <form method="POST" action="{{ route('perfil.update') }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
@@ -24,7 +22,6 @@
                 <div class="">
                     <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
                     <div class="mt-2">
-                        {{-- El valor es el dato del usuario, con fallback a old() por si falla la validación --}}
                         <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}" required
                                class="w-full px-2 py-1 border border-gray-300 rounded-lg shadow-sm focus:ring-violet-500 focus:border-violet-500 focus:bg-violet-100">
                         @error('name')
@@ -57,9 +54,9 @@
                 <div class="">
                     <label for="profile_image" class="block text-sm font-medium text-gray-700">Imagen de Perfil</label>
                     <div class="mt-2 flex items-center space-x-4">
-                        {{-- Mostramos la imagen actual --}}
+
                         <img src="{{ $user->profile_image_url }}" alt="Imagen actual" class="h-16 w-16 rounded-full object-cover">
-                        {{-- Botón para subir una nueva --}}
+
                         <input type="file" name="profile_image" id="profile_image" accept="image/*"
                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-100 file:text-violet-700 hover:file:bg-violet-200 cursor-pointer">
                     </div>
@@ -68,7 +65,6 @@
                     @enderror
                 </div>
 
-                {{-- Sección opcional para cambiar la contraseña --}}
                 <div class="border-t border-gray-200 pt-6">
                     <div class="block text-sm font-medium text-gray-600 mb-6 flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5 mr-2 text-orange-500 shrink-0">

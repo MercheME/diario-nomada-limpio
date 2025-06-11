@@ -3,7 +3,7 @@
 <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
     <div class="w-full max-w-md space-y-8">
       <div>
-        <h2 class="text-center text-3xl italic tracking-tight text-gray-900">Registro</h2>
+        <h2 class="text-center text-6xl italic tracking-tight text-gray-900">Regístrate en <span class="italic text-violet-400 thin-underline underline-offset-6">Diarios Nómadas</span></h2>
       </div>
       <form method="POST" action="{{ route("store") }}" enctype="multipart/form-data">
         @csrf
@@ -56,7 +56,6 @@
                     </div>
                 </div>
 
-                 <!-- Biografía -->
                 <div class="mb-4">
                     <label for="bio" class="block text-sm font-medium text-gray-700">Biografía</label>
                     <div class="mt-2">
@@ -67,7 +66,6 @@
                     </div>
                 </div>
 
-                <!-- Imagen de Perfil -->
                 <div class="mb-4">
                     <label for="profile_image" class="block text-sm font-medium text-gray-700">Imagen de Perfil</label>
                     <div class="mt-2">

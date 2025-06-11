@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Builder; 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,12 +25,7 @@ class Friendship extends Model
     }
 
     /**
-     * Query Scope para encontrar una amistad entre dos usuarios, en cualquier dirección.
-     *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \App\Models\User  $user1
-     * @param  \App\Models\User  $user2
-     * @return void
+     * Query Scope para encontrar una amistad entre dos usuarios, en cualquier dirección
      */
     public function scopeBetween(Builder $query, User $user1, User $user2): void
     {

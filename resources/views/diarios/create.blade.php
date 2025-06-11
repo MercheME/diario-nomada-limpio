@@ -105,13 +105,10 @@
 
 
 @push('scripts')
-{{-- Flatpickr desde jsdelivr --}}
+
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-{{-- Alternativamente, desde unpkg si prefieres:
-<script src="https://unpkg.com/flatpickr/dist/flatpickr.min.js"></script>
-<script src="https://unpkg.com/flatpickr/dist/l10n/es.js"></script>
---}}
+
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const fechaInicioElem = document.getElementById('fecha_inicio');
@@ -126,29 +123,24 @@ document.addEventListener('DOMContentLoaded', function () {
     let fpFinalInstance = null;
     const urlFechasOcupadas = "{{ route('diarios.fechasOcupadas') }}";
 
-    // Imprime la URL para asegurarte de que es la correcta
-    console.log("Flatpickr - URL para fetch:", urlFechasOcupadas);
-
     fetch(urlFechasOcupadas, {
-        method: 'GET', // Aunque GET es el default, ser explícito no hace daño
-        credentials: 'include', // ¡MUY IMPORTANTE! Asegura que las cookies de sesión se envíen
+        method: 'GET',
+        credentials: 'include',
         headers: {
-            'Accept': 'application/json', // Informa al servidor que esperas JSON
+            'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest', // Estándar para identificar peticiones AJAX
-            // Para peticiones GET, X-CSRF-TOKEN no suele ser necesario si usas sesiones/cookies
-            // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content')
         }
     })
     .then(response => {
         console.log("Flatpickr - Respuesta del fetch recibida. Status:", response.status, "OK:", response.ok);
         if (!response.ok) {
-            // Intenta leer el cuerpo de la respuesta si no es OK, podría dar más pistas
+
             return response.text().then(text => {
                 console.error("Flatpickr - Respuesta de error del fetch (texto):", text);
                 throw new Error('Error al cargar fechas ocupadas: ' + response.status + " (" + response.statusText + ")");
             });
         }
-        return response.json(); // Esto fallará si la respuesta no es JSON válido
+        return response.json(); 6
     })
     .then(rangosOcupados => {
         console.log("Flatpickr - Rangos Ocupados recibidos:", rangosOcupados);
@@ -184,8 +176,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
     .catch(error => {
-        console.error("Flatpickr - Error en la cadena fetch o procesamiento:", error);
-        // Fallback: Inicializar Flatpickr sin fechas deshabilitadas
+        console.error("Flatpickr - Error:", error);
+        // Inicializa Flatpickr sin fechas deshabilitadas
         const configBasica = { locale: "es", dateFormat: "Y-m-d", altInput: true, altFormat: "j F, Y", allowInput: false };
         if(fpInicioInstance) fpInicioInstance.destroy(); // Destruir instancia previa si existe
         if(fpFinalInstance) fpFinalInstance.destroy();

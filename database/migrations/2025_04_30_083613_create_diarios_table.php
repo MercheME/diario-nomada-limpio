@@ -18,27 +18,21 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('contenido')->nullable();
 
-            // Privacidad
             $table->boolean('is_public')->default(false);
 
-            // Fechas del viaje
             $table->date('fecha_inicio')->nullable();
             $table->date('fecha_final')->nullable();
 
-            // Reflexiones globales del viaje
             $table->text('impacto_ambiental')->nullable();
             $table->text('impacto_cultural')->nullable();
 
-            // Medios inspiradores
             $table->text('libros')->nullable();
             $table->text('musica')->nullable();
             $table->text('peliculas')->nullable();
             $table->text('documentales')->nullable();
 
-            // Etiquetas del diario
             $table->json('etiquetas')->nullable();
 
-            // Estado del diario
             $table->enum('estado', ['planificado', 'en_curso', 'realizado'])->default('planificado');
 
             $table->timestamps();

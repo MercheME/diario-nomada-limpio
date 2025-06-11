@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('diario_id')->constrained()->onDelete('cascade');
             $table->string('url_imagen');
             $table->text('descripcion')->nullable();
-            $table->boolean('is_principal')->default(false); // Imagen destacada
+            $table->boolean('is_principal')->default(false);
             $table->timestamps();
         });
     }
