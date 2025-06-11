@@ -25,3 +25,6 @@ Características Principales
 ```bash
 git clone [https://github.com/MercheME/diario-nomada-limpio.git]
 cd diario-nomada
+
+![image](https://github.com/user-attachments/assets/dfb0265d-8815-4b1b-9a01-841dbb04a86e)
+
