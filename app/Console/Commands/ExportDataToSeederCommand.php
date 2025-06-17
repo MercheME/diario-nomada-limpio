@@ -34,7 +34,7 @@ class ExportDataToSeederCommand extends Command
      */
      public function handle()
     {
-          $this->info('Iniciando exportación de datos a un Seeder...');
+        $this->info('Iniciando exportación de datos a un Seeder...');
 
         $seederContent = "<?php\n\nnamespace Database\Seeders;\n\nuse Illuminate\Database\Seeder;\nuse Illuminate\Support\Facades\DB;\nuse Illuminate\Support\Facades\Hash;\n";
         // Añadimos todas las sentencias 'use' para los modelos
@@ -49,7 +49,6 @@ class ExportDataToSeederCommand extends Command
 
         $seederContent .= "class GeneratedDataSeeder extends Seeder\n{\n    public function run(): void\n    {\n";
         // $seederContent .= "        DB::statement('SET FOREIGN_KEY_CHECKS=0;');\n\n";
-        $seederContent .= "        DB::statement(\"SET session_replication_role = 'replica';\");\n\n";
 
 
         // --- 1. Usuarios (no dependen de nadie) ---
@@ -121,7 +120,7 @@ class ExportDataToSeederCommand extends Command
         // --- Añade aquí tus otras tablas como 'proyectos', 'proyecto_imagenes', 'favoritos_proyectos' si las necesitas ---
 
         // $seederContent .= "\n        DB::statement('SET FOREIGN_KEY_CHECKS=1;');\n";
-        $seederContent .= "\n        DB::statement(\"SET session_replication_role = 'origin';\");\n";
+        
         $seederContent .= "    }\n}\n";
 
         $filePath = database_path('seeders/GeneratedDataSeeder.php');

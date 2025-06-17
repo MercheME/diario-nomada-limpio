@@ -17,8 +17,6 @@ class GeneratedDataSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement("SET session_replication_role = 'replica';");
-
         User::create([
             'id' => 1,
             'uuid' => 'cfd6a9bd-d13c-4174-841b-789ae18a0eb5',
@@ -320,7 +318,5 @@ El verdadero viaje hacia el interior, sin embargo, fue hacia el sur, hacia la Pa
         DB::table('favoritos_diarios')->insert(['user_id' => 6, 'diario_id' => 4]);
         DB::table('favoritos_diarios')->insert(['user_id' => 1, 'diario_id' => 2]);
         DB::table('favoritos_diarios')->insert(['user_id' => 1, 'diario_id' => 4]);
-
-        DB::statement("SET session_replication_role = 'origin';");
     }
 }
